@@ -3489,7 +3489,7 @@ document.addEventListener('click', function(e){
   var ZH = (document.documentElement.getAttribute('data-lang') || '') === 'zh';
   var T = ZH ? {title:'作品排序', close:'关闭', hint:'按住右边的 ≡ 上下拖动，或点 ↑ ↓。排好后点保存。', save:'保存顺序', saving:'保存中…', ok:'已保存，网站已经按新顺序显示。', no:'需要用你自己的 Claude 账号登录打开才能保存。', err:'保存失败：', big:'整行大图'} :
                 {title:'Ordre des œuvres', close:'Fermer', hint:'Glissez ≡ ou utilisez ↑ ↓, puis enregistrez.', save:'Enregistrer', saving:'Enregistrement…', ok:'Enregistré.', no:'Ouvrez la page connecté(e) à votre compte pour enregistrer.', err:'Erreur : ', big:'Grand format'};
-  var LBL = {flash:ZH?'纹身稿':'Flash', realise:ZH?'纹身':'Tatouages', peinture:ZH?'绘画':'Peintures', sculpture:ZH?'雕塑':'Sculptures', dessin:ZH?'素描':'Dessins', photo:ZH?'摄影（按组）':'Photographie (séries)'};
+  var LBL = {flash:ZH?'纹身稿':'Flash', realise:ZH?'纹身':'Tatouages', peinture:ZH?'绘画':'Peintures', sculpture:ZH?'雕塑':'Sculptures', dessin:ZH?'素描':'Dessins', photo:ZH?'摄影':'Photographie'};
   var box, list, tabs, msg, saveB, cat = 'flash', work = null, dirty = false;
   function items(){ return window.HYP_ITEMS || []; }
   function build(){
@@ -3501,18 +3501,23 @@ document.addEventListener('click', function(e){
     box.querySelector('.ar-x').onclick = close; saveB.onclick = save;
   }
   function snapshot(){ var o = {}, ser = {}; items().forEach(function(it){ if(it.cat === 'photo'){ var k = it.serie || it.key; if(!ser[k]){ ser[k] = {title:it.serie || it.key, key:'@' + k, members:[], thumb:it.imgs && it.imgs[0]}; (o.photo = o.photo || []).push(ser[k]); } ser[k].members.push(it); if(it.cover) ser[k].thumb = it.imgs[0]; return; } (o[it.cat] = o[it.cat] || []).push(it); }); return o; }
+  var sub = null;
   function drawTabs(){
     tabs.innerHTML = '';
+    var hint = box.querySelector('.ar-hint');
+    if(sub){ var bk = document.createElement('button'); bk.type = 'button'; bk.textContent = '← ' + (sub._name || sub.title); bk.className = 'on'; bk.onclick = function(){ sub = null; drawTabs(); drawList(); }; tabs.appendChild(bk);
+      hint.textContent = ZH ? '排这一组里照片的顺序。第一张会显示在主页上。排好点左上角返回，最后点保存。' : 'Ordre des photos de cette série. La première apparaît sur l’accueil.'; return; }
+    hint.textContent = cat === 'photo' ? (ZH ? '拖动可以调整组的顺序。点组名可以排这一组里面照片的顺序。' : 'Glissez les séries ; touchez un nom pour ordonner ses photos.') : T.hint;
     Object.keys(LBL).forEach(function(c){ if(!work[c]) return; var b = document.createElement('button'); b.type = 'button'; b.textContent = LBL[c]; if(c === cat) b.className = 'on'; b.onclick = function(){ cat = c; drawTabs(); drawList(); }; tabs.appendChild(b); });
   }
   function drawList(){
     list.innerHTML = '';
-    work[cat].forEach(function(it, i){
+    (sub ? sub.members : work[cat]).forEach(function(it, i){
       var li = document.createElement('li'); li._it = it;
       var src = it.thumb || (it.imgs && it.imgs[0]) || '';
       li.innerHTML = '<span class="ar-n"></span><span class="ar-img">' + (src ? '<img alt="">' : '') + '</span><span class="ar-t"></span><button class="ar-b" type="button" aria-label="up">↑</button><button class="ar-b" type="button" aria-label="down">↓</button><span class="ar-h" aria-hidden="true">≡</span>';
       if(src) li.querySelector('img').src = src;
-      li.querySelector('.ar-t').textContent = it.title; if(it.members){ var sp = document.createElement('small'); sp.textContent = it.members.length + (ZH ? ' 张' : ' photos'); li.querySelector('.ar-t').appendChild(sp); } if(it.big){ var sm = document.createElement('small'); sm.textContent = T.big; li.querySelector('.ar-t').appendChild(sm); }
+      li.querySelector('.ar-t').textContent = it.title; if(it.members){ var sp = document.createElement('small'); sp.textContent = it.members.length + (ZH ? ' 张 · 点开排序 ›' : ' photos · ordonner ›'); var at = li.querySelector('.ar-t'); at.appendChild(sp); at.style.cursor = 'pointer'; (function(g){ at.onclick = function(){ g._name = at.firstChild.textContent; sub = g; drawTabs(); drawList(); list.scrollTop = 0; }; })(it); } if(it.big){ var sm = document.createElement('small'); sm.textContent = T.big; li.querySelector('.ar-t').appendChild(sm); }
       var bs = li.querySelectorAll('.ar-b');
       bs[0].onclick = function(){ move(li, -1); }; bs[1].onclick = function(){ move(li, 1); };
       drag(li, li.querySelector('.ar-h'));
@@ -3521,7 +3526,7 @@ document.addEventListener('click', function(e){
     renum();
   }
   function renum(){ Array.prototype.forEach.call(list.children, function(li, i){ li.querySelector('.ar-n').textContent = (i < 9 ? '0' : '') + (i + 1); }); }
-  function sync(){ work[cat] = Array.prototype.map.call(list.children, function(li){ return li._it; }); dirty = true; renum(); msg.textContent = ''; }
+  function sync(){ if(sub){ sub.members = Array.prototype.map.call(list.children, function(li){ return li._it; }); dirty = true; renum(); msg.textContent = ''; return; } work[cat] = Array.prototype.map.call(list.children, function(li){ return li._it; }); dirty = true; renum(); msg.textContent = ''; }
   function move(li, d){ var t = d < 0 ? li.previousElementSibling : li.nextElementSibling; if(!t) return; if(d < 0) list.insertBefore(li, t); else list.insertBefore(t, li); sync(); }
   function drag(li, h){
     h.addEventListener('pointerdown', function(e){
@@ -3549,7 +3554,7 @@ document.addEventListener('click', function(e){
       });
     }).catch(function(e){ msg.textContent = T.err + ((e && (e.code || e.message)) || e); saveB.disabled = false; });
   }
-  function open(){ if(!box) build(); work = snapshot(); if(!work[cat]) cat = 'flash'; drawTabs(); drawList(); msg.textContent = ''; box.hidden = false; document.documentElement.style.overflow = 'hidden'; getDb(); }
+  function open(){ if(!box) build(); sub = null; work = snapshot(); if(!work[cat]) cat = 'flash'; drawTabs(); drawList(); msg.textContent = ''; box.hidden = false; document.documentElement.style.overflow = 'hidden'; getDb(); }
   function close(){ box.hidden = true; document.documentElement.style.overflow = ''; if(location.hash === '#ranger') history.replaceState(null, '', location.pathname + location.search); }
   function check(){ if(location.hash === '#ranger' || /[?&]ranger=1/.test(location.search)) open(); }
   window.addEventListener('hashchange', check);
