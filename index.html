@@ -998,7 +998,7 @@
 .gal-grid.ph .ph-row .ph-item{width:min(88vw,900px);height:var(--rh,auto);display:flex;align-items:center;justify-content:center;}
 .gal-grid.ph .ph-row .ph-item:only-child{width:100%;}
 .gal-grid.ph .ph-row .ph-art{width:auto;display:flex;}
-.gal-grid.ph .ph-row .ph-art img{width:auto;height:auto;max-width:100%;max-height:min(62vh,520px);object-fit:contain;}
+.gal-grid.ph .ph-row .ph-art img{width:auto;height:auto;max-width:100%;max-height:min(var(--phmax,520px),62vh,520px);object-fit:contain;}
 .gal-grid.ph .ph-row .ph-item:only-child .ph-art img{max-width:100%;}
 .gal-grid.ph .ph-serie{display:flex;align-items:baseline;gap:10px;}
 .gal-grid.ph .ph-i{flex:none;width:19px;height:19px;padding:0;border:1px solid currentColor;border-radius:50%;background:none;color:var(--ink-soft);font-family:inherit;font-style:italic;font-size:13px;line-height:17px;text-align:center;cursor:pointer;opacity:.6;transform:translateY(-2px);transition:opacity .3s ease;-webkit-tap-highlight-color:transparent;}
@@ -1651,7 +1651,8 @@ html[data-lang="zh"] .gal-grid.ph .ph-meta{letter-spacing:.06em;}
         window.phSet = function(r){ var H = r._hs; if(!H || !H.length) return; var it0 = r.children[0], step = it0 ? it0.offsetWidth + 10 : 1, x = r.scrollLeft / step, i = Math.max(0, Math.min(H.length - 1, Math.floor(x))), f = Math.max(0, Math.min(1, x - i)), j = Math.min(H.length - 1, i + 1);
           r.style.height = Math.round(H[i] + (H[j] - H[i]) * f) + 'px'; };
         window.phFit = function(r){ var W = Math.min(900, r.clientWidth - 2 * (parseFloat(getComputedStyle(r).paddingLeft) || 0)), C = Math.min(innerHeight * .62, 520);
-          r._hs = Array.prototype.map.call(r.querySelectorAll('img'), function(x){ return x.naturalWidth ? Math.min(C, W * x.naturalHeight / x.naturalWidth) : C * .66; }); phSet(r); };
+          r._hs = Array.prototype.map.call(r.querySelectorAll('img'), function(x){ return x.naturalWidth ? Math.min(C, W * x.naturalHeight / x.naturalWidth) : C * .66; });
+          var lo = Math.min.apply(null, r._hs), cap = Math.min(C, lo * 1.5); r._hs = r._hs.map(function(h){ return Math.min(h, cap); }); r.style.setProperty('--phmax', Math.round(cap) + 'px'); phSet(r); };
         addEventListener('resize', function(){ document.querySelectorAll('.ph-row').forEach(function(r){ phFit(r); }); });
       }
       if(cur==='photo'){
