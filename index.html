@@ -1036,8 +1036,8 @@ html[data-lang="zh"] .gal-grid.ph .ph-meta{letter-spacing:.06em;}
   <!-- ===== FULL-BLEED COVER ===== -->
   <section class="cover pg" data-page="accueil">
     <div class="cover-img-wrap">
-      <picture><source media="(min-width: 861px)" srcset="img/3bc390997181.webp"><img class="cover-img" src="img/d932bfdb2c92.webp" alt="" /></picture>
-      <picture><source media="(min-width: 861px)" srcset="img/3bc390997181.webp"><img class="cover-img-halo" src="img/f376cc28956c.png" alt="" /></picture>
+      <picture><source media="(min-width: 861px)" srcset="img/cover_desk_a.webp"><img class="cover-img" src="img/d932bfdb2c92.webp" alt="" /></picture>
+      <picture><source media="(min-width: 861px)" srcset="img/cover_desk_a.webp"><img class="cover-img-halo" src="img/f376cc28956c.png" alt="" /></picture>
     </div>
     <div class="cover-scrim-top"></div>
     <div class="cover-scrim-bottom"></div>
@@ -2128,6 +2128,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     }
     function morph(y){
       if(!home()){ bar.classList.add('docked'); return; }
+      if(window.innerWidth > 860){ cl.style.transform = ''; var cv0 = document.getElementById('coverLogoCv'); if(cv0) cv0.style.transform = ''; cl.style.opacity = ''; bar.classList.add('docked'); return; }
       if(!dock.ok) measure();
       if(!dock.ok){ bar.classList.add('docked'); return; }
       var p = Math.min(1, Math.max(0, y / dock.D));
@@ -3677,4 +3678,17 @@ document.addEventListener('click', function(e){
 </script>
 <script>(function(){var f=document.getElementById('bqForm');if(!f)return;f.addEventListener('submit',function(e){e.preventDefault();var v=document.getElementById('bqEmail').value.trim(),er=document.getElementById('bqErr');if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){er.hidden=false;return;}er.hidden=true;if(window.HYP_SEND){var fd=new FormData();fd.append('_subject','Boutique — liste d\'attente');fd.append('_replyto',v);fd.append('email',v);fd.append('Demande','Me prévenir de l\'ouverture de la boutique');window.HYP_POST(fd,document.getElementById('boutique'));}f.hidden=true;document.getElementById('bqOk').hidden=false;});})();</script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "7014cca5eb864afea33b28615b359916"}'></script><!-- End Cloudflare Web Analytics -->
+<style id="deskFix">
+@media (min-width: 861px){
+  /* photos: images sit side by side at one height, no empty slots */
+  .gal-grid.ph .ph-row{flex-wrap:wrap !important;overflow:visible !important;scroll-snap-type:none !important;height:auto !important;margin:0 0 8px !important;padding:0 !important;gap:12px !important;}
+  .gal-grid.ph .ph-row::after{content:'';flex-grow:999;}
+  .gal-grid.ph .ph-row .ph-item{width:auto !important;height:auto !important;flex:var(--ar,1.5) 1 calc(var(--ar,1.5) * 210px) !important;}
+  .gal-grid.ph .ph-row .ph-art{width:100% !important;}
+  .gal-grid.ph .ph-row .ph-art img{width:100% !important;height:auto !important;max-height:none !important;max-width:none !important;}
+  /* header: small logo always at the left, the big cover logo no longer slides into it */
+  body[data-page="accueil"] .topbar:not(.docked) .tb-brand{opacity:1 !important;pointer-events:auto !important;}
+}
+</style>
+<script>(function(){var g=document.getElementById('galGrid');if(!g)return;function ar(i){var it=i.closest('.ph-item');if(it&&i.naturalWidth)it.style.setProperty('--ar',(i.naturalWidth/i.naturalHeight).toFixed(3));}function scan(){g.querySelectorAll('.ph-item img').forEach(function(i){if(i.complete)ar(i);else i.addEventListener('load',function(){ar(i);},{once:true});});}new MutationObserver(scan).observe(g,{childList:true,subtree:true});scan();})();</script>
 </body></html>
