@@ -3678,6 +3678,27 @@ document.addEventListener('click', function(e){
 </script>
 <script>(function(){var f=document.getElementById('bqForm');if(!f)return;f.addEventListener('submit',function(e){e.preventDefault();var v=document.getElementById('bqEmail').value.trim(),er=document.getElementById('bqErr');if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){er.hidden=false;return;}er.hidden=true;if(window.HYP_SEND){var fd=new FormData();fd.append('_subject','Boutique — liste d\'attente');fd.append('_replyto',v);fd.append('email',v);fd.append('Demande','Me prévenir de l\'ouverture de la boutique');window.HYP_POST(fd,document.getElementById('boutique'));}f.hidden=true;document.getElementById('bqOk').hidden=false;});})();</script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "7014cca5eb864afea33b28615b359916"}'></script><!-- End Cloudflare Web Analytics -->
+<style id="deskFull">/* desktop: tattoos / paintings / sculptures / drawings as a gallery wall, not full-bleed phone cards */
+@media (min-width:861px){
+.gal-grid.full{width:auto !important;margin:8px 0 0 !important;display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr));gap:80px 48px;align-items:start;}
+.gal-grid.full .fs-item{background:none !important;line-height:normal;}
+.gal-grid.full .fs-item::after{display:none !important;}
+.gal-grid.full .fs-art{height:min(54vh,500px);display:flex;align-items:flex-end;justify-content:center;overflow:hidden;}
+.gal-grid.full .fs-art img{width:auto !important;height:auto;max-width:100%;max-height:100%;transition:opacity .4s ease,transform 1.2s cubic-bezier(.2,.7,.2,1);}
+.gal-grid.full .fs-art:hover img{transform:scale(1.02);}
+.gal-grid.full .fs-cap{position:static !important;padding:20px 0 0 !important;background:none !important;color:var(--ink);text-align:left;}
+.gal-grid.full .fs-cap h4{font-size:20px !important;letter-spacing:.02em;text-transform:none;text-shadow:none;color:var(--ink);line-height:1.25;}
+.gal-grid.full .fs-cap .fs-meta{font-size:15px;font-style:italic;color:var(--ink-soft);margin-top:4px;}
+.gal-grid.full .fs-more{color:var(--ink);border-bottom-color:var(--ink);margin-top:12px;}
+.gal-grid.full .fs-views button{border-color:var(--line);}
+.gal-grid.full .fs-views button.on{border-color:var(--ink);}
+.gal-grid.full .fs-row .ex-state{color:var(--ink-soft);}
+.gal-grid.full .fs-row .ex-btn{border-color:var(--ink);color:var(--ink);}
+.gal-grid.full .fs-row .ex-btn:hover,.gal-grid.full .fs-row .ex-btn.solid{background:var(--ink);color:var(--ivory);border-color:var(--ink);}
+html[data-theme^="v"] body:where(:not(.th-clone)) .gal-grid.full[data-cat="realise"] .fs-art, body.th-v .gal-grid.full[data-cat="realise"] .fs-art{background:var(--tatpaper) center/cover;}
+}
+@media (min-width:861px) and (max-width:1100px){.gal-grid.full{grid-template-columns:repeat(2,minmax(0,1fr));}}
+</style>
 <style id="deskFix">
 @media (min-width: 861px){
   /* photos: images sit side by side at one height, no empty slots */
