@@ -1701,7 +1701,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
       if(it.cat==='flash' && it.status==='dispo') return '<a class="ex-btn solid" href="#reservation" data-book="flash" data-no="' + it.no + '">Réserver</a>';
       if(it.cat==='flash') return '<a class="ex-btn" href="#reservation" data-book="style" data-no="' + it.no + '">Un flash dans ce style</a>';
       if((it.cat==='peinture' || it.cat==='sculpture') && it.status==='dispo') return '<a class="ex-btn solid" href="' + (it.pay || 'mailto:contact@hypnum.fr?subject=' + encodeURIComponent('Achat — ' + it.title + ' (' + it.price + ')')) + '">Acheter · ' + it.price + '</a>';
-      if(it.cat==='peinture' || it.cat==='dessin') return '<a class="ex-btn" href="#commande" data-cmd="' + (it.cat==='peinture' ? 'Peinture' : 'Dessin') + '">Commander une œuvre</a>';
+      if(it.cat==='peinture' || it.cat==='dessin' || it.cat==='sculpture') return '<a class="ex-btn" href="#commande" data-cmd="' + (it.cat==='peinture' ? 'Peinture' : it.cat==='sculpture' ? 'Sculpture' : 'Dessin') + '">Commander une œuvre</a>';
       if(it.status==='nfs') return '';
       if(it.cat==='sculpture') return '<a class="ex-btn" href="#commande" data-cmd="Sculpture">Commander une pièce</a>';
       return '';
