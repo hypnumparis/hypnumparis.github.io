@@ -2006,10 +2006,10 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
           '<div class="dt-sec"><h5>' + (it.cat==='realise' ? 'La pièce' : 'L\'œuvre') + '</h5><p>' + it.text + '</p></div>' +
           (it.flash ? pair(it.flash, true) : '') +
           (it.novel ? '<div class="dt-sec dt-novel"><h5>Extrait du roman</h5><blockquote>' + it.novel + '</blockquote></div>' : '') +
-          ((it.novel && !it.story) || (it.cat==='realise' && !it.story) ? '' : '<div class="dt-sec"><h5>L\'inspiration</h5>' + (it.story ? '<p>' + it.story + '</p>' + (it.quote ? '<div class="dt-novel dt-quote"><blockquote>' + it.quote + '</blockquote><p class="dt-qcap">' + (it.quoteCap||'') + '</p></div>' : '') + (it.storyImg ? '<figure class="dt-ref"><img src="' + it.storyImg + '" alt="' + (it.storyCap||'') + '" loading="lazy"><figcaption>' + (it.storyCap||'') + '</figcaption></figure>' : '') : '<p class="soon">Le récit de cette œuvre sera bientôt ajouté.</p>') + '</div>') +
+          (!it.story ? '' : '<div class="dt-sec"><h5>L\'inspiration</h5>' + (it.story ? '<p>' + it.story + '</p>' + (it.quote ? '<div class="dt-novel dt-quote"><blockquote>' + it.quote + '</blockquote><p class="dt-qcap">' + (it.quoteCap||'') + '</p></div>' : '') + (it.storyImg ? '<figure class="dt-ref"><img src="' + it.storyImg + '" alt="' + (it.storyCap||'') + '" loading="lazy"><figcaption>' + (it.storyCap||'') + '</figcaption></figure>' : '') : '<p class="soon">Le récit de cette œuvre sera bientôt ajouté.</p>') + '</div>') +
           '<div class="dt-sec"><h5>Détails</h5><table class="dt-tab">' +
             (it.cat==='realise' ? row('Emplacement', it.place || '—') + row('D\'après', it.meta.split(' · ')[1] ? it.meta.split(' · ')[1].replace('d\'après le ', '') : 'Projet sur mesure') :
-            row('Technique', it.meta.split(' · ')[0]) + row('Dimensions', it.dims || '—') + row('Année', it.year || '—') +
+            row('Technique', it.meta.split(' · ')[0]) + (it.dims ? row('Dimensions', it.dims) : '') + (it.year ? row('Année', it.year) : '') +
             row('Disponibilité', STATE[it.status] || '—') + (it.status==='dispo' ? row('Prix', it.price) + (it.cadre ? row('Cadre', it.cadre) : '') + (it.envoi ? row('Livraison', it.envoi) : '') + (it.nb ? row('À noter', it.nb) : '') : '')) +
           '</table></div>' +
           (list.length > 1 ? '<div class="dt-nav"><button type="button" data-go="p"><small>Précédente</small>' + prev.title + '</button><button type="button" data-go="n"><small>Suivante</small>' + next.title + '</button></div>' : '') +
