@@ -1,0 +1,18 @@
+<!doctype html><html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Hypnum · 巴黎原创纹身稿与纹身</title><meta name="description" content="Hypnum，巴黎：根据手绘原创纹身稿完成的纹身，以及油画、素描和雕塑。灵感来自古董、新艺术运动和古典绘画。"><link rel="canonical" href="https://hypnum.fr/zh/"><link rel="alternate" hreflang="fr" href="https://hypnum.fr/"><link rel="alternate" hreflang="en" href="https://hypnum.fr/en/"><link rel="alternate" hreflang="zh-Hans" href="https://hypnum.fr/zh/"><link rel="alternate" hreflang="x-default" href="https://hypnum.fr/"><meta property="og:type" content="website"><meta property="og:site_name" content="Hypnum"><meta property="og:title" content="HYPNUM · 巴黎"><meta property="og:description" content="Hypnum，巴黎：根据手绘原创纹身稿完成的纹身，以及油画、素描和雕塑。灵感来自古董、新艺术运动和古典绘画。"><meta property="og:url" content="https://hypnum.fr/zh/"><meta property="og:image" content="https://hypnum.fr/img/og2.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:locale" content="zh_CN"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#f8f3e9"><style>html,body{margin:0;background:#f8f3e9}</style></head><body><noscript><a href="/?lang=zh">Hypnum</a></noscript><script>(function(){
+var L={"html": "zh-Hans", "title": "Hypnum · 巴黎原创纹身稿与纹身", "desc": "Hypnum，巴黎：根据手绘原创纹身稿完成的纹身，以及油画、素描和雕塑。灵感来自古董、新艺术运动和古典绘画。", "ogt": "HYPNUM · 巴黎", "loc": "zh_CN", "url": "https://hypnum.fr/zh/", "lang": "zh"};
+function go(t){
+  var x=function(a,b){ t=t.replace(a,b); };
+  x(/<html lang="fr">/,'<html lang="'+L.html+'">');
+  x(/<title>[^<]*<\/title>/,'<title>'+L.title+'</title>');
+  x(/<meta name="description" content="[^"]*">/,'<meta name="description" content="'+L.desc+'">');
+  x(/<link rel="canonical" href="[^"]*">/,'<link rel="canonical" href="'+L.url+'">');
+  x(/<meta property="og:title" content="[^"]*">/,'<meta property="og:title" content="'+L.ogt+'">');
+  x(/<meta property="og:description" content="[^"]*">/,'<meta property="og:description" content="'+L.desc+'">');
+  x(/<meta property="og:url" content="[^"]*">/,'<meta property="og:url" content="'+L.url+'">');
+  x(/<meta property="og:locale" content="[^"]*">/,'<meta property="og:locale" content="'+L.loc+'">');
+  t=t.replace(/(["'(])img\//g,'$1/img/');
+  t=t.replace(/<head>/,'<head><script>window.__forceLang="'+L.lang+'";<\/script>');
+  document.open(); document.write(t); document.close();
+}
+fetch('/index.html',{cache:'no-cache'}).then(function(r){ return r.text(); }).then(go).catch(function(){ location.replace('/?lang='+L.lang+location.hash); });
+})();</script></body></html>
