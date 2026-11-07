@@ -1215,7 +1215,7 @@ html[data-lang="zh"] .gal-grid.ph .ph-meta{letter-spacing:.06em;}
             </label>
           </div>
           <div class="resa-sub-panel" data-for="browse">
-            <a href="#galerie" class="resa-link" id="browseFlash">Parcourir les flashs →</a>
+            <a href="#galerie" data-tab="flash" class="resa-link" id="browseFlash">Parcourir les flashs →</a>
             <p class="resa-hint">Dans la galerie, touchez « Réserver » sous le dessin choisi : vous reviendrez ici avec le flash sélectionné.</p>
           </div>
           <div class="resa-picked" id="flashPicked" hidden></div>
@@ -1737,6 +1737,11 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     }, true);
     document.addEventListener('click', function(e){
       var a = e.target.closest && e.target.closest('[data-tab]');
+      if(a && a.closest('.ap-strip') && a.getAttribute('data-oi') != null){
+        var it0 = ITEMS[+a.getAttribute('data-oi')]; e.preventDefault(); e.stopPropagation();
+        if(it0){ if(window.__galTab) window.__galTab(a.getAttribute('data-tab')); openItem(it0); } return;
+      }
+      if(a && a.closest('#apercu, .resa')) return;
       if(a && window.__galTab) window.__galTab(a.getAttribute('data-tab'));
       var oi = a && a.getAttribute('data-oi'), it = oi != null && ITEMS[+oi];
       if(it) setTimeout(function(){
@@ -2119,7 +2124,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
         '<div class="ex-sheet-art gal-main' + (it.photo?' photo':'') + '">' + (it.imgs ? '<img' + (it.cat==='flash' && it.scale ? ' style="--s:' + it.scale + '"' : '') + ' src="' + it.imgs[0] + '" alt="' + it.title + '">' : ORN) + '</div>' +
         (it.imgs && it.imgs.length > 1 ? '<div class="gal-thumbs">' + it.imgs.map(function(u,i){ return '<button type="button" class="gal-thumb' + (i===0?' on':'') + '" data-src="' + u + '"><img src="' + u + '" alt=""></button>'; }).join('') + '</div>' : '') +
         '<div class="ex-sheet-info"><span class="ex-no">N° ' + (no<10?'0':'') + no + ' — ' + it.meta + '</span>' +
-        '<h3>' + it.title + '</h3><p>' + it.text + '</p>' + (it.cat==='flash' && it.story ? '<div class="ex-insp"><span>L\'inspiration</span><p>' + it.story + '</p>' + (it.storyImg ? '<figure class="dt-ref ex-ref"><img src="' + it.storyImg + '" alt="" loading="lazy">' + (it.storyCap ? '<figcaption>' + it.storyCap + '</figcaption>' : '') + '</figure>' : '') + '</div>' : '') + (it.cat==='flash' && PEAU[it.key||it.title] ? '<div class="ex-peau"><span>Emplacements suggérés</span><div class="peau-row">' + PEAU[it.key||it.title].map(function(m){ return '<figure style="--r:' + (m[1] / m[2]).toFixed(4) + '"><img src="' + m[0] + '" width="' + m[1] + '" height="' + m[2] + '" alt="' + (it.title + ' · ' + peauPart(m[0])).replace(/"/g,'&quot;') + '" loading="lazy"></figure>'; }).join('') + '</div>' + (PEAU[it.key||it.title].length > 1 ? '<div class="peau-th">' + PEAU[it.key||it.title].map(function(m, i, A){ var lb = peauPart(m[0]); return '<button type="button" data-i="' + i + '"' + (i ? '' : ' class="on"') + '><img src="' + m[0] + '" alt="" loading="lazy" style="aspect-ratio:' + m[1] + '/' + m[2] + '"><em>' + (i && peauPart(A[i-1][0]) === lb ? '' : lb) + '</em></button>'; }).join('') + '</div>' : '') + '<small>Simulation sur des statues de musée</small></div>' : '') + (it.zone && !(it.cat==='flash' && PEAU[it.key||it.title]) ? '<p class="ex-zone"><span>Emplacement conseillé</span>' + it.zone + '</p>' : '') + (it.cat==='flash' && it.status!=='fait' && MINS[it.key||it.title] ? '<p class="ex-zone"><span>Taille minimale</span>' + MINS[it.key||it.title] + '</p>' : '') + (it.cat==='flash' && it.status==='dispo' && PRIX[it.key||it.title] ? '<div class="ex-opts">' + '<div class="ex-opt"><div class="ex-opt-t"><h6>Se faire tatouer</h6><p><i>à partir de</i> <b>' + PRIX[it.key||it.title] + '</b></p></div><a class="ex-opt-a tracked" href="#reservation" data-book="flash" data-no="' + it.no + '">Réserver le tatouage</a></div>' + (DESSIN[it.key||it.title] ? '<div class="ex-opt"><div class="ex-opt-t"><h6>Le dessin seul</h6><p><b>' + DESSIN[it.key||it.title] + '</b> <i>fichier numérique HD, envoyé par e-mail</i></p></div><a class="ex-opt-a tracked"' + (DPAY[it.key||it.title] ? ' data-buy="' + (window.HYP_ITEMS || []).indexOf(it) + '"' : '') + ' href="' + (DPAY[it.key||it.title] || 'mailto:contact@hypnum.fr?subject=' + encodeURIComponent('Achat du dessin — ' + it.title + ' (' + DESSIN[it.key||it.title] + ')')) + '">Acheter</a></div>' : '') + '</div>' : '') +
+        '<h3>' + it.title + '</h3><p>' + it.text + '</p>' + (it.cat==='flash' && it.story ? '<div class="ex-insp"><span>L\'inspiration</span><p>' + it.story + '</p>' + (it.storyImg ? '<figure class="dt-ref ex-ref"><img src="' + it.storyImg + '" alt="" loading="lazy">' + (it.storyCap ? '<figcaption>' + it.storyCap + '</figcaption>' : '') + '</figure>' : '') + '</div>' : '') + (it.cat==='flash' && PEAU[it.key||it.title] ? '<div class="ex-peau"><span>Emplacements suggérés</span><div class="peau-row">' + PEAU[it.key||it.title].map(function(m){ return '<figure style="--r:' + (m[1] / m[2]).toFixed(4) + '"><img src="' + m[0] + '" width="' + m[1] + '" height="' + m[2] + '" alt="' + (it.title + ' · ' + peauPart(m[0])).replace(/"/g,'&quot;') + '" loading="lazy"></figure>'; }).join('') + '</div>' + (PEAU[it.key||it.title].length > 1 ? '<div class="peau-th">' + PEAU[it.key||it.title].map(function(m, i, A){ var lb = peauPart(m[0]); return '<button type="button" data-i="' + i + '"' + (i ? '' : ' class="on"') + '><img src="' + m[0] + '" alt="" loading="lazy" style="aspect-ratio:' + m[1] + '/' + m[2] + '"><em>' + (i && peauPart(A[i-1][0]) === lb ? '' : lb) + '</em></button>'; }).join('') + '</div>' : '') + '<small>Simulation sur des statues de musée</small></div>' : '') + (it.zone && !(it.cat==='flash' && PEAU[it.key||it.title]) ? '<p class="ex-zone"><span>Emplacement conseillé</span>' + it.zone + '</p>' : '') + (it.cat==='flash' && it.status!=='fait' && MINS[it.key||it.title] ? '<p class="ex-zone"><span>Taille minimale</span>' + MINS[it.key||it.title] + '</p>' : '') + (it.cat==='flash' && it.status==='dispo' && PRIX[it.key||it.title] ? '<div class="ex-act dt-act">' + '<a href="#reservation" data-book="flash" data-no="' + it.no + '">Réserver le tatouage · dès\u00a0' + PRIX[it.key||it.title].replace(' ', '\u00a0') + '</a>' + (DESSIN[it.key||it.title] && DPAY[it.key||it.title] ? '<a data-buy="' + (window.HYP_ITEMS || []).indexOf(it) + '" href="' + DPAY[it.key||it.title] + '">Le dessin seul\u00a0·\u00a0' + DESSIN[it.key||it.title].replace(' ', '\u00a0') + '</a>' : '') + '</div>' : '') +
         (STATE[it.status] && !(it.cat==='flash' && it.status==='dispo' && PRIX[it.key||it.title]) ? '<span class="ex-state' + (it.status==='dispo'?' ok':'') + '">' + STATE[it.status] + '</span>' : '') + (it.price && it.cat!=='flash' ? '<p class="ex-price">' + it.price + '</p>' : '') + (it.cat==='flash' && it.status==='dispo' ? '<p class="ex-unique">Ce flash ne sera tatoué qu\'une seule fois.</p>' : '') + (it.done ? pair(it.done, false) : '') + cta(it) + (sib.length > 1 ? '<div class="dt-nav gal-nav"><button type="button" data-go="p"><small>Précédente</small>' + sprev.title + '</button><button type="button" data-go="n"><small>Suivante</small>' + snext.title + '</button></div>' : '') + '</div>';
       sheet.querySelectorAll('.gal-thumb').forEach(function(t){
         t.onclick = function(){
@@ -2233,7 +2238,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     window.addEventListener('scroll', upd, {passive:true}); upd();
   })();
   (function(){
-    var PAGES = {'':'accueil', top:'accueil', accueil:'accueil', atelier:'atelier', galerie:'galerie', boutique:'boutique', reservation:'reservation', commande:'commande', infos:'infos', conditions:'infos', soins:'infos', faq:'infos'};
+    var PAGES = {'':'accueil', top:'accueil', accueil:'accueil', atelier:'atelier', galerie:'accueil', boutique:'boutique', reservation:'reservation', commande:'commande', infos:'infos', conditions:'infos', soins:'infos', faq:'infos'};
     var body = document.body, cur = null, busy = false, cover = document.querySelector('.cover');
     function pageFromHash(){ var h = (location.hash || '').replace('#',''); return PAGES[h] || 'accueil'; }
     var SY = {}, restore = false;
@@ -2274,11 +2279,15 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
       e.preventDefault();
       var p = PAGES[h];
       try{ history.pushState(null, '', p === 'accueil' ? location.pathname + location.search : '#' + h); }catch(err){}
+      if(h === 'galerie'){ var tg = document.getElementById('ap-' + (a.getAttribute('data-tab') || 'flash')) || document.getElementById('apercu');
+        var to = function(){ var bar = document.getElementById('topbar'), off = bar ? bar.offsetHeight : 0; window.scrollTo({top: tg.getBoundingClientRect().top + window.pageYOffset - off - 10, behavior: 'smooth'}); };
+        if(cur === 'accueil') to(); else { go('accueil'); setTimeout(to, 420); } return; }
       go(p);
     });
     window.addEventListener('popstate', function(){ var p = pageFromHash(); if(p !== cur) restore = true; go(p); });
     window.__nav = function(h){ try{ history.pushState(null, '', '#' + h); }catch(err){} go(PAGES[h] || 'accueil'); };
     swap(pageFromHash());
+    if(location.hash === '#galerie') setTimeout(function(){ var tg = document.getElementById('ap-flash'); if(tg) window.scrollTo(0, tg.getBoundingClientRect().top + window.pageYOffset - 80); }, 700);
   })();
   (function(){
     var form = document.getElementById('resaForm');
@@ -2518,9 +2527,9 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
       var list = items.filter(function(it){ return it.cat===cat && it.imgs; });
       if(cat==='photo'){ var sn = {}; list = list.filter(function(it){ if(!it.serie) return true; if(sn[it.serie]) return false; sn[it.serie] = 1; return true; }).map(function(it){ return items.filter(function(x){ return x.cat==='photo' && x.serie===it.serie && x.cover; })[0] || it; }); }
       if(!list.length) return '';
-      return '<div class="ap-block"><div class="ap-head"><span class="ap-no">' + no + '</span><h2>' + title + '</h2><a href="#galerie" data-tab="' + cat + '" class="ap-sub ap-go">' + more.replace('%n', list.length) + ' →</a></div>' +
+      return '<div class="ap-block" id="ap-' + cat + '"><div class="ap-head"><span class="ap-no">' + no + '</span><h2>' + title + '</h2><p class="ap-sub">' + sub + '</p></div>' +
         '<div class="ap-strip">' + list.map(function(it){ var act = acts(it); return (act ? '<div class="ap-card ap-c-' + cat + '">' : '') + '<a href="#galerie" data-tab="' + cat + '" data-oi="' + items.indexOf(it) + '" class="ap-' + cat + (it.pp!=null?' pp'+it.pp:'') + (it.photo?' photo':'') + (it.paper==='uni'?' plain':'') + '"' + '' + '>' + (cat==='flash' ? '<span class="sheet"></span>' : '') + '<img' + (cat==='flash' && it.scale ? ' style="--s:' + it.scale + (it.scale===1 ? ';mix-blend-mode:normal' : '') + '"' : '') + TI(it.thumb || it.imgs[0], '(min-width:861px) 560px, 400px') + ' alt="' + it.title + '" loading="lazy">' + '</a>' + (act ? '<div class="ap-act">' + act + '</div></div>' : ''); }).join('') + '</div>' +
-        '<p class="ap-desc">' + sub + '</p>' + (CMD[cat] ? '<a class="ap-cmd" href="#commande" data-cmd="' + CMD[cat][0] + '">' + CMD[cat][1] + '</a>' : '') + '</div>';
+        (CMD[cat] ? '<a class="ap-cmd" href="#commande" data-cmd="' + CMD[cat][0] + '">' + CMD[cat][1] + '</a>' : '') + '</div>';
     }
     root.innerHTML =
       block('01', 'flash', 'Flash', 'Dessins disponibles à tatouer', 'Voir les %n flashs') +
@@ -2610,6 +2619,7 @@ document.addEventListener('click', function(e){
   }
   var R = [
     [/^Voir les (\d+) flashs →$/, function(m){ return lang==='en' ? 'See the ' + m[1] + ' flashes →' : '查看全部 ' + m[1] + ' 张纹身稿 →'; }],
+    [/^Réserver le tatouage · dès\s(.+)$/, function(m){ return lang==='en' ? 'Book the tattoo · from ' + m[1] : '预约纹身 · ' + m[1] + ' 起'; }],
     [/^Le dessin seul\s·\s(.+)$/, function(m){ return (lang==='en' ? 'Design only · ' : '只买图稿 · ') + m[1]; }],
     [/^Acheter le dessin · (.+)$/, function(m){ return (lang==='en' ? 'Buy the design only · ' : '购买图稿 · ') + m[1]; }],
     [/^Acheter · (.+)$/, function(m){ return (lang==='en' ? 'Buy · ' : '购买 · ') + m[1]; }],
@@ -4010,6 +4020,9 @@ html[lang^=zh] .ap-desc{font-style:normal;}
 <style>
 .ex-act{display:flex;flex-direction:column;align-items:flex-start;margin-top:10px;gap:4px;}
 .ex-act .nw{white-space:nowrap;}
+.dt-act{align-items:center;margin:26px auto 6px;gap:8px;}
+.dt-act a{font-size:12px;letter-spacing:.1em;}
+html[lang^=zh] .dt-act a{font-size:15px;}
 @media (max-width:860px){ .gal-grid.mosaic .ex-item.small .ex-top .ex-more{display:none !important;} }
 .ex-act a{display:block;padding:4px 0;line-height:1.5;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:inherit;text-decoration:none;}
 .ex-act a::after{content:'→';margin-left:.4em;letter-spacing:0;font-size:1.15em;white-space:nowrap;}
