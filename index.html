@@ -3882,6 +3882,15 @@ html[lang^=zh] .bq-l,html[lang^=zh] .mobile-panel .mp-links small{font-size:13px
 .gal-wait{flex-basis:100%;order:-1;margin:0 0 14px;font-size:16px;line-height:1.6;font-style:italic;color:var(--ink);max-width:640px;}
 html[lang^=zh] .gal-wait{font-style:normal;font-size:15px;}
 [aria-invalid="true"]{border-color:#9b2c2c !important;}
+@media (max-width:640px){
+  .footer-inner{flex-direction:column;gap:34px;padding:44px 24px 30px;}
+  .footer-inner>div:nth-child(2){display:flex !important;flex-direction:column;gap:30px !important;}
+  .footer-inner>div:nth-child(2)>div{display:grid !important;grid-template-columns:1fr 1fr;gap:2px 20px !important;}
+  .footer-inner>div:nth-child(2)>div>span{grid-column:1/-1;margin-bottom:8px;}
+  .footer-inner>div:nth-child(2)>div>a{min-height:38px;}
+  .footer-inner .wx,.footer-inner a[href^="mailto"]{white-space:nowrap;}
+  .pg-foot .pg-legal{padding:0 24px 32px !important;line-height:1.9;}
+}
 </style>
 <script>
   window.__flagErr = function(box, msg, el){
