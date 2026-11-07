@@ -4043,6 +4043,12 @@ html[lang^=zh] .resa-alt{font-size:14.5px;}
 .ap-strip .ap-name{height:auto !important;display:block;width:0;min-width:100%;box-sizing:border-box;padding:10px 4px 0;text-align:center;font-size:15px;line-height:1.35;color:var(--ink);text-decoration:none;scroll-snap-align:none;}
 .ap-strip .ap-c-flash .ap-name{padding-top:2px;}
 .ap-strip .ap-name + .ap-act{padding-top:0;}
+.ap-strip .ap-name::after{content:'→';margin-left:.4em;font-size:.85em;opacity:.6;}
+body .ap-strip .ap-act{gap:8px !important;padding:10px 6% 0 !important;align-items:stretch !important;}
+body .ap-strip .ap-act a{min-height:40px !important;padding:6px 10px !important;border:1px solid var(--ink);line-height:1.25;box-sizing:border-box;}
+body .ap-strip .ap-act a::after{content:none !important;}
+body .ap-strip .ap-act a[data-book],body .ap-strip .ap-c-peinture .ap-act a[data-buy],body .ap-strip .ap-c-sculpture .ap-act a[data-buy],body .ap-strip .ap-c-dessin .ap-act a[data-buy],body .ap-strip .ap-c-photo .ap-act a[data-buy]{background:var(--ink);color:var(--ivory) !important;}
+body .ap-strip .ap-act .ap-state{justify-content:center;min-height:40px;}
 </style>
 <style>
 /* bigger buy/book buttons */
