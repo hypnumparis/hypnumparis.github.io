@@ -1517,7 +1517,7 @@ html[data-lang="zh"] .gal-grid.ph .ph-meta{letter-spacing:.06em;}
           for(var k2=0;k2<all.length;k2++) d[all[k2]*4+3] = 0;
           ctx.putImageData(id, 0, 0);
           img.parentNode.insertBefore(cv, img.nextSibling);
-          var D = 3200, t0 = null;
+          var D = 2600, t0 = null;
           function ease(t){
             var base = 0.5*t + 0.5*(0.5 - 0.5*Math.cos(Math.PI*t));
             return base + 0.012*Math.sin(2*Math.PI*3*t) + 0.006*Math.sin(2*Math.PI*7*t);
@@ -1530,10 +1530,11 @@ html[data-lang="zh"] .gal-grid.ph .ph-meta{letter-spacing:.06em;}
             }
             ctx.putImageData(id, 0, 0);
             document.querySelectorAll('canvas#coverLogoCv').forEach(function(o){ if(o !== cv){ var ox = o.getContext('2d'); ox.clearRect(0, 0, w, h); ox.drawImage(cv, 0, 0); } });
+            if(t >= .78 && !window.__logoDone){ window.__logoDone = 1; try{ document.dispatchEvent(new Event('hyp-logo')); }catch(e){} }
             if(t < 1) requestAnimationFrame(frame);
             else { clearTimeout(failsafe); show(); document.querySelectorAll('canvas#coverLogoCv').forEach(function(o){ o.style.display = 'none'; }); }
           }
-          setTimeout(function(){ requestAnimationFrame(frame); }, 900);
+          setTimeout(function(){ requestAnimationFrame(frame); }, 600);
         }catch(e){ console.error('logo-write', e && e.message); clearTimeout(failsafe); show(); }
       }
       if(img.complete && img.naturalWidth) start(); else img.addEventListener('load', start);
@@ -1716,7 +1717,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     function galAct(it){
       var P = window.HYP_P || {}, k = it.key || it.title, n = (window.HYP_ITEMS || []).indexOf(it), h = '';
       if(it.cat==='flash'){
-        if(P.DESSIN && P.DESSIN[k] && P.DPAY && P.DPAY[k]) h += '<a href="' + P.DPAY[k] + '" data-buy="' + n + '">Acheter juste le dessin · ' + P.DESSIN[k] + '</a>';
+        if(P.DESSIN && P.DESSIN[k] && P.DPAY && P.DPAY[k]) h += '<a href="' + P.DPAY[k] + '" data-buy="' + n + '">Seulement le dessin · ' + P.DESSIN[k] + '</a>';
         h += '<a href="#reservation" data-book="flash" data-no="' + it.no + '">Réserver le tatouage</a>';
       } else h += '<a href="' + it.pay + '" data-buy="' + n + '">Acheter · ' + it.price + '</a>';
       return '<div class="ex-act">' + h + '</div>';
@@ -2498,7 +2499,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
       if(it.status === 'vendu') return '<span class="ap-state">Vendue</span>';
       if(it.status !== 'dispo') return '';
       if(it.cat === 'flash'){
-        if(P.DESSIN && P.DESSIN[k] && P.DPAY && P.DPAY[k]) h += '<a href="' + P.DPAY[k] + '" data-buy="' + items.indexOf(it) + '">Acheter juste le dessin · ' + P.DESSIN[k] + '</a>';
+        if(P.DESSIN && P.DESSIN[k] && P.DPAY && P.DPAY[k]) h += '<a href="' + P.DPAY[k] + '" data-buy="' + items.indexOf(it) + '">Seulement le dessin · ' + P.DESSIN[k] + '</a>';
         h += '<a href="#reservation" data-book="flash" data-no="' + it.no + '">Réserver le tatouage</a>';
       } else if((it.cat === 'peinture' || it.cat === 'sculpture') && it.pay && it.price){
         h += '<a href="' + it.pay + '" data-buy="' + items.indexOf(it) + '">Acheter · ' + it.price + '</a>';
@@ -2601,7 +2602,7 @@ document.addEventListener('click', function(e){
   }
   var R = [
     [/^Voir les (\d+) flashs →$/, function(m){ return lang==='en' ? 'See the ' + m[1] + ' flashes →' : '查看全部 ' + m[1] + ' 张纹身稿 →'; }],
-    [/^Acheter juste le dessin · (.+)$/, function(m){ return (lang==='en' ? 'Buy just the design · ' : '只买图稿 · ') + m[1]; }],
+    [/^Seulement le dessin · (.+)$/, function(m){ return (lang==='en' ? 'Just the design · ' : '只买图稿 · ') + m[1]; }],
     [/^Acheter le dessin · (.+)$/, function(m){ return (lang==='en' ? 'Buy the design only · ' : '购买图稿 · ') + m[1]; }],
     [/^Acheter · (.+)$/, function(m){ return (lang==='en' ? 'Buy · ' : '购买 · ') + m[1]; }],
     [/^Tatouage · d'après le flash (N° \d+)$/, function(m){ return lang==='en' ? 'Tattoo · from flash ' + m[1] : '纹身 · 来自纹身稿 ' + m[1]; }],
@@ -3590,7 +3591,7 @@ document.addEventListener('click', function(e){
     set('v2', true);
     // the copy is made only once the logo has finished writing: making it earlier stops the writing on iPhone
     var began = false;
-    function intro(){ if(began) return; began = true; setTimeout(function(){ if(!stain.busy && document.documentElement.getAttribute('data-theme')) stain('v2', 'epure'); }, 250); }
+    function intro(){ if(began) return; began = true; setTimeout(function(){ if(!stain.busy && document.documentElement.getAttribute('data-theme')) stain('v2', 'epure'); }, 0); }
     if(window.__logoDone) intro(); else { document.addEventListener('hyp-logo', intro); setTimeout(intro, 7000); }
   } else set(document.documentElement.getAttribute('data-theme') || 'epure');
 })();
