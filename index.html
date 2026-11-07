@@ -1765,7 +1765,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
           r.style.height = Math.round(H[i] + (H[j] - H[i]) * f) + 'px'; };
         window.phFit = function(r){ var W = Math.min(900, r.clientWidth - 2 * (parseFloat(getComputedStyle(r).paddingLeft) || 0)), C = Math.min(innerHeight * .62, 520);
           r._hs = Array.prototype.map.call(r.querySelectorAll('img'), function(x){ return x.naturalWidth ? Math.min(C, W * x.naturalHeight / x.naturalWidth) : C * .66; });
-          var lo = Math.min.apply(null, r._hs), cap = Math.min(C, lo * 1.5); r._hs = r._hs.map(function(h){ return Math.min(h, cap); }); r.style.setProperty('--phmax', Math.round(cap) + 'px'); phSet(r); };
+          var lo = Math.min.apply(null, r._hs), cap = Math.min(C, lo * 1.5); r._hs = r._hs.map(function(h){ return Math.min(h, cap); }); r.style.setProperty('--phmax', Math.round(cap) + 'px'); if(!r._ut && r.scrollLeft) r.scrollLeft = 0; phSet(r); };
         addEventListener('resize', function(){ document.querySelectorAll('.ph-row').forEach(function(r){ phFit(r); }); });
       }
       if(cur==='photo'){
@@ -1812,7 +1812,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
           d.querySelector('.ph-art').onclick = function(){ dOpen(it); };
           (row || grid).appendChild(d);
           if(row){ (function(r, im){ im.addEventListener('load', function(){ phFit(r); }); if(im.complete && im.naturalWidth) setTimeout(function(){ phFit(r); }, 0); })(row, d.querySelector('img'));
-            if(!row._ph){ row._ph = 1; (function(r){ r.addEventListener('scroll', function(){ phSet(r); }, {passive:true}); })(row); } }
+            if(!row._ph){ row._ph = 1; (function(r){ r.addEventListener('scroll', function(){ phSet(r); }, {passive:true}); ['touchstart','pointerdown','wheel'].forEach(function(ev){ r.addEventListener(ev, function(){ r._ut = 1; }, {passive:true}); }); })(row); } }
         });
         reveal();
         return;
@@ -2234,7 +2234,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
       if(cur === 'accueil' && p !== 'accueil' && cover) cover.classList.add('seen');
       if(cur !== null && p === 'accueil' && cover) cover.classList.add('seen');
       cur = p; body.setAttribute('data-page', p);
-      if(p === 'accueil') document.querySelectorAll('.ap-strip').forEach(function(r){ try{ r.scrollTo({left:0, behavior:'instant'}); }catch(e){ r.scrollLeft = 0; } });
+      document.querySelectorAll('.ap-strip,.ph-row').forEach(function(r){ r._ut = 0; try{ r.scrollTo({left:0, behavior:'instant'}); }catch(e){ r.scrollLeft = 0; } });
       var ty = restore ? (SY[p] || 0) : 0; restore = false;
       try{ window.scrollTo({top:ty, left:0, behavior:'instant'}); }catch(e){ window.scrollTo(0,ty); }
       if(ty){ setTimeout(function(){ if(Math.abs((window.pageYOffset||0) - ty) > 40) window.scrollTo(0, ty); }, 250); }
@@ -3882,14 +3882,12 @@ html[lang^=zh] .bq-l,html[lang^=zh] .mobile-panel .mp-links small{font-size:13px
 .gal-wait{flex-basis:100%;order:-1;margin:0 0 14px;font-size:16px;line-height:1.6;font-style:italic;color:var(--ink);max-width:640px;}
 html[lang^=zh] .gal-wait{font-style:normal;font-size:15px;}
 [aria-invalid="true"]{border-color:#9b2c2c !important;}
-@media (max-width:640px){
-  .footer-inner{flex-direction:column;gap:34px;padding:44px 24px 30px;}
-  .footer-inner>div:nth-child(2){display:flex !important;flex-direction:column;gap:30px !important;}
-  .footer-inner>div:nth-child(2)>div{display:grid !important;grid-template-columns:1fr 1fr;gap:2px 20px !important;}
-  .footer-inner>div:nth-child(2)>div>span{grid-column:1/-1;margin-bottom:8px;}
-  .footer-inner>div:nth-child(2)>div>a{min-height:38px;}
-  .footer-inner .wx,.footer-inner a[href^="mailto"]{white-space:nowrap;}
-  .pg-foot .pg-legal{padding:0 24px 32px !important;line-height:1.9;}
+@media (max-width:860px){
+  .footer-inner>div:nth-child(2)>div{gap:0 !important;}
+  .footer-inner>div:nth-child(2)>div>span{margin-bottom:6px;}
+  .footer-inner>div:nth-child(2)>div>a{min-height:30px;}
+  .pg-foot .pg-legal{padding:0 24px 32px !important;}
+}
 }
 </style>
 <script>
