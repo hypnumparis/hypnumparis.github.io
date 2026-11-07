@@ -1546,12 +1546,12 @@ html[data-lang="zh"] .gal-grid.ph .ph-meta{letter-spacing:.06em;}
     window.TI = function(u, sz){ var m = THM[u]; if(!m) return ' src="' + u + '"'; var b = 'img/s/' + u.slice(4).replace(/\.\w+$/, ''); return ' src="' + b + '-' + m[m.length-1] + '.webp" srcset="' + m.slice(1).map(function(w){ return b + '-' + w + '.webp ' + w + 'w'; }).join(', ') + ', ' + u + ' ' + m[0] + 'w" sizes="' + (sz || '(min-width:861px) 22vw, 50vw') + '"'; };
     window.TS = function(u){ var m = THM[u]; return m ? 'img/s/' + u.slice(4).replace(/\.\w+$/, '') + '-' + m[m.length-1] + '.webp' : u; };
     var CATS = [
-      {id:'flash', label:'Flash'},
-      {id:'realise', label:'Tatouages réalisés'},
       {id:'peinture', label:'Peintures'},
       {id:'sculpture', label:'Sculptures'},
+      {id:'photo', label:'Photographie'},
       {id:'dessin', label:'Dessins'},
-      {id:'photo', label:'Photographie'}
+      {id:'flash', label:'Flash'},
+      {id:'realise', label:'Tatouages réalisés'}
     ];
     var ITEMS = [
       {cat:'flash', big:1, pp:1, scale:0.8, zone:'Dos', title:'Ange à la lettrine', story:'Les rinceaux viennent des ornements Art nouveau des premières pages d\'une édition de Notre-Dame de Paris de 1924, reliée en peau de mouton. L\'ange est une statue que j\'ai vue dans une église.', meta:'Flash', status:'dispo', badge:'Disponible', imgs:['img/f07bbe43ca79.webp'], text:'Une statue d\'ange posée dans une lettrine fleurie.', price:'À partir de 65 € · prix selon la taille et l\'emplacement'},
@@ -1690,7 +1690,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     }
     try{ hypSort(JSON.parse(localStorage.getItem('hyp-order') || 'null')); }catch(e){}
     if(window.HYP_ORDER0) hypSort(window.HYP_ORDER0);
-    var cur = 'flash', LAST = null;
+    var cur = 'peinture', LAST = null;
 
     var STATE = {fait:'Collection privée', dispo:'Disponible', pris:'Déjà réservé', vendu:'Vendue', commande:'Sur commande', nfs:'Pas à vendre'};
     function hypNumber(){
