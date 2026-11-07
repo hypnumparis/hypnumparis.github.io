@@ -1654,6 +1654,7 @@ html[data-lang="zh"] .gal-grid.ph .ph-meta{letter-spacing:.06em;}
     var DPAY = {'Ange à la lettrine':'https://buy.stripe.com/3cI5kD8eo7K07734YJ2Fa01', 'Gisant':'https://buy.stripe.com/00w4gz8eo3tK62Z2QB2Fa02', 'Sanglier à deux têtes':'https://buy.stripe.com/fZu00jgKU7K0ajfezj2Fa03', 'Pendentif':'https://buy.stripe.com/8x214n0LW3tK0IFfDn2Fa04', 'Pendentif à la dame':'https://buy.stripe.com/7sY5kDbqA1lCezvbn72Fa05', 'Lustre':'https://buy.stripe.com/00w7sL66gd4kajf1Mx2Fa06', 'Phalène, ombre':'https://buy.stripe.com/6oU00j3Y88O40IFbn72Fa07', 'Phalène':'https://buy.stripe.com/7sYbJ11Q0c0ggHDcrb2Fa08', 'Pendentif, ombre':'https://buy.stripe.com/14A28r1Q07K0bnjfDn2Fa09', 'Cœur en hachures':'https://buy.stripe.com/8x23cvfGQggwbnj76R2Fa0a', 'Croix':'https://buy.stripe.com/4gMbJ1eCM3tK2QN62N2Fa0b', 'Monogramme':'https://buy.stripe.com/fZu4gzamwe8ocrn8aV2Fa0c', 'Arabesque':'https://buy.stripe.com/3cIfZhbqAfcscrn8aV2Fa0d', 'Motif':'https://buy.stripe.com/cNi6oHbqA6FWezv4YJ2Fa0e'}; // liens Stripe « achat du dessin seul », par titre
     var DESSIN = {'Motif':'50 €', 'Arabesque':'50 €', 'Monogramme':'50 €', 'Croix':'50 €', 'Cœur en hachures':'50 €', 'Pendentif, ombre':'50 €', 'Phalène':'60 €', 'Phalène, ombre':'60 €', 'Pendentif à la dame':'80 €', 'Lustre':'80 €', 'Pendentif':'90 €', 'Sanglier à deux têtes':'120 €', 'Gisant':'180 €', 'Ange à la lettrine':'450 €'};
     var PRIX = {'Ange à la lettrine':'600 €', 'L\'Agneau':'220 €', 'Pendentif':'140 €', 'Pendentif, ombre':'80 €', 'Le Calice aux anges':'350 €', 'Lustre, crayon':'200 €', 'Phalène, ombre':'120 €', 'Arabesque':'65 €', 'Motif':'65 €', 'Phalène':'90 €', 'Faon à deux têtes':'180 €', 'Gisant':'290 €', 'Lustre':'150 €', 'Cœur en hachures':'80 €', 'Croix':'80 €', 'Sanglier à deux têtes':'200 €', 'Pendentif à la dame':'120 €', 'Tulipes':'100 €', 'Monogramme':'70 €'};
+    window.HYP_P = {DPAY: DPAY, DESSIN: DESSIN};
 var PEAU_PART = {dos:'Dos', poitrine:'Poitrine', cotes:'Côtes', ventre:'Ventre', hanche:'Hanche', epaule:'Épaule', bras:'Haut du bras', avantbras:'Avant-bras', poignet:'Poignet', main:'Dos de la main', cuisse:'Cuisse', mollet:'Mollet', cheville:'Cheville', cou:'Cou', oreille:'Derrière l\u2019oreille'};
 function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return PEAU_PART[k] || ''; }
 (function(){
@@ -2483,12 +2484,23 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     var root = document.getElementById('apercu'), items = window.HYP_ITEMS || [];
     if(!root) return;
     function pad(n){ return (n<10?'0':'') + n; }
+    function acts(it){
+      var P = window.HYP_P || {}, k = it.key || it.title, h = '';
+      if(it.status !== 'dispo') return '';
+      if(it.cat === 'flash'){
+        if(P.DESSIN && P.DESSIN[k] && P.DPAY && P.DPAY[k]) h += '<a href="' + P.DPAY[k] + '">Acheter le dessin · ' + P.DESSIN[k] + '</a>';
+        h += '<a href="#reservation" data-book="flash" data-no="' + it.no + '">Réserver</a>';
+      } else if((it.cat === 'peinture' || it.cat === 'sculpture') && it.pay && it.price){
+        h += '<a href="' + it.pay + '">Acheter · ' + it.price + '</a>';
+      }
+      return h;
+    }
     function block(no, cat, title, sub, more){
       var list = items.filter(function(it){ return it.cat===cat && it.imgs; });
       if(cat==='photo'){ var sn = {}; list = list.filter(function(it){ if(!it.serie) return true; if(sn[it.serie]) return false; sn[it.serie] = 1; return true; }).map(function(it){ return items.filter(function(x){ return x.cat==='photo' && x.serie===it.serie && x.cover; })[0] || it; }); }
       if(!list.length) return '';
       return '<div class="ap-block"><div class="ap-head"><span class="ap-no">' + no + '</span><h2>' + title + '</h2><p class="ap-sub">' + sub + '</p></div>' +
-        '<div class="ap-strip">' + list.map(function(it){ return '<a href="#galerie" data-tab="' + cat + '" data-oi="' + items.indexOf(it) + '" class="ap-' + cat + (it.pp!=null?' pp'+it.pp:'') + (it.photo?' photo':'') + (it.paper==='uni'?' plain':'') + '"' + '' + '>' + (cat==='flash' ? '<span class="sheet"></span>' : '') + '<img' + (cat==='flash' && it.scale ? ' style="--s:' + it.scale + (it.scale===1 ? ';mix-blend-mode:normal' : '') + '"' : '') + TI(it.thumb || it.imgs[0], '(min-width:861px) 560px, 400px') + ' alt="' + it.title + '" loading="lazy">' + '</a>'; }).join('') + '</div>' +
+        '<div class="ap-strip">' + list.map(function(it){ var act = acts(it); return (act ? '<div class="ap-card ap-c-' + cat + '">' : '') + '<a href="#galerie" data-tab="' + cat + '" data-oi="' + items.indexOf(it) + '" class="ap-' + cat + (it.pp!=null?' pp'+it.pp:'') + (it.photo?' photo':'') + (it.paper==='uni'?' plain':'') + '"' + '' + '>' + (cat==='flash' ? '<span class="sheet"></span>' : '') + '<img' + (cat==='flash' && it.scale ? ' style="--s:' + it.scale + (it.scale===1 ? ';mix-blend-mode:normal' : '') + '"' : '') + TI(it.thumb || it.imgs[0], '(min-width:861px) 560px, 400px') + ' alt="' + it.title + '" loading="lazy">' + '</a>' + (act ? '<div class="ap-act">' + act + '</div></div>' : ''); }).join('') + '</div>' +
         '<a href="#galerie" data-tab="' + cat + '" class="ap-more">' + more.replace('%n', list.length) + ' →</a></div>';
     }
     root.innerHTML =
@@ -2553,9 +2565,9 @@ document.addEventListener('click', function(e){
   }
   var R = [
     [/^Voir les (\d+) flashs →$/, function(m){ return lang==='en' ? 'See the ' + m[1] + ' flashes →' : '查看全部 ' + m[1] + ' 张纹身稿 →'; }],
-    [/^Acheter le dessin · (.+)$/, function(m){ return (lang==='en' ? 'Buy the design only · ' : '只买稿 · ') + m[1]; }],
+    [/^Acheter le dessin · (.+)$/, function(m){ return (lang==='en' ? 'Buy the design only · ' : '购买图稿 · ') + m[1]; }],
     [/^Acheter · (.+)$/, function(m){ return (lang==='en' ? 'Buy · ' : '购买 · ') + m[1]; }],
-    [/^Tatouage · d'après le flash (N° \d+)$/, function(m){ return lang==='en' ? 'Tattoo · from flash ' + m[1] : '纹身 · 源自纹身稿 ' + m[1]; }],
+    [/^Tatouage · d'après le flash (N° \d+)$/, function(m){ return lang==='en' ? 'Tattoo · from flash ' + m[1] : '纹身 · 来自纹身稿 ' + m[1]; }],
     [/^flash (N° \d+)$/, function(m){ return lang==='en' ? 'flash ' + m[1] : '纹身稿 ' + m[1]; }],
     [/^(N° \d+) — (.+)$/, function(m){ return m[1] + ' — ' + (d1(m[2]) || m[2]); }],
     [/^(.+) · (\d+) \/ (\d+)$/, function(m){ var c = d1(m[1]); return c ? c + ' · ' + m[2] + ' / ' + m[3] : null; }],
@@ -3906,4 +3918,15 @@ html[lang^=zh] .gal-wait{font-style:normal;font-size:15px;}
     }
   };
 </script>
+<style>
+.ap-strip .ap-card{flex:0 0 auto;display:flex;flex-direction:column;scroll-snap-align:start;}
+.ap-strip .ap-card > a{scroll-snap-align:none;}
+.ap-strip .ap-card.ap-c-flash{margin:0 -16.8px;}
+.ap-strip .ap-card.ap-c-flash > a.ap-flash{margin:0 !important;}
+.ap-strip .ap-act{display:flex;flex-wrap:wrap;justify-content:center;gap:0 18px;padding:4px 10% 0;width:0;min-width:100%;box-sizing:border-box;}
+.ap-strip .ap-act a{height:auto !important;flex:none;display:inline-flex;align-items:center;min-height:30px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:inherit;opacity:.85;white-space:nowrap;}
+.ap-strip .ap-act a:hover{opacity:1;}
+html[lang^=zh] .ap-strip .ap-act a{letter-spacing:.08em;font-size:13px;}
+@media (min-width:861px){ .ap-strip .ap-card.ap-c-flash{margin:0 -21px;} }
+</style>
 </body></html>
