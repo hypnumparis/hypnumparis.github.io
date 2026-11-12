@@ -78,7 +78,7 @@ var REFUSE = [
   {k:'hands',    p:['hand_back','finger','palm'], l:L('Mains et doigts','Hands and fingers','手和手指')},
   {k:'scalp',    p:['scalp'], l:L('Crâne','Scalp','头皮')},
   {k:'intimate', p:['intimate'], l:L('Zones intimes','Intimate areas','私密部位')},
-  {k:'first_visible', p:['face','lip','neck','hand_back','finger','palm'], l:L('Premier tatouage sur le visage, le cou ou les mains','A first tattoo on the face, neck or hands','第一次纹身就纹在脸、脖子、手上')},
+  {k:'first_visible', p:['face','lip','neck','hand_back','finger','palm'], l:L('Premier tatouage sur le visage, le cou ou les mains','A first tattoo on the face, neck or hands','客人的第一个纹身就纹在脸、脖子、手上')},
   {k:'coverup',  l:L('Cover-up ou retouche du travail d\'un autre tatoueur','Cover-ups or reworking another artist\'s tattoo','cover-up（盖旧图）/ 修改别人纹的图')},
   {k:'copy',     l:L('Copie du travail d\'un autre tatoueur','Copying another artist\'s work','照抄其他纹身师的作品')},
   {k:'hate',     l:L('Motifs haineux ou discriminatoires','Hateful or discriminatory designs','仇恨、歧视类图案')},
