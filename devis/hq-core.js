@@ -32,7 +32,7 @@ function validate(c){
   if(!A.styles || !A.styles.length) m.push('A · 擅长的风格');
   if(!A.languages || !A.languages.length) m.push('A · 会说的语言');
   var df = A.designFee;
-  if(!df || typeof df.has !== 'boolean' || (df.has && !pos(df.pct))) m.push('A · 设计费');
+  if(!df || !num(df.pct) || df.pct < 0) m.push('A · 设计稿加价百分比');
   if(!A.retouch || !num(A.retouch.free) || !num(A.retouch.months)) m.push('A · 补色政策');
   if(!A.payment || !A.payment.length) m.push('A · 支付方式');
   if(c.mode !== 1 && c.mode !== 2) m.push('模式（已有价格 / 帮我定价）');
@@ -95,7 +95,7 @@ function estimate(c, q){
   out.dep = dp.type === 'fixed' ? dp.amount : r10(Math.max(dp.min || 0, out.lo * dp.pct / 100));
   out.refundable = dp.refundable;
   var dfe = A.designFee;
-  if(dfe && dfe.has && q.type !== 'flash') out.fee = {pct:dfe.pct, lo:r10(out.lo * dfe.pct / 100), hi:r10(out.hi * dfe.pct / 100)};
+  if(dfe && dfe.pct > 0 && q.type !== 'flash') out.fee = {pct:dfe.pct, lo:r10(out.lo * dfe.pct / 100), hi:r10(out.hi * dfe.pct / 100)};
   return out;
 }
 

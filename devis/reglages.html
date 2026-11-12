@@ -69,7 +69,7 @@ try{ c = JSON.parse(localStorage.getItem('hq-draft') || 'null'); }catch(e){}
 if(!c || c.id !== base.id) c = base;
 c.A = c.A || {}; c.A.cost = c.A.cost || {}; c.A.reply = c.A.reply || {n:24, unit:'h'};
 ['styles','refuse','languages','payment'].forEach(function(k){ c.A[k] = c.A[k] || []; });
-c.A.designFee = c.A.designFee || {has:null, pct:null};
+c.A.designFee = c.A.designFee || {pct:null};
 c.A.retouch = c.A.retouch || {free:null, months:null};
 c.M2 = c.M2 || {otherFixed:null, supplies:{per:'month', amount:null}, status:{k:'ae', pct:21.5}, targetNet:null, actualHours:null, actualClients:null, maxHours:null, speed:{s:null, m:null}};
 c.B = c.B || {};
@@ -116,8 +116,7 @@ function render(){
   h += '<div data-show="styleother">' + txt('A.styleOther', '其他风格（自己填）') + '</div>';
   h += multi('A.refuse', '不接的类型', D.REFUSE.map(function(r){ return [r.k, r.l.zh + (r.k === 'minors' ? '（法国 18 岁以下需要家长书面同意）' : '')]; })) + txt('A.refuseOther', '其他不接的（自己填，选填）');
   h += multi('A.languages', '会说的语言', D.LANGS.map(function(x){ return [x.k, x.l]; }));
-  h += radio('A.designFee.has', '设计费：需要我画设计稿的图，要不要比普通纹身贵', [[true,'要贵一些'],[false,'一样的价格']]);
-  h += '<div data-show="fee">' + num('A.designFee.pct', '需要设计稿的图比普通纹身贵百分之多少', '%') + '</div>';
+  h += num('A.designFee.pct', '设计费：需要我画设计稿的图比普通纹身贵百分之多少（客人选纹身稿时不加）', '%');
   h += '<div class="f"><span>补色政策</span><div class="inline">免费补色 <input type="number" min="0" data-p="A.retouch.free" value="' + esc(A.retouch.free) + '" style="width:80px"> 次，在 <input type="number" min="0" data-p="A.retouch.months" value="' + esc(A.retouch.months) + '" style="width:80px"> 个月内</div></div>';
   h += multi('A.payment', '支付方式', D.PAY.map(function(x){ return [x.k, x.l.zh]; })) + txt('A.payOther', '其他支付方式（选填）');
   h += '</section>';

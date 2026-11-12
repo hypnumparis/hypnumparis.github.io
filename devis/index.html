@@ -186,7 +186,7 @@ function profile(){
   var rt = A.retouch.free > 0 ? f(A.retouch.free > 1 ? t.rtn : t.rt, {n:A.retouch.free, m:A.retouch.months}) : t.rt0;
   var pay = A.payment.map(function(k){ var x = find(D.PAY, k); return x ? lab(x) : k; }).concat(A.payOther ? [A.payOther] : []).join(', ');
   var rf = (A.refuse || []).map(function(k){ return lab(find(D.REFUSE, k)); }).concat(A.refuseOther ? [A.refuseOther] : []);
-  var fee = A.designFee.has ? f(t.feeA, {a:f(t.feePc, {p:A.designFee.pct})}) : t.feeN;
+  var fee = A.designFee.pct > 0 ? f(t.feeA, {a:f(t.feePc, {p:A.designFee.pct})}) : t.feeN;
   return '<aside class="pf"><h2>' + esc(A.name) + '</h2><p class="pf-n">' + esc(f(t.since, {y:yearsTxt(A.years)})) + '</p><dl>' +
     '<div><dt>' + t.styles + '</dt><dd>' + esc(sty) + '</dd></div>' +
     '<div><dt>' + t.where + '</dt><dd>' + esc(A.location) + '</dd></div>' +
