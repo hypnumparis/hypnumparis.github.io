@@ -106,10 +106,10 @@ function render(){
   h += '<h3>身份和经验</h3>' + txt('A.name', '名字 / 品牌名') + num('A.years', '纹了几年', '年', ' style="max-width:120px"') + txt('A.instagram', 'Instagram 账号（选填，会在表单上展示）', '例如 hypnum.paris');
   h += '<h3>工作方式</h3>' + radio('A.work', '工作方式', [['split','工作室分成'],['desk','租工位'],['own','自己的工作室'],['home','在家'],['guest','guest 或展会为主']]);
   h += '<div data-show="split">' + num('A.cost.splitPct', '工作室拿走多少', '%') + '</div>';
-  h += '<div data-show="desk">' + radio('A.cost.deskUnit', '工位怎么付', [['day','按天'],['session','按次'],['month','按月']]) + num('A.cost.deskPrice', '每次多少钱', '€') + '<div data-show="deskday">' + num('A.cost.deskDays', '每个月大约租几天', '天') + '</div></div>';
+  h += '<div data-show="desk">' + radio('A.cost.deskUnit', '工位怎么付', [['day','按天'],['session','按次'],['month','按月']]) + '<div data-show="deskday">' + num('A.cost.deskPrice', '每天多少钱', '€ / 天') + num('A.cost.deskDays', '每个月大约租几天', '天') + '</div><div data-show="desksess">' + num('A.cost.deskPrice', '每次多少钱', '€ / 次') + '</div><div data-show="deskmonth">' + num('A.cost.deskPrice', '每月多少钱', '€ / 月') + num('A.daysPerMonth', '每个月在这个工位工作几天', '天') + '</div></div>';
   h += '<div data-show="own">' + num('A.cost.monthly', '每月房租和杂费大约多少', '€ / 月') + '</div>';
   h += txt('A.location', '地点（巴黎几区或城市）', '例如 Paris 11e');
-  h += num('A.daysPerMonth', '每个月大约能工作几天', '天') + '<p class="note" data-show="deskday">按天租工位时，默认等于每月租的天数。</p>';
+  h += '<div data-show="notmonth">' + num('A.daysPerMonth', '每个月大约能工作几天', '天') + '</div>' + '<p class="note" data-show="deskday">按天租工位时，默认等于每月租的天数。</p>';
   h += num('A.maxSession', '单次最长做几个小时', '小时');
   h += '<div class="f"><span>回复时间（显示在客人表单上）</span><div class="inline"><input type="number" min="1" data-p="A.reply.n" value="' + esc(A.reply.n) + '" style="width:90px"><select data-p="A.reply.unit" style="width:auto"><option value="h"' + (A.reply.unit === 'h' ? ' selected' : '') + '>小时</option><option value="d"' + (A.reply.unit === 'd' ? ' selected' : '') + '>天</option></select></div></div>';
   h += '<h3>风格和接单规则</h3>' + multi('A.styles', '擅长的风格', D.STYLES.map(function(s){ return [s.k, s.l.zh + ' ' + s.l.fr]; }));
@@ -177,7 +177,7 @@ function bind(){
       if(p === 'pricing' && v === 'none'){ c.mode = 2; c.pricing = 'table'; render(); return; }
       if(p === 'M2.status.k'){ c.M2.status.pct = D.STATUS.filter(function(s){ return s.k === v; })[0].pct; var e = app.querySelector('[data-p="M2.status.pct"]'); if(e) e.value = c.M2.status.pct; }
       if(p === 'A.cost.deskDays' && c.A.cost.deskUnit === 'day' && !c.A.daysPerMonth){ c.A.daysPerMonth = v; var e2 = app.querySelector('[data-p="A.daysPerMonth"]'); if(e2) e2.value = v; }
-      if(p.indexOf('M2.speed') === 0) app.querySelectorAll('[data-p="' + p + '"]').forEach(function(x){ if(x !== el) x.value = el.value; });
+      app.querySelectorAll('[data-p="' + p + '"]').forEach(function(x){ if(x !== el && el.type !== 'radio' && x.type !== 'radio') x.value = el.value; });
       vis(); persist();
     });
   });
@@ -209,7 +209,7 @@ function bind(){
 
 function vis(){
   var A = c.A, m = {
-    split:A.work === 'split', desk:A.work === 'desk', deskday:A.work === 'desk' && A.cost.deskUnit === 'day',
+    split:A.work === 'split', desk:A.work === 'desk', deskday:A.work === 'desk' && A.cost.deskUnit === 'day', desksess:A.work === 'desk' && A.cost.deskUnit === 'session', deskmonth:A.work === 'desk' && A.cost.deskUnit === 'month', notmonth:!(A.work === 'desk' && A.cost.deskUnit === 'month'),
     own:A.work === 'own' || A.work === 'home' || A.work === 'guest', styleother:A.styles.indexOf('other') > -1,
     fee:A.designFee.has === true, m1:c.mode === 1, m2:c.mode === 2, b:c.mode === 1 || (c.mode === 2 && (!!rep || c.B.min > 0)),
     hourlyhelp:c.mode === 1 && c.pricing === 'hourly', cover:A.refuse.indexOf('coverup') < 0,
