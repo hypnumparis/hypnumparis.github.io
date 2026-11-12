@@ -69,7 +69,7 @@ try{ c = JSON.parse(localStorage.getItem('hq-draft') || 'null'); }catch(e){}
 if(!c || c.id !== base.id) c = base;
 c.A = c.A || {}; c.A.cost = c.A.cost || {}; c.A.reply = c.A.reply || {n:24, unit:'h'};
 ['styles','refuse','languages','payment'].forEach(function(k){ c.A[k] = c.A[k] || []; });
-c.A.designFee = c.A.designFee || {has:null, amount:null, deducted:null};
+c.A.designFee = c.A.designFee || {has:null, pct:null};
 c.A.retouch = c.A.retouch || {free:null, months:null};
 c.M2 = c.M2 || {otherFixed:null, supplies:{per:'month', amount:null}, status:{k:'ae', pct:21.5}, targetNet:null, actualHours:null, actualClients:null, maxHours:null, speed:{s:null, m:null}};
 c.B = c.B || {};
@@ -117,7 +117,7 @@ function render(){
   h += multi('A.refuse', '不接的类型', D.REFUSE.map(function(r){ return [r.k, r.l.zh + (r.k === 'minors' ? '（法国 18 岁以下需要家长书面同意）' : '')]; })) + txt('A.refuseOther', '其他不接的（自己填，选填）');
   h += multi('A.languages', '会说的语言', D.LANGS.map(function(x){ return [x.k, x.l]; }));
   h += radio('A.designFee.has', '设计费', [[true,'有'],[false,'没有']]);
-  h += '<div data-show="fee">' + num('A.designFee.amount', '设计费多少', '€') + radio('A.designFee.deducted', '是否从总价里扣', [[true,'从总价里扣'],[false,'另外收']]) + '</div>';
+  h += '<div data-show="fee">' + num('A.designFee.pct', '设计费是纹身价格的百分之几', '%') + '</div>';
   h += '<div class="f"><span>补色政策</span><div class="inline">免费补色 <input type="number" min="0" data-p="A.retouch.free" value="' + esc(A.retouch.free) + '" style="width:80px"> 次，在 <input type="number" min="0" data-p="A.retouch.months" value="' + esc(A.retouch.months) + '" style="width:80px"> 个月内</div></div>';
   h += multi('A.payment', '支付方式', D.PAY.map(function(x){ return [x.k, x.l.zh]; })) + txt('A.payOther', '其他支付方式（选填）');
   h += '</section>';

@@ -115,7 +115,7 @@ fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'af
  since:'Tatoue depuis {y}', y0:'moins d\'un an', y1:'{n} an', yn:'{n} ans', yp1:'plus d\'un an', ypn:'plus de {n} ans',
  styles:'Styles', where:'Lieu', langs:'Langues', retouch:'Retouches', rt:'{n} retouche offerte dans les {m} mois', rtn:'{n} retouches offertes dans les {m} mois', rt0:'Pas de retouche offerte',
  reply:'Réponse sous', h:'{n} h', d:'{n} jours', d1:'{n} jour', pay:'Paiement', refuse:'Ne réalise pas', fees:'Frais de dessin',
- feeP:'{a} €, déduits du prix final', feeA:'{a} €, en plus du tatouage', feeN:'Aucun'},
+ feeP:'{a}, déduits du prix final', feeA:'{a}, en plus du tatouage', feeE:'{a} €', feePc:'{p} % du prix du tatouage', feeN:'Aucun'},
 en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate right away. Reply within {r}.',
  type:'Project type', types:{custom:'A custom design', flash:'One of my flashes', cover:'Cover-up or rework of an old tattoo'},
  flashHint:'Add a screenshot of the flash in the reference images.',
@@ -137,7 +137,7 @@ en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate
  since:'Tattooing for {y}', y0:'less than a year', y1:'{n} year', yn:'{n} years', yp1:'over a year', ypn:'over {n} years',
  styles:'Styles', where:'Location', langs:'Languages', retouch:'Touch-ups', rt:'{n} free touch-up within {m} months', rtn:'{n} free touch-ups within {m} months', rt0:'No free touch-up',
  reply:'Reply within', h:'{n} h', d:'{n} days', d1:'{n} day', pay:'Payment', refuse:'Does not do', fees:'Design fee',
- feeP:'€{a}, deducted from the final price', feeA:'€{a}, on top of the tattoo', feeN:'None'},
+ feeP:'{a}, deducted from the final price', feeA:'{a}, on top of the tattoo', feeE:'€{a}', feePc:'{p}% of the tattoo price', feeN:'None'},
 zh:{title:'纹身询价', sub:'描述你的想法，马上看到大概价格。{r}内回复。',
  type:'类型', types:{custom:'定制图', flash:'我的纹身稿', cover:'cover-up 或修改旧图'},
  flashHint:'请在参考图里上传那张纹身稿的截图。',
@@ -159,7 +159,7 @@ zh:{title:'纹身询价', sub:'描述你的想法，马上看到大概价格。{
  since:'纹身 {y}', y0:'不到一年', y1:'{n} 年', yn:'{n} 年', yp1:'一年多', ypn:'{n} 年多',
  styles:'风格', where:'地点', langs:'语言', retouch:'补色', rt:'{m} 个月内免费补色 {n} 次', rtn:'{m} 个月内免费补色 {n} 次', rt0:'不提供免费补色',
  reply:'回复时间', h:' {n} 小时', d:' {n} 天', d1:' {n} 天', pay:'支付方式', refuse:'不接', fees:'设计费',
- feeP:'{a} €，从总价里扣', feeA:'{a} €，另外收取', feeN:'无'}
+ feeP:'{a}，从总价里扣', feeA:'{a}，另外收取', feeE:'{a} €', feePc:'纹身价格的 {p}%', feeN:'无'}
 };
 var lang = 'fr';
 try{ var nl = (navigator.language || '').slice(0, 2); if(T[nl]) lang = nl; }catch(e){}
@@ -186,7 +186,7 @@ function profile(){
   var rt = A.retouch.free > 0 ? f(A.retouch.free > 1 ? t.rtn : t.rt, {n:A.retouch.free, m:A.retouch.months}) : t.rt0;
   var pay = A.payment.map(function(k){ var x = find(D.PAY, k); return x ? lab(x) : k; }).concat(A.payOther ? [A.payOther] : []).join(', ');
   var rf = (A.refuse || []).map(function(k){ return lab(find(D.REFUSE, k)); }).concat(A.refuseOther ? [A.refuseOther] : []);
-  var fee = A.designFee.has ? f(A.designFee.deducted ? t.feeP : t.feeA, {a:A.designFee.amount}) : t.feeN;
+  var fee = A.designFee.has ? f(t.feeA, {a:f(t.feePc, {p:A.designFee.pct})}) : t.feeN;
   return '<aside class="pf"><h2>' + esc(A.name) + '</h2><p class="pf-n">' + esc(f(t.since, {y:yearsTxt(A.years)})) + '</p><dl>' +
     '<div><dt>' + t.styles + '</dt><dd>' + esc(sty) + '</dd></div>' +
     '<div><dt>' + t.where + '</dt><dd>' + esc(A.location) + '</dd></div>' +
@@ -283,7 +283,7 @@ function update(){
   box.innerHTML = '<span class="k">' + t.est + '</span><span class="v">' + e.lo + ' – ' + e.hi + ' €</span>' +
     (e.hours ? '<span class="l">' + esc(f(t.hours, {a:e.hours[0], b:e.hours[1], c:e.sessions[0] === e.sessions[1] ? e.sessions[0] : e.sessions[0] + '–' + e.sessions[1]})) + '</span>' : '') +
     '<span class="l">' + t.dep + ' : ' + e.dep + ' € (' + (e.refundable ? t.depR : t.depNR) + ')</span>' +
-    (e.fee ? '<span class="l">' + t.fee + ' : ' + e.fee.amount + ' € (' + (e.fee.deducted ? t.feeDed : t.feeAdd) + ')</span>' : '') +
+    (e.fee ? '<span class="l">' + t.fee + ' : ' + e.fee.lo + ' – ' + e.fee.hi + ' € (' + t.feeAdd + ')</span>' : '') +
     '<span class="n">' + t.note + '</span>';
 }
 
@@ -305,7 +305,7 @@ function submit(ev){
     type:q.type, technique:q.tech || 'unsure', size:q.size, place:q.place, place_tier:HQ.tierOf(cfg, q.place), color:q.color, first_tattoo:q.first || '',
     idea:q.idea || '', budget:q.budget || '', dates:q.dates || '', name:q.name, email:q.email, contact:q.contact || '',
     adult:q.adult ? 'oui' : '', consent:'oui',
-    estimate_low:e.lo, estimate_high:e.hi, deposit:e.dep, design_fee:e.fee ? e.fee.amount : '', coef:Math.round(e.coef * 100) / 100,
+    estimate_low:e.lo, estimate_high:e.hi, deposit:e.dep, design_fee:e.fee ? e.fee.lo + '-' + e.fee.hi : '', coef:Math.round(e.coef * 100) / 100,
     est_hours:e.hours ? e.hours.join('-') : '', est_sessions:e.sessions ? e.sessions.join('-') : ''};
   var ep = window.HQ_ENDPOINT;
   if(!ep || preview){ msg.className = 'msg ok'; msg.textContent = t.demo + ' ' + f(t.ok, {r:replyTxt()}); return; }
