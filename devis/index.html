@@ -2,223 +2,325 @@
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Demande de devis · Hypnum</title>
-<meta name="description" content="Demande de devis pour un tatouage sur mesure, Hypnum Paris.">
+<meta name="description" content="Demande de devis pour un tatouage, avec une estimation immédiate du prix. Hypnum, Paris.">
 <link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Noto+Serif+SC:wght@400&display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#f8f3e9;color:#2a1c15;font-family:'IM Fell English','Songti SC','STSong','Noto Serif SC',Georgia,serif;-webkit-text-size-adjust:100%;}
-.dv-top{max-width:640px;margin:0 auto;padding:28px 22px 0;display:flex;justify-content:space-between;align-items:center;}
-.dv-top a{color:inherit;font-size:12px;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:3px;}
-.dv-foot{max-width:640px;margin:0 auto;padding:10px 22px 48px;font-size:13px;color:#6a5a4e;display:flex;gap:18px;flex-wrap:wrap;}
-.dv-foot a{color:inherit;}
-.hq input,.hq textarea,.hq select{font-size:16px !important;}
-.hq form{grid-template-columns:minmax(0,1fr);}
-.hq-chips span{white-space:normal;}
-.hq input[type=file]{max-width:100%;font-size:14px !important;}
+:root{--bg:#f8f3e9;--card:#fbf8f2;--ink:#2a1c15;--soft:#6a5a4e;--line:rgba(42,28,21,.2);--good:#3d5a40;--bad:#8a2f24;}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'IM Fell English','Songti SC','STSong','Noto Serif SC',Georgia,serif;font-size:17px;line-height:1.55;-webkit-text-size-adjust:100%;}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 22px 56px;}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.top a{font-size:12px;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:3px;}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:transparent;color:var(--soft);padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+h1{font-weight:400;font-size:34px;line-height:1.2;margin:34px 0 6px;}
+.sub{margin:0;color:var(--soft);font-style:italic;font-size:16px;}
+html[lang=zh] .sub,html[lang=zh] .pf-n,html[lang=zh] .hint{font-style:normal}
+.grid{display:grid;gap:34px;margin-top:28px;}
+@media (min-width:880px){ .grid{grid-template-columns:minmax(0,1fr) 300px;align-items:start;} .pf{position:sticky;top:24px;order:2} }
+.pf{border:1px solid var(--line);background:var(--card);padding:20px 20px 16px;}
+.pf h2{font-weight:400;font-size:22px;margin:0 0 4px;}
+.pf-n{margin:0 0 12px;color:var(--soft);font-style:italic;font-size:15px;}
+.pf dl{margin:0;display:grid;gap:10px;font-size:15px;line-height:1.45;}
+.pf dt{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);}
+.pf dd{margin:2px 0 0;}
+html[lang=zh] .pf dt,html[lang=zh] .lb{letter-spacing:.08em;font-size:13px;}
+form{display:grid;gap:26px;grid-template-columns:minmax(0,1fr);}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:10px;min-width:0;}
+legend,.lb{display:block;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);padding:0;margin-bottom:10px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chips label{position:relative;}
+.chips input{position:absolute;opacity:0;pointer-events:none;}
+.chips span{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:8px 14px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:16px;line-height:1.25;}
+.chips input:checked + span{background:var(--ink);border-color:var(--ink);color:var(--bg);}
+.chips input:focus-visible + span{outline:2px solid var(--ink);outline-offset:2px;}
+.chips.tech span{flex-direction:column;align-items:flex-start;gap:6px;width:100%;}
+.chips.tech{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));}
+.chips.tech label{display:flex;}
+.chips.tech svg{width:46px;height:30px;stroke:currentColor;fill:none;stroke-width:1.3;}
+.hint{margin:0;color:var(--soft);font-size:14px;font-style:italic;}
+input[type=text],input[type=email],input[type=number],textarea,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:0;background:var(--card);color:var(--ink);font:inherit;font-size:16px;}
+select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px;}
+textarea{min-height:110px;resize:vertical;}
+input[type=file]{max-width:100%;font:inherit;font-size:14px;}
+input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:1px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media (max-width:560px){ .row{grid-template-columns:1fr;} }
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.thumbs img{width:64px;height:64px;object-fit:cover;border:1px solid var(--line);}
+.est{border:1px solid var(--ink);background:var(--card);padding:18px 18px 16px;display:grid;gap:4px;}
+.est .k{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);}
+.est .v{font-size:34px;line-height:1.15;font-variant-numeric:tabular-nums;}
+.est .l{font-size:15px;}
+.est .n{font-size:14px;color:var(--soft);font-style:italic;margin-top:6px;}
+html[lang=zh] .est .n{font-style:normal;}
+.est.no{border-color:var(--bad);}
+.est.no .v{font-size:18px;line-height:1.45;color:var(--bad);}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.45;}
+.check input{margin-top:4px;flex:none;width:18px;height:18px;accent-color:var(--ink);}
+.btn{background:var(--ink);color:var(--bg);border:0;min-height:54px;padding:12px 18px;font:inherit;font-size:14px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}
+html[lang=zh] .btn{font-size:17px;letter-spacing:.1em;}
+.btn:disabled{opacity:.5;cursor:wait;}
+.msg{margin:0;font-size:15px;}
+.msg.ok{color:var(--good);} .msg.err{color:var(--bad);}
+.closed{margin-top:40px;font-size:18px;max-width:560px;}
+.miss{margin-top:18px;font-size:14px;color:var(--soft);}
+.foot{margin-top:46px;font-size:13px;color:var(--soft);display:flex;gap:18px;flex-wrap:wrap;}
+.req{color:var(--soft);}
 </style>
 </head>
 <body>
-<div class="dv-top"><a href="/">← Hypnum</a><a href="/#reservation">Réservation</a></div>
-<!-- ===== Hypnum Paris · Formulaire de devis (询价助手 v1) =====
-     粘贴位置：放进 hypnum.fr 任意页面的 <body> 里你想显示表单的地方。
-     改价格：只改下面 HQ_CONFIG 里的数字。
-     接后台：把 ENDPOINT 换成 Google Apps Script 部署后给你的网址。 -->
-<div id="hq-root" class="hq"></div>
-
-<style>
-.hq{
-  /* 颜色和字体：想配合网站，改这几行就行 */
-  --hq-paper:#f8f3e9; --hq-card:#fbf8f2; --hq-ink:#2a1c15; --hq-mute:#6a5a4e;
-  --hq-line:rgba(42,28,21,.2); --hq-accent:#2a1c15; --hq-accent-ink:#f8f3e9; --hq-good:#3d5a40;
-  --hq-display:"IM Fell English","Songti SC","STSong","Noto Serif SC",Georgia,serif; --hq-body:"IM Fell English","Songti SC","STSong","Noto Serif SC",Georgia,serif;
-  font-family:var(--hq-body); color:var(--hq-ink); background:var(--hq-paper);
-  max-width:640px; margin:0 auto; padding:28px 22px; border-radius:6px; box-sizing:border-box;
-  font-size:15px; line-height:1.5;
-}
-.hq *{box-sizing:border-box}
-.hq-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
-.hq h2{font-family:var(--hq-display);font-weight:500;font-size:1.7rem;line-height:1.15;margin:0;text-wrap:balance}
-.hq-sub{color:var(--hq-mute);margin:6px 0 0;font-size:.92rem}
-.hq-lang{display:flex;border:1px solid var(--hq-line);border-radius:999px;overflow:hidden}
-.hq-lang button{border:0;background:transparent;color:var(--hq-mute);padding:5px 11px;font:inherit;font-size:.8rem;cursor:pointer}
-.hq-lang button[aria-pressed="true"]{background:var(--hq-ink);color:var(--hq-paper)}
-.hq form{display:grid;gap:18px;margin-top:22px}
-.hq fieldset{border:0;margin:0;padding:0;display:grid;gap:8px;min-width:0}
-.hq label.hq-l{display:block}
-.hq legend,.hq label.hq-l{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--hq-mute);font-weight:600;padding:0;margin-bottom:6px}
-.hq-chips{display:flex;flex-wrap:wrap;gap:6px}
-.hq-chips label{position:relative}
-.hq-chips input{position:absolute;opacity:0;pointer-events:none}
-.hq-chips span{display:inline-block;padding:7px 12px;border:1px solid var(--hq-line);border-radius:4px;background:var(--hq-card);cursor:pointer;font-size:.9rem}
-.hq-chips span small{color:var(--hq-mute);margin-left:4px}
-.hq-chips input:checked+span{border-color:var(--hq-accent);background:var(--hq-accent);color:var(--hq-accent-ink)}
-.hq-chips input:checked+span small{color:inherit;opacity:.8}
-.hq-chips input:focus-visible+span{outline:2px solid var(--hq-accent);outline-offset:2px}
-.hq input[type=text],.hq input[type=email],.hq input[type=tel],.hq input[type=number],.hq textarea,.hq select{
-  width:100%;padding:10px 12px;border:1px solid var(--hq-line);border-radius:4px;background:var(--hq-card);color:var(--hq-ink);font:inherit}
-.hq input:focus-visible,.hq textarea:focus-visible,.hq select:focus-visible{outline:2px solid var(--hq-accent);outline-offset:1px}
-.hq textarea{min-height:90px;resize:vertical}
-.hq-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:520px){.hq-row{grid-template-columns:1fr}}
-.hq-files{font-size:.85rem;color:var(--hq-mute)}
-.hq-thumbs{display:flex;gap:6px;flex-wrap:wrap}
-.hq-thumbs img{width:64px;height:64px;object-fit:cover;border-radius:3px;border:1px solid var(--hq-line)}
-.hq-est{border:1px solid var(--hq-ink);border-radius:4px;padding:16px;background:var(--hq-card);display:grid;gap:4px}
-.hq-est .k{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--hq-mute);font-weight:600}
-.hq-est .v{font-family:var(--hq-display);font-size:1.9rem;font-variant-numeric:tabular-nums;line-height:1.1}
-.hq-est .n{font-size:.85rem;color:var(--hq-mute)}
-.hq-btn{background:var(--hq-ink);color:var(--hq-paper);border:0;border-radius:4px;padding:13px 18px;font:inherit;font-weight:600;cursor:pointer}
-.hq-btn:disabled{opacity:.5;cursor:wait}
-.hq-btn:focus-visible{outline:2px solid var(--hq-accent);outline-offset:2px}
-.hq-msg{font-size:.9rem;margin:0}
-.hq-msg.ok{color:var(--hq-good)} .hq-msg.err{color:#a3322a}
-.hq-check{display:flex;gap:8px;align-items:flex-start;font-size:.85rem;color:var(--hq-mute)}
-.hq-check input{margin-top:3px}
-</style>
-
+<div class="wrap">
+  <div class="top"><a href="/">← Hypnum</a><div class="lang" role="group" aria-label="Langue"></div></div>
+  <div id="app"></div>
+  <div class="foot"><a href="/cgv.html">CGV</a><a href="/mentions-legales.html">Mentions légales</a><a href="mailto:contact@hypnum.fr">contact@hypnum.fr</a></div>
+</div>
+<script src="hq-data.js"></script>
+<script src="hq-core.js"></script>
+<script src="config.js"></script>
 <script>
 (function(){
-/* ============ 1. 价格规则（示例数字，等 Haibei 给真实规则后替换） ============ */
-var HQ_CONFIG = {
-  ENDPOINT: "",          // ← Google Apps Script 网址，空着 = 演示模式（不发送）
-  currency: "€",
-  minimum: 120,          // 最低起价
-  deposit: { percent: 30, min: 50 },   // 定金 = 价格下限的 30%，至少 50€
-  sizes: {               // 按尺寸的基础价格区间
-    xs: [120, 180],      // < 5 cm
-    s:  [180, 300],      // 5–10 cm
-    m:  [300, 500],      // 10–15 cm
-    l:  [500, 900],      // 15–25 cm
-    xl: null             // 半臂/大面积 → 按天报价
-  },
-  dayRate: 800,          // 大面积按天价格
-  colorExtra: 0.20,      // 彩色 +20%
-  placementExtra: { ribs:0.15, hand:0.15, neck:0.15, foot:0.10 } // 难做部位加价
-};
+var D = HQ_DATA, app = document.getElementById('app');
+var preview = /[?&]preview=1/.test(location.search), cfg = null;
+if(preview){ try{ cfg = JSON.parse(localStorage.getItem('hq-draft') || 'null'); }catch(e){} }
+if(!cfg) cfg = (window.HQ_ARTISTS || {})[window.HQ_ACTIVE];
+var missing = HQ.validate(cfg);
 
-/* ============ 2. 三语文字 ============ */
 var T = {
- fr:{title:"Demande de devis",sub:"Décris ton projet, tu verras une estimation tout de suite. Je te réponds sous 48 h.",
-  style:"Style",size:"Taille",place:"Emplacement",color:"Couleur",ref:"Images de référence",refHint:"Jusqu'à 3 images, 5 Mo max chacune.",
-  idea:"Ton idée",ideaPh:"Le sujet, l'ambiance, ce qui compte pour toi…",budget:"Budget (€)",dates:"Disponibilités",datesPh:"ex. samedis en décembre",
-  name:"Prénom",email:"E-mail",phone:"Téléphone / Instagram",consent:"J'accepte que ces informations soient utilisées pour répondre à ma demande.",
-  est:"Estimation",dep:"Acompte pour réserver",send:"Envoyer ma demande",sending:"Envoi…",
-  ok:"Merci ! Ta demande est bien envoyée. Je te réponds sous 48 h.",err:"L'envoi n'a pas marché. Réessaie, ou écris-moi sur Instagram.",
-  demo:"Mode démo : rien n'a été envoyé.",need:"Choisis au moins la taille, l'emplacement et laisse un e-mail.",
-  note:"Estimation indicative. Le prix final dépend du dessin et du temps réel.",day:"Grande pièce : en séances, environ {d}/jour",
-  styles:{fine:"Fine line",black:"Blackwork",real:"Réaliste",orn:"Ornemental",letter:"Lettrage",other:"Autre"},
-  sizesL:{xs:"< 5 cm",s:"5–10 cm",m:"10–15 cm",l:"15–25 cm",xl:"Demi-manche ou plus"},
-  places:{arm:"Bras",forearm:"Avant-bras",leg:"Jambe",back:"Dos",chest:"Poitrine",ribs:"Côtes",hand:"Main / doigts",neck:"Cou",foot:"Pied / cheville"},
-  colors:{bw:"Noir & gris",col:"Couleur"}},
- en:{title:"Tattoo inquiry",sub:"Describe your project and see an estimate right away. I reply within 48 h.",
-  style:"Style",size:"Size",place:"Placement",color:"Colour",ref:"Reference images",refHint:"Up to 3 images, 5 MB each.",
-  idea:"Your idea",ideaPh:"Subject, mood, what matters to you…",budget:"Budget (€)",dates:"Availability",datesPh:"e.g. Saturdays in December",
-  name:"First name",email:"Email",phone:"Phone / Instagram",consent:"I agree that this information is used to answer my request.",
-  est:"Estimate",dep:"Deposit to book",send:"Send my inquiry",sending:"Sending…",
-  ok:"Thank you! Your inquiry was sent. I'll reply within 48 h.",err:"Sending failed. Please try again, or message me on Instagram.",
-  demo:"Demo mode: nothing was sent.",need:"Pick at least a size and placement, and leave an email.",
-  note:"Rough estimate. The final price depends on the design and actual time.",day:"Large piece: in sessions, about {d}/day",
-  styles:{fine:"Fine line",black:"Blackwork",real:"Realism",orn:"Ornamental",letter:"Lettering",other:"Other"},
-  sizesL:{xs:"< 5 cm",s:"5–10 cm",m:"10–15 cm",l:"15–25 cm",xl:"Half sleeve or bigger"},
-  places:{arm:"Upper arm",forearm:"Forearm",leg:"Leg",back:"Back",chest:"Chest",ribs:"Ribs",hand:"Hand / fingers",neck:"Neck",foot:"Foot / ankle"},
-  colors:{bw:"Black & grey",col:"Colour"}},
- zh:{title:"纹身询价",sub:"描述你的想法，马上看到大概价格。我会在 48 小时内回复。",
-  style:"风格",size:"大小",place:"部位",color:"颜色",ref:"参考图",refHint:"最多 3 张，每张不超过 5 MB。",
-  idea:"你的想法",ideaPh:"图案、感觉、对你重要的点……",budget:"预算 (€)",dates:"方便的时间",datesPh:"例如：12 月的周六",
-  name:"名字",email:"邮箱",phone:"电话 / Instagram / 微信",consent:"我同意这些信息用于回复我的询价。",
-  est:"预估价格",dep:"预约定金",send:"发送询价",sending:"发送中…",
-  ok:"谢谢！询价已发送，我会在 48 小时内回复。",err:"发送失败，请再试一次，或在 Instagram 私信我。",
-  demo:"演示模式：没有真的发送。",need:"请至少选择大小、部位，并留下邮箱。",
-  note:"仅为大概估价，最终价格取决于图案和实际时长。",day:"大面积：分次完成，约 {d}/天",
-  styles:{fine:"细线",black:"暗黑/黑工",real:"写实",orn:"装饰",letter:"字母",other:"其他"},
-  sizesL:{xs:"< 5 cm",s:"5–10 cm",m:"10–15 cm",l:"15–25 cm",xl:"半臂或更大"},
-  places:{arm:"上臂",forearm:"小臂",leg:"腿",back:"背",chest:"胸",ribs:"肋骨",hand:"手 / 手指",neck:"脖子",foot:"脚 / 脚踝"},
-  colors:{bw:"黑灰",col:"彩色"}}
+fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'affiche tout de suite. Réponse sous {r}.',
+ type:'Type de projet', types:{custom:'Un dessin sur mesure', flash:'Un de mes flashs', cover:'Cover-up ou retouche d\'un ancien tatouage'},
+ flashHint:'Ajoutez une capture du flash dans les images de référence.',
+ tech:'Technique', size:'Taille', place:'Emplacement', pick:'Choisir…', color:'Couleur', colors:{bw:'Noir et gris', col:'Couleur'},
+ first:'Est-ce votre premier tatouage ?', yes:'Oui', no:'Non',
+ idea:'Votre idée', ideaPh:'Le sujet, l\'ambiance, ce qui compte pour vous…',
+ ref:'Images de référence', refHint:'Jusqu\'à 3 images, 5 Mo maximum chacune.',
+ budget:'Budget (€)', dates:'Disponibilités', datesPh:'ex. les samedis de janvier',
+ name:'Prénom', email:'E-mail', contact:'Téléphone, Instagram ou WeChat',
+ adult:'J\'ai 18 ans ou plus.',
+ consent:'J\'accepte que ces informations soient utilisées pour répondre à ma demande. Mes images de référence pourront être analysées par un service d\'intelligence artificielle (prestataire externe) pour reconnaître le style. <a href="/mentions-legales.html" target="_blank" rel="noopener">En savoir plus</a>',
+ est:'Estimation', dep:'Acompte pour réserver', depR:'remboursable', depNR:'non remboursable',
+ fee:'Frais de dessin', feeDed:'déduits du prix final', feeAdd:'en plus du tatouage',
+ hours:'Environ {a} à {b} heures, en {c} séances', note:'Estimation indicative : le prix final dépend du dessin et du temps réel.',
+ refused:'Je ne réalise pas ce type de projet : {x}. Merci de votre compréhension.',
+ send:'Envoyer ma demande', sending:'Envoi…', ok:'Merci, votre demande est bien envoyée. Je vous réponds sous {r}.',
+ err:'L\'envoi n\'a pas fonctionné. Réessayez, ou écrivez-moi à contact@hypnum.fr.', demo:'Mode démo : rien n\'a été envoyé.',
+ need:'Il manque : {x}.', closed:'Ce formulaire n\'est pas encore ouvert. Pour une demande, écrivez-moi à <a href="mailto:contact@hypnum.fr">contact@hypnum.fr</a>.',
+ since:'Tatoue depuis {y}', y0:'moins d\'un an', y1:'{n} an', yn:'{n} ans', yp1:'plus d\'un an', ypn:'plus de {n} ans',
+ styles:'Styles', where:'Lieu', langs:'Langues', retouch:'Retouches', rt:'{n} retouche offerte dans les {m} mois', rtn:'{n} retouches offertes dans les {m} mois', rt0:'Pas de retouche offerte',
+ reply:'Réponse sous', h:'{n} h', d:'{n} jours', d1:'{n} jour', pay:'Paiement', refuse:'Ne réalise pas', fees:'Frais de dessin',
+ feeP:'{a} €, déduits du prix final', feeA:'{a} €, en plus du tatouage', feeN:'Aucun'},
+en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate right away. Reply within {r}.',
+ type:'Project type', types:{custom:'A custom design', flash:'One of my flashes', cover:'Cover-up or rework of an old tattoo'},
+ flashHint:'Add a screenshot of the flash in the reference images.',
+ tech:'Technique', size:'Size', place:'Placement', pick:'Choose…', color:'Colour', colors:{bw:'Black and grey', col:'Colour'},
+ first:'Is this your first tattoo?', yes:'Yes', no:'No',
+ idea:'Your idea', ideaPh:'Subject, mood, what matters to you…',
+ ref:'Reference images', refHint:'Up to 3 images, 5 MB each.',
+ budget:'Budget (€)', dates:'Availability', datesPh:'e.g. Saturdays in January',
+ name:'First name', email:'Email', contact:'Phone, Instagram or WeChat',
+ adult:'I am 18 or older.',
+ consent:'I agree that this information is used to answer my request. My reference images may be analysed by an artificial intelligence service (external provider) to recognise the style. <a href="/mentions-legales.html" target="_blank" rel="noopener">Learn more</a>',
+ est:'Estimate', dep:'Deposit to book', depR:'refundable', depNR:'non-refundable',
+ fee:'Design fee', feeDed:'deducted from the final price', feeAdd:'on top of the tattoo',
+ hours:'About {a} to {b} hours, over {c} sessions', note:'Rough estimate: the final price depends on the design and the actual time.',
+ refused:'I don\'t do this kind of project: {x}. Thank you for understanding.',
+ send:'Send my request', sending:'Sending…', ok:'Thank you, your request has been sent. I\'ll reply within {r}.',
+ err:'Sending failed. Please try again, or write to contact@hypnum.fr.', demo:'Demo mode: nothing was sent.',
+ need:'Missing: {x}.', closed:'This form is not open yet. To ask for a quote, write to <a href="mailto:contact@hypnum.fr">contact@hypnum.fr</a>.',
+ since:'Tattooing for {y}', y0:'less than a year', y1:'{n} year', yn:'{n} years', yp1:'over a year', ypn:'over {n} years',
+ styles:'Styles', where:'Location', langs:'Languages', retouch:'Touch-ups', rt:'{n} free touch-up within {m} months', rtn:'{n} free touch-ups within {m} months', rt0:'No free touch-up',
+ reply:'Reply within', h:'{n} h', d:'{n} days', d1:'{n} day', pay:'Payment', refuse:'Does not do', fees:'Design fee',
+ feeP:'€{a}, deducted from the final price', feeA:'€{a}, on top of the tattoo', feeN:'None'},
+zh:{title:'纹身询价', sub:'描述你的想法，马上看到大概价格。{r}内回复。',
+ type:'类型', types:{custom:'定制图', flash:'我的纹身稿', cover:'cover-up 或修改旧图'},
+ flashHint:'请在参考图里上传那张纹身稿的截图。',
+ tech:'技法', size:'大小', place:'部位', pick:'请选择', color:'颜色', colors:{bw:'黑灰', col:'彩色'},
+ first:'这是你的第一个纹身吗？', yes:'是', no:'不是',
+ idea:'你的想法', ideaPh:'图案、感觉、对你重要的点……',
+ ref:'参考图', refHint:'最多 3 张，每张不超过 5 MB。',
+ budget:'预算（€）', dates:'方便的时间', datesPh:'例如：1 月的周六',
+ name:'名字', email:'邮箱', contact:'电话、Instagram 或微信',
+ adult:'我已年满 18 岁。',
+ consent:'我同意这些信息用于回复我的询价。我的参考图可能会交给人工智能服务商（外部服务）分析风格。<a href="/mentions-legales.html" target="_blank" rel="noopener">了解更多</a>',
+ est:'预估价格', dep:'预约定金', depR:'可退', depNR:'不退',
+ fee:'设计费', feeDed:'从总价里扣', feeAdd:'另外收取',
+ hours:'约 {a}–{b} 小时，分 {c} 次完成', note:'仅为大概估价，最终价格取决于图案和实际时长。',
+ refused:'这类项目我不接：{x}。谢谢理解。',
+ send:'发送询价', sending:'发送中…', ok:'谢谢！询价已发送，我会在{r}内回复。',
+ err:'发送失败，请再试一次，或写信到 contact@hypnum.fr。', demo:'演示模式：没有真的发送。',
+ need:'还缺：{x}。', closed:'询价表还没有开放。如需询价，请写信到 <a href="mailto:contact@hypnum.fr">contact@hypnum.fr</a>。',
+ since:'纹身 {y}', y0:'不到一年', y1:'{n} 年', yn:'{n} 年', yp1:'一年多', ypn:'{n} 年多',
+ styles:'风格', where:'地点', langs:'语言', retouch:'补色', rt:'{m} 个月内免费补色 {n} 次', rtn:'{m} 个月内免费补色 {n} 次', rt0:'不提供免费补色',
+ reply:'回复时间', h:' {n} 小时', d:' {n} 天', d1:' {n} 天', pay:'支付方式', refuse:'不接', fees:'设计费',
+ feeP:'{a} €，从总价里扣', feeA:'{a} €，另外收取', feeN:'无'}
+};
+var lang = 'fr';
+try{ var nl = (navigator.language || '').slice(0, 2); if(T[nl]) lang = nl; }catch(e){}
+try{ var sl = localStorage.getItem('hyp-lang'); if(sl && T[sl]) lang = sl; }catch(e){}
+var files = [], st = {};
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function f(s, o){ return s.replace(/\{(\w)\}/g, function(_, k){ return o[k]; }); }
+function lab(x){ return x.l[lang] || x.l.fr; }
+function find(list, k){ return list.filter(function(x){ return x.k === k; })[0]; }
+
+function replyTxt(){ var t = T[lang], r = cfg.A.reply; return f(r.unit === 'd' ? (r.n === 1 ? t.d1 : t.d) : t.h, {n:r.n}).trim(); }
+function yearsTxt(y){ var t = T[lang], n = Math.floor(y); if(y < 1) return t.y0; if(y > n) return f(n === 1 ? t.yp1 : t.ypn, {n:n}); return f(n === 1 ? t.y1 : t.yn, {n:n}); }
+
+function langBar(){
+  var b = document.querySelector('.lang');
+  b.innerHTML = ['fr','en','zh'].map(function(l){ return '<button type="button" data-l="' + l + '" aria-pressed="' + (l === lang) + '">' + {fr:'FR', en:'EN', zh:'中文'}[l] + '</button>'; }).join('');
+  b.querySelectorAll('button').forEach(function(x){ x.onclick = function(){ save(); lang = x.getAttribute('data-l'); render(); }; });
+}
+
+function profile(){
+  var t = T[lang], A = cfg.A;
+  var sty = A.styles.map(function(k){ return k === 'other' ? (A.styleOther || lab(find(D.STYLES, k))) : lab(find(D.STYLES, k)); }).join(', ');
+  var lg = A.languages.map(function(k){ var x = find(D.LANGS, k); return x ? x.l : k; }).join(', ');
+  var rt = A.retouch.free > 0 ? f(A.retouch.free > 1 ? t.rtn : t.rt, {n:A.retouch.free, m:A.retouch.months}) : t.rt0;
+  var pay = A.payment.map(function(k){ var x = find(D.PAY, k); return x ? lab(x) : k; }).concat(A.payOther ? [A.payOther] : []).join(', ');
+  var rf = (A.refuse || []).map(function(k){ return lab(find(D.REFUSE, k)); }).concat(A.refuseOther ? [A.refuseOther] : []);
+  var fee = A.designFee.has ? f(A.designFee.deducted ? t.feeP : t.feeA, {a:A.designFee.amount}) : t.feeN;
+  return '<aside class="pf"><h2>' + esc(A.name) + '</h2><p class="pf-n">' + esc(f(t.since, {y:yearsTxt(A.years)})) + '</p><dl>' +
+    '<div><dt>' + t.styles + '</dt><dd>' + esc(sty) + '</dd></div>' +
+    '<div><dt>' + t.where + '</dt><dd>' + esc(A.location) + '</dd></div>' +
+    '<div><dt>' + t.langs + '</dt><dd>' + esc(lg) + '</dd></div>' +
+    '<div><dt>' + t.fees + '</dt><dd>' + esc(fee) + '</dd></div>' +
+    '<div><dt>' + t.retouch + '</dt><dd>' + esc(rt) + '</dd></div>' +
+    '<div><dt>' + t.pay + '</dt><dd>' + esc(pay) + '</dd></div>' +
+    (rf.length ? '<div><dt>' + t.refuse + '</dt><dd>' + esc(rf.join(', ')) + '</dd></div>' : '') +
+    '<div><dt>' + t.reply + '</dt><dd>' + esc(replyTxt()) + '</dd></div>' +
+    (A.instagram ? '<div><dt>Instagram</dt><dd><a href="https://www.instagram.com/' + esc(A.instagram) + '" target="_blank" rel="noopener">@' + esc(A.instagram) + '</a></dd></div>' : '') +
+    '</dl></aside>';
+}
+
+var ICON = {
+  line:'<svg viewBox="0 0 46 30"><path d="M6 24 C10 6 20 4 23 15 C26 26 36 24 40 6"/></svg>',
+  shade:'<svg viewBox="0 0 46 30"><path d="M6 24 C10 6 20 4 23 15 C26 26 36 24 40 6"/><path d="M10 22 l4 -6 M14 23 l4 -9 M18 24 l3 -6 M27 22 l4 -5 M31 22 l4 -8 M35 20 l3 -7" stroke-width=".9"/></svg>',
+  fill:'<svg viewBox="0 0 46 30"><path d="M6 24 C10 6 20 4 23 15 C26 26 36 24 40 6 L40 26 L6 26 Z" fill="currentColor" fill-opacity=".55" stroke="none"/></svg>',
+  unsure:'<svg viewBox="0 0 46 30"><path d="M18 10 C18 5 28 5 28 10 C28 14 23 14 23 18"/><circle cx="23" cy="23" r=".9" fill="currentColor"/></svg>'
 };
 
-var root=document.getElementById("hq-root"), C=HQ_CONFIG, lang="fr", files=[], state={};
-try{var nl=(navigator.language||"").slice(0,2); if(T[nl]) lang=nl;}catch(e){}
-
-function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-function chips(name,obj,type,extra){var h='<div class="hq-chips">';for(var k in obj){h+='<label><input type="'+type+'" name="'+name+'" value="'+k+'"'+(state[name]&&[].concat(state[name]).indexOf(k)>-1?" checked":"")+'><span>'+esc(obj[k])+(extra&&extra[k]?'<small>'+extra[k]+'</small>':'')+'</span></label>'}return h+'</div>'}
-function money(n){return Math.round(n/10)*10+" "+C.currency}
-
-function estimate(){
-  var f=root.querySelector("form"); if(!f) return null;
-  var size=(f.querySelector('[name=size]:checked')||{}).value, place=(f.querySelector('[name=place]:checked')||{}).value,
-      color=(f.querySelector('[name=color]:checked')||{}).value;
-  if(!size) return null;
-  if(!C.sizes[size]) return {day:true};
-  var m=1+(color==="col"?C.colorExtra:0)+(C.placementExtra[place]||0);
-  var lo=Math.max(C.minimum,C.sizes[size][0]*m), hi=Math.max(C.minimum,C.sizes[size][1]*m);
-  var dep=Math.max(C.deposit.min,lo*C.deposit.percent/100);
-  return {lo:Math.round(lo/10)*10,hi:Math.round(hi/10)*10,dep:Math.round(dep/10)*10};
+function chip(name, k, txt, type, extra){
+  var on = st[name] === k ? ' checked' : '';
+  return '<label><input type="' + (type || 'radio') + '" name="' + name + '" value="' + k + '"' + on + '><span>' + (extra || '') + '<b style="font-weight:400">' + esc(txt) + '</b></span></label>';
 }
-function paintEst(){
-  var t=T[lang],e=estimate(),box=root.querySelector(".hq-est");
-  if(!e){box.hidden=true;return}
-  box.hidden=false;
-  box.innerHTML=e.day
-    ? '<span class="k">'+t.est+'</span><span class="v" style="font-size:1.3rem">'+esc(t.day.replace("{d}",money(C.dayRate)))+'</span><span class="n">'+t.note+'</span>'
-    : '<span class="k">'+t.est+'</span><span class="v">'+e.lo+' – '+e.hi+' '+C.currency+'</span><span class="n">'+t.dep+' : '+e.dep+' '+C.currency+'</span><span class="n">'+t.note+'</span>';
-}
-function save(){var f=root.querySelector("form");if(!f)return;state={};new FormData(f).forEach(function(v,k){if(k==="refs")return;if(k==="style"){(state.style=state.style||[]).push(v)}else state[k]=v})}
 
 function render(){
-  save(); var t=T[lang];
-  root.innerHTML='<div class="hq-top"><div><h2>'+t.title+'</h2><p class="hq-sub">'+t.sub+'</p></div>'
-   +'<div class="hq-lang" role="group" aria-label="Language">'+["fr","en","zh"].map(function(l){return'<button type="button" data-l="'+l+'" aria-pressed="'+(l===lang)+'">'+{fr:"FR",en:"EN",zh:"中文"}[l]+'</button>'}).join("")+'</div></div>'
-   +'<form novalidate>'
-   +'<fieldset><legend>'+t.style+'</legend>'+chips("style",t.styles,"checkbox")+'</fieldset>'
-   +'<fieldset><legend>'+t.size+'</legend>'+chips("size",t.sizesL,"radio")+'</fieldset>'
-   +'<fieldset><legend>'+t.place+'</legend>'+chips("place",t.places,"radio")+'</fieldset>'
-   +'<fieldset><legend>'+t.color+'</legend>'+chips("color",t.colors,"radio")+'</fieldset>'
-   +'<div class="hq-est" aria-live="polite" hidden></div>'
-   +'<div><label class="hq-l" for="hq-idea">'+t.idea+'</label><textarea id="hq-idea" name="idea" placeholder="'+t.ideaPh+'">'+esc(state.idea||"")+'</textarea></div>'
-   +'<div><label class="hq-l" for="hq-refs">'+t.ref+'</label><input id="hq-refs" type="file" name="refs" accept="image/*" multiple><div class="hq-files">'+t.refHint+'</div><div class="hq-thumbs"></div></div>'
-   +'<div class="hq-row"><div><label class="hq-l" for="hq-budget">'+t.budget+'</label><input id="hq-budget" type="number" min="0" name="budget" value="'+esc(state.budget||"")+'"></div>'
-   +'<div><label class="hq-l" for="hq-dates">'+t.dates+'</label><input id="hq-dates" type="text" name="dates" placeholder="'+t.datesPh+'" value="'+esc(state.dates||"")+'"></div></div>'
-   +'<div class="hq-row"><div><label class="hq-l" for="hq-name">'+t.name+'</label><input id="hq-name" type="text" name="name" autocomplete="given-name" value="'+esc(state.name||"")+'"></div>'
-   +'<div><label class="hq-l" for="hq-email">'+t.email+'</label><input id="hq-email" type="email" name="email" autocomplete="email" value="'+esc(state.email||"")+'"></div></div>'
-   +'<div><label class="hq-l" for="hq-phone">'+t.phone+'</label><input id="hq-phone" type="text" name="phone" value="'+esc(state.phone||"")+'"></div>'
-   +'<label class="hq-check"><input type="checkbox" name="consent" id="hq-consent"'+(state.consent?" checked":"")+'> '+t.consent+'</label>'
-   +'<button class="hq-btn" type="submit">'+t.send+'</button><p class="hq-msg" aria-live="polite"></p></form>';
-  root.querySelectorAll(".hq-lang button").forEach(function(b){b.onclick=function(){lang=b.dataset.l;render()}});
-  var f=root.querySelector("form");
-  f.addEventListener("change",paintEst);
-  root.querySelector("#hq-refs").addEventListener("change",function(ev){
-    files=[].slice.call(ev.target.files).filter(function(x){return x.size<=5e6}).slice(0,3);
-    root.querySelector(".hq-thumbs").innerHTML=files.map(function(x){return'<img alt="" src="'+URL.createObjectURL(x)+'">'}).join("");
+  document.documentElement.lang = lang;
+  try{ localStorage.setItem('hyp-lang', lang); }catch(e){}
+  langBar();
+  var t = T[lang];
+  if(missing.length){
+    app.innerHTML = '<h1>' + t.title + '</h1><p class="closed">' + t.closed + '</p>' +
+      (preview || /[?&]debug=1/.test(location.search) ? '<div class="miss">设置还缺：' + esc(missing.join('；')) + '</div>' : '');
+    return;
+  }
+  var A = cfg.A, cover = (A.refuse || []).indexOf('coverup') < 0;
+  var types = ['custom', 'flash'].concat(cover ? ['cover'] : []);
+  var places = D.ZONES.map(function(z){
+    return '<optgroup label="' + esc(lab(z)) + '">' + D.PLACES.filter(function(p){ return p.z === z.k; }).map(function(p){
+      return '<option value="' + p.k + '"' + (st.place === p.k ? ' selected' : '') + '>' + esc(lab(p)) + '</option>'; }).join('') + '</optgroup>';
+  }).join('');
+  app.innerHTML = '<h1>' + t.title + '</h1><p class="sub">' + esc(f(t.sub, {r:replyTxt()})) + '</p>' +
+   '<div class="grid">' + profile() + '<form novalidate>' +
+   '<fieldset><legend>' + t.type + '</legend><div class="chips">' + types.map(function(k){ return chip('type', k, t.types[k]); }).join('') + '</div><p class="hint" id="flashHint"' + (st.type === 'flash' ? '' : ' hidden') + '>' + t.flashHint + '</p></fieldset>' +
+   '<fieldset><legend>' + t.tech + '</legend><div class="chips tech">' + D.TECH.map(function(x){ return chip('tech', x.k, lab(x), 'radio', ICON[x.k]); }).join('') + '</div></fieldset>' +
+   '<fieldset><legend>' + t.size + '</legend><div class="chips">' + D.SIZES.concat(D.LARGE).map(function(x){ return chip('size', x.k, lab(x)); }).join('') + '</div></fieldset>' +
+   '<div><label class="lb" for="q-place">' + t.place + '</label><select id="q-place" name="place"><option value="">' + t.pick + '</option>' + places + '</select></div>' +
+   '<fieldset id="firstQ" hidden><legend>' + t.first + '</legend><div class="chips">' + chip('first', 'yes', t.yes) + chip('first', 'no', t.no) + '</div></fieldset>' +
+   '<fieldset><legend>' + t.color + '</legend><div class="chips">' + chip('color', 'bw', t.colors.bw) + chip('color', 'col', t.colors.col) + '</div></fieldset>' +
+   '<div class="est" aria-live="polite" hidden></div>' +
+   '<div><label class="lb" for="q-idea">' + t.idea + '</label><textarea id="q-idea" name="idea" placeholder="' + esc(t.ideaPh) + '">' + esc(st.idea) + '</textarea></div>' +
+   '<div><label class="lb" for="q-refs">' + t.ref + '</label><input id="q-refs" type="file" name="refs" accept="image/*" multiple><p class="hint">' + t.refHint + '</p><div class="thumbs"></div></div>' +
+   '<div class="row"><div><label class="lb" for="q-budget">' + t.budget + '</label><input id="q-budget" type="number" min="0" inputmode="numeric" name="budget" value="' + esc(st.budget) + '"></div>' +
+   '<div><label class="lb" for="q-dates">' + t.dates + '</label><input id="q-dates" type="text" name="dates" placeholder="' + esc(t.datesPh) + '" value="' + esc(st.dates) + '"></div></div>' +
+   '<div class="row"><div><label class="lb" for="q-name">' + t.name + ' <span class="req">*</span></label><input id="q-name" type="text" name="name" autocomplete="given-name" value="' + esc(st.name) + '"></div>' +
+   '<div><label class="lb" for="q-email">' + t.email + ' <span class="req">*</span></label><input id="q-email" type="email" name="email" autocomplete="email" value="' + esc(st.email) + '"></div></div>' +
+   '<div><label class="lb" for="q-contact">' + t.contact + '</label><input id="q-contact" type="text" name="contact" value="' + esc(st.contact) + '"></div>' +
+   ((A.refuse || []).indexOf('minors') > -1 ? '<label class="check"><input type="checkbox" name="adult"' + (st.adult ? ' checked' : '') + '> ' + t.adult + '</label>' : '') +
+   '<label class="check"><input type="checkbox" name="consent"' + (st.consent ? ' checked' : '') + '> <span>' + t.consent + '</span></label>' +
+   '<button class="btn" type="submit">' + t.send + '</button><p class="msg" aria-live="polite"></p></form></div>';
+  var fm = app.querySelector('form');
+  fm.addEventListener('change', update);
+  fm.querySelector('#q-refs').addEventListener('change', function(ev){
+    files = [].slice.call(ev.target.files).filter(function(x){ return x.size <= 5e6; }).slice(0, 3);
+    fm.querySelector('.thumbs').innerHTML = files.map(function(x){ return '<img alt="" src="' + URL.createObjectURL(x) + '">'; }).join('');
   });
-  f.addEventListener("submit",submit);
-  paintEst();
+  fm.addEventListener('submit', submit);
+  update();
 }
 
-function toB64(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res({name:file.name,type:file.type,data:String(r.result).split(",")[1]})};r.onerror=rej;r.readAsDataURL(file)})}
+function read(){
+  var fm = app.querySelector('form'), d = {};
+  if(!fm) return d;
+  new FormData(fm).forEach(function(v, k){ if(k !== 'refs') d[k] = v; });
+  return d;
+}
+function save(){ var d = read(); if(Object.keys(d).length) st = d; }
+
+function update(){
+  var t = T[lang], fm = app.querySelector('form'), q = read(), box = fm.querySelector('.est');
+  fm.querySelector('#flashHint').hidden = q.type !== 'flash';
+  var fv = find(D.REFUSE, 'first_visible');
+  var askFirst = (cfg.A.refuse || []).indexOf('first_visible') > -1 && fv.p.indexOf(q.place) > -1;
+  fm.querySelector('#firstQ').hidden = !askFirst;
+  if(!askFirst) q.first = '';
+  var e = HQ.estimate(cfg, q);
+  if(e && e.refused){
+    box.hidden = false; box.className = 'est no';
+    box.innerHTML = '<span class="v">' + esc(f(t.refused, {x:lab(find(D.REFUSE, e.refused)).toLowerCase()})) + '</span>';
+    return;
+  }
+  if(!e || !q.type || !q.size || !q.place || !q.color){ box.hidden = true; return; }
+  box.hidden = false; box.className = 'est';
+  box.innerHTML = '<span class="k">' + t.est + '</span><span class="v">' + e.lo + ' – ' + e.hi + ' €</span>' +
+    (e.hours ? '<span class="l">' + esc(f(t.hours, {a:e.hours[0], b:e.hours[1], c:e.sessions[0] === e.sessions[1] ? e.sessions[0] : e.sessions[0] + '–' + e.sessions[1]})) + '</span>' : '') +
+    '<span class="l">' + t.dep + ' : ' + e.dep + ' € (' + (e.refundable ? t.depR : t.depNR) + ')</span>' +
+    (e.fee ? '<span class="l">' + t.fee + ' : ' + e.fee.amount + ' € (' + (e.fee.deducted ? t.feeDed : t.feeAdd) + ')</span>' : '') +
+    '<span class="n">' + t.note + '</span>';
+}
+
+function toB64(file){ return new Promise(function(res, rej){ var r = new FileReader(); r.onload = function(){ res({name:file.name, type:file.type, data:String(r.result).split(',')[1]}); }; r.onerror = rej; r.readAsDataURL(file); }); }
 
 function submit(ev){
-  ev.preventDefault(); var t=T[lang], f=ev.target, msg=f.querySelector(".hq-msg"), btn=f.querySelector(".hq-btn");
-  var d={}; new FormData(f).forEach(function(v,k){if(k==="refs")return;d[k]=k==="style"?(d[k]?d[k]+", ":"")+v:v});
-  if(!d.size||!d.place||!/.+@.+\..+/.test(d.email||"")||!d.consent){msg.className="hq-msg err";msg.textContent=t.need;return}
-  var e=estimate()||{}; d.estimate_low=e.lo||""; d.estimate_high=e.hi||""; d.deposit=e.dep||""; d.lang=lang; d.page=location.href;
-  if(!C.ENDPOINT){msg.className="hq-msg ok";msg.textContent=t.demo+" "+t.ok;return}
-  btn.disabled=true; btn.textContent=t.sending;
+  ev.preventDefault();
+  var t = T[lang], fm = ev.target, msg = fm.querySelector('.msg'), btn = fm.querySelector('.btn'), q = read();
+  var miss = [];
+  if(!q.type) miss.push(t.type); if(!q.size) miss.push(t.size); if(!q.place) miss.push(t.place); if(!q.color) miss.push(t.color);
+  if(!fm.querySelector('#firstQ').hidden && !q.first) miss.push(t.first);
+  if(!q.name) miss.push(t.name); if(!/.+@.+\..+/.test(q.email || '')) miss.push(t.email);
+  if(fm.querySelector('[name=adult]') && !q.adult) miss.push(t.adult);
+  if(!q.consent) miss.push(t.consent.split('.')[0]);
+  if(miss.length){ msg.className = 'msg err'; msg.textContent = f(t.need, {x:miss.join(', ')}); return; }
+  var e = HQ.estimate(cfg, q) || {};
+  if(e.refused){ msg.className = 'msg err'; msg.textContent = f(t.refused, {x:lab(find(D.REFUSE, e.refused)).toLowerCase()}); return; }
+  var d = {artist:cfg.id, config_version:cfg.version, lang:lang, page:location.href,
+    type:q.type, technique:q.tech || 'unsure', size:q.size, place:q.place, place_tier:HQ.tierOf(cfg, q.place), color:q.color, first_tattoo:q.first || '',
+    idea:q.idea || '', budget:q.budget || '', dates:q.dates || '', name:q.name, email:q.email, contact:q.contact || '',
+    adult:q.adult ? 'oui' : '', consent:'oui',
+    estimate_low:e.lo, estimate_high:e.hi, deposit:e.dep, design_fee:e.fee ? e.fee.amount : '', coef:Math.round(e.coef * 100) / 100,
+    est_hours:e.hours ? e.hours.join('-') : '', est_sessions:e.sessions ? e.sessions.join('-') : ''};
+  var ep = window.HQ_ENDPOINT;
+  if(!ep || preview){ msg.className = 'msg ok'; msg.textContent = t.demo + ' ' + f(t.ok, {r:replyTxt()}); return; }
+  btn.disabled = true; btn.textContent = t.sending;
   Promise.all(files.map(toB64)).then(function(imgs){
-    d.images=imgs;
-    return fetch(C.ENDPOINT,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)});
-  }).then(function(r){return r.json()}).then(function(j){
-    if(!j.ok) throw 0; msg.className="hq-msg ok"; msg.textContent=t.ok; f.reset(); files=[]; state={};
-    root.querySelector(".hq-thumbs").innerHTML=""; paintEst();
-  }).catch(function(){msg.className="hq-msg err";msg.textContent=t.err})
-  .then(function(){btn.disabled=false;btn.textContent=t.send});
+    d.images = imgs;
+    return fetch(ep, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(d)});
+  }).then(function(r){ return r.json(); }).then(function(j){
+    if(!j.ok) throw 0;
+    msg.className = 'msg ok'; msg.textContent = f(t.ok, {r:replyTxt()});
+    fm.reset(); files = []; st = {}; fm.querySelector('.thumbs').innerHTML = ''; update();
+  }).catch(function(){ msg.className = 'msg err'; msg.textContent = t.err; })
+  .then(function(){ btn.disabled = false; btn.textContent = t.send; });
 }
 render();
 })();
 </script>
-<!-- ===== fin du formulaire ===== -->
-
-<div class="dv-foot"><a href="/cgv.html">CGV</a><a href="/mentions-legales.html">Mentions légales</a><a href="mailto:contact@hypnum.fr">contact@hypnum.fr</a></div>
 </body></html>
