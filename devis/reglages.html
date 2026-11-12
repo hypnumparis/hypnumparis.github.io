@@ -116,8 +116,8 @@ function render(){
   h += '<div data-show="styleother">' + txt('A.styleOther', '其他风格（自己填）') + '</div>';
   h += multi('A.refuse', '不接的类型', D.REFUSE.map(function(r){ return [r.k, r.l.zh + (r.k === 'minors' ? '（法国 18 岁以下需要家长书面同意）' : '')]; })) + txt('A.refuseOther', '其他不接的（自己填，选填）');
   h += multi('A.languages', '会说的语言', D.LANGS.map(function(x){ return [x.k, x.l]; }));
-  h += radio('A.designFee.has', '设计费', [[true,'有'],[false,'没有']]);
-  h += '<div data-show="fee">' + num('A.designFee.pct', '设计费是纹身价格的百分之几', '%') + '</div>';
+  h += radio('A.designFee.has', '设计费：需要我画设计稿的图，要不要比普通纹身贵', [[true,'要贵一些'],[false,'一样的价格']]);
+  h += '<div data-show="fee">' + num('A.designFee.pct', '需要设计稿的图比普通纹身贵百分之多少', '%') + '</div>';
   h += '<div class="f"><span>补色政策</span><div class="inline">免费补色 <input type="number" min="0" data-p="A.retouch.free" value="' + esc(A.retouch.free) + '" style="width:80px"> 次，在 <input type="number" min="0" data-p="A.retouch.months" value="' + esc(A.retouch.months) + '" style="width:80px"> 个月内</div></div>';
   h += multi('A.payment', '支付方式', D.PAY.map(function(x){ return [x.k, x.l.zh]; })) + txt('A.payOther', '其他支付方式（选填）');
   h += '</section>';
