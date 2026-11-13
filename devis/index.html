@@ -219,7 +219,7 @@ function render(){
   var t = T[lang];
   if(missing.length){
     app.innerHTML = '<h1>' + t.title + '</h1><p class="closed">' + t.closed + '</p>' +
-      (preview || /[?&]debug=1/.test(location.search) ? '<div class="miss">设置还缺：' + esc(missing.join('；')) + '</div>' : '');
+      (preview || /[?&]debug=1/.test(location.search) ? '<div class="miss">' + ({fr:'Réglages manquants : ', en:'Missing settings: ', zh:'设置还缺：'})[lang] + esc(HQ.validate(cfg, lang).join(lang === 'zh' ? '；' : ' ; ')) + '</div>' : '');
     return;
   }
   var A = cfg.A, cover = (A.refuse || []).indexOf('coverup') < 0;

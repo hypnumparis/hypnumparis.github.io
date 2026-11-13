@@ -122,10 +122,10 @@ var DAY_RATE = [600, 1200];
 
 /* Statut fiscal : taux de cotisations par défaut (modifiable). base = sur le chiffre d'affaires ou sur le bénéfice. */
 var STATUS = [
-  {k:'ae',    pct:21.5, l:'auto-entrepreneur（按营业额，约 21.5%，请在 urssaf.fr 核对）'},
-  {k:'other', pct:40,   l:'其他（个人企业按利润交或开了公司，约按利润 40%）'},
-  {k:'none',  pct:0,    l:'目前没有申报（按 0% 算）'},
-  {k:'unknown', pct:21.5, l:'不知道（按 auto-entrepreneur 算）'}
+  {k:'ae',    pct:21.5, l:L('Auto-entrepreneur (sur le chiffre d\'affaires, environ 21,5 %, à vérifier sur urssaf.fr)','Auto-entrepreneur (on turnover, about 21.5%, check on urssaf.fr)','auto-entrepreneur（按营业额，约 21.5%，请在 urssaf.fr 核对）')},
+  {k:'other', pct:40,   l:L('Autre (entreprise individuelle au réel ou société, environ 40 % du bénéfice)','Other (sole trader on actual profit or a company, about 40% of profit)','其他（个人企业按利润交或开了公司，约按利润 40%）')},
+  {k:'none',  pct:0,    l:L('Pas encore déclarée (compté à 0 %)','Not registered yet (counted as 0%)','目前没有申报（按 0% 算）')},
+  {k:'unknown', pct:21.5, l:L('Je ne sais pas (compté comme auto-entrepreneur)','Not sure (counted as auto-entrepreneur)','不知道（按 auto-entrepreneur 算）')}
 ];
 
 window.HQ_DATA = {STYLES:STYLES, ZONES:ZONES, PLACES:PLACES, REFUSE:REFUSE, SIZES:SIZES, LARGE:LARGE, TECH:TECH, LANGS:LANGS, PAY:PAY, MARKET:MARKET, DAY_RATE:DAY_RATE, STATUS:STATUS};

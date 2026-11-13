@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="zh"><head><meta charset="utf-8">
+<html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>询价助手 · 纹身师设置</title>
+<title>Assistant de devis · Réglages</title>
 <link rel="icon" href="/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,13 +56,17 @@ input[type=number]{max-width:160px;}
 textarea.out{min-height:160px;font-family:ui-monospace,Menlo,monospace;font-size:12px;}
 .hide{display:none !important;}
 .bar{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:transparent;color:var(--soft);padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 </style>
 </head>
 <body>
 <div class="wrap">
-<a href="/devis/" class="note">← 询价表单</a>
-<h1>询价助手 · 纹身师设置</h1>
-<p class="lead">设置填完以前，客人的询价表单不会开放。填的内容会自动存在这台设备的浏览器里，可以随时回来接着填。</p>
+<div class="top"><a href="/devis/" class="note" id="back"></a><div class="lang" role="group" aria-label="Langue"></div></div>
+<h1 id="h1"></h1>
+<p class="lead" id="lead"></p>
 <div id="app"></div>
 </div>
 <script src="hq-data.js"></script>
@@ -98,7 +102,22 @@ var rep = null;
 function get(p){ return p.split('.').reduce(function(o, k){ return o == null ? undefined : o[k]; }, c); }
 function set(p, v){ var ks = p.split('.'), o = c; for(var i = 0; i < ks.length - 1; i++){ if(o[ks[i]] == null) o[ks[i]] = isNaN(+ks[i + 1]) ? {} : []; o = o[ks[i]]; } o[ks[ks.length - 1]] = v; }
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(x){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[x]; }); }
-function zh(x){ return x.l.zh || x.l; }
+var lang = 'fr';
+try{ var nl = (navigator.language || '').slice(0, 2); if(nl === 'en' || nl === 'zh') lang = nl; }catch(e){}
+try{ var sl = localStorage.getItem('hyp-lang'); if(sl === 'fr' || sl === 'en' || sl === 'zh') lang = sl; }catch(e){}
+function t(fr, en, zh){ return lang === 'en' ? en : lang === 'zh' ? zh : fr; }
+function lab(x){ return x.l[lang] || x.l.fr; }
+function sep(){ return lang === 'zh' ? '、' : ', '; }
+function header(){
+  document.documentElement.lang = lang;
+  document.title = t('Assistant de devis · Réglages', 'Quote assistant · Settings', '询价助手 · 纹身师设置');
+  document.getElementById('back').textContent = t('← Formulaire de devis', '← Quote form', '← 询价表单');
+  document.getElementById('h1').textContent = t('Assistant de devis · Réglages du tatoueur', 'Quote assistant · Artist settings', '询价助手 · 纹身师设置');
+  document.getElementById('lead').textContent = t('Le formulaire de devis reste fermé aux clients tant que les réglages ne sont pas complets. Vos réponses sont enregistrées automatiquement dans le navigateur de cet appareil : vous pouvez revenir les compléter à tout moment.', 'The quote form stays closed to clients until these settings are complete. Your answers are saved automatically in this device\'s browser, so you can come back and finish at any time.', '设置填完以前，客人的询价表单不会开放。填的内容会自动存在这台设备的浏览器里，可以随时回来接着填。');
+  var b = document.querySelector('.lang');
+  b.innerHTML = ['fr','en','zh'].map(function(l){ return '<button type="button" data-l="' + l + '" aria-pressed="' + (l === lang) + '">' + {fr:'FR', en:'EN', zh:'中文'}[l] + '</button>'; }).join('');
+  b.querySelectorAll('button').forEach(function(x){ x.onclick = function(){ lang = x.getAttribute('data-l'); try{ localStorage.setItem('hyp-lang', lang); }catch(e){} var y = window.scrollY; render(); window.scrollTo(0, y); }; });
+}
 
 function num(p, label, unit, extra){ var v = get(p); return '<label class="f"><span>' + label + '</span><div class="inline"><input type="number" step="any" min="0" data-p="' + p + '" value="' + (v == null ? '' : v) + '"' + (extra || '') + '>' + (unit ? '<span>' + unit + '</span>' : '') + '</div></label>'; }
 function txt(p, label, ph){ return '<label class="f"><span>' + label + '</span><input type="text" data-p="' + p + '" value="' + esc(get(p)) + '" placeholder="' + esc(ph || '') + '"></label>'; }
@@ -109,66 +128,68 @@ function pair(p, label){ var v = get(p) || []; return '<div class="pair"><span>'
 function render(){
   var A = c.A;
   var h = '';
+  var H = t('heures', 'hours', '小时'), DAYS = t('jours', 'days', '天');
   /* ---------- A ---------- */
-  h += '<section><h2>第一步 · 纹身师资料</h2><p class="why">这部分不参与估价。用来展示给客人、在「帮我定价」里算建议价，以及以后做数据分析。</p>';
-  h += '<h3>身份和经验</h3>' + txt('A.name', '名字 / 品牌名') + num('A.years', '纹了几年', '年', ' style="max-width:120px"') + txt('A.instagram', 'Instagram 账号（选填，会在表单上展示）', '例如 hypnum.paris');
-  h += '<h3>工作方式</h3>' + radio('A.work', '工作方式', [['split','工作室分成'],['desk','租工位'],['own','自己的工作室'],['home','在家'],['guest','guest 或展会为主']]);
-  h += '<div data-show="split">' + num('A.cost.splitPct', '工作室拿走多少', '%') + '</div>';
-  h += '<div data-show="desk">' + radio('A.cost.deskUnit', '工位怎么付', [['day','按天'],['session','按次'],['month','按月']]) + '<div data-show="deskday">' + num('A.cost.deskPrice', '每天多少钱', '€ / 天') + num('A.cost.deskDays', '每个月大约租几天', '天') + '</div><div data-show="desksess">' + num('A.cost.deskPrice', '每次多少钱', '€ / 次') + '</div><div data-show="deskmonth">' + num('A.cost.deskPrice', '每月多少钱', '€ / 月') + num('A.daysPerMonth', '每个月在这个工位工作几天', '天') + '</div></div>';
-  h += '<div data-show="own">' + num('A.cost.monthly', '每月房租和杂费大约多少', '€ / 月') + '</div>';
-  h += txt('A.location', '地点（巴黎几区或城市）', '例如 Paris 11e');
-  h += '<div data-show="notmonth">' + num('A.daysPerMonth', '每个月大约能工作几天', '天') + '</div>' + '<p class="note" data-show="deskday">按天租工位时，默认等于每月租的天数。</p>';
-  h += num('A.maxSession', '单次最长做几个小时', '小时');
-  h += '<div class="f"><span>回复时间（显示在客人表单上）</span><div class="inline"><input type="number" min="1" data-p="A.reply.n" value="' + esc(A.reply.n) + '" style="width:90px"><select data-p="A.reply.unit" style="width:auto"><option value="h"' + (A.reply.unit === 'h' ? ' selected' : '') + '>小时</option><option value="d"' + (A.reply.unit === 'd' ? ' selected' : '') + '>天</option></select></div></div>';
-  h += '<h3>风格和接单规则</h3>' + multi('A.styles', '擅长的风格', D.STYLES.map(function(s){ return [s.k, s.l.zh + ' ' + s.l.fr]; }));
-  h += '<div data-show="styleother">' + txt('A.styleOther', '其他风格（自己填）') + '</div>';
-  h += multi('A.refuse', '不接的类型', D.REFUSE.map(function(r){ return [r.k, r.l.zh + (r.k === 'minors' ? '（法国 18 岁以下需要家长书面同意）' : '')]; })) + txt('A.refuseOther', '其他不接的（自己填，选填）');
-  h += multi('A.languages', '会说的语言', D.LANGS.map(function(x){ return [x.k, x.l]; }));
-  h += num('A.designFee.pct', '设计费：需要我画设计稿的图比普通纹身贵百分之多少（纹身稿和客人自己的图不加）', '%');
-  h += '<div class="f"><span>补色政策</span><div class="inline">免费补色 <input type="number" min="0" data-p="A.retouch.free" value="' + esc(A.retouch.free) + '" style="width:80px"> 次，在 <input type="number" min="0" data-p="A.retouch.months" value="' + esc(A.retouch.months) + '" style="width:80px"> 个月内</div></div>';
-  h += multi('A.payment', '支付方式', D.PAY.map(function(x){ return [x.k, x.l.zh]; })) + txt('A.payOther', '其他支付方式（选填）');
+  h += '<section><h2>' + t('Étape 1 · Votre profil', 'Step 1 · Your profile', '第一步 · 纹身师资料') + '</h2><p class="why">' + t('Cette partie n\'entre pas dans le calcul des estimations. Elle sert à vous présenter aux clients, à calculer un prix conseillé dans « Aidez-moi à fixer mes prix », et plus tard à analyser les données.', 'This part doesn\'t affect the estimates. It is shown to clients, used to work out a suggested price in "Help me set my prices", and later for data analysis.', '这部分不参与估价。用来展示给客人、在「帮我定价」里算建议价，以及以后做数据分析。') + '</p>';
+  h += '<h3>' + t('Identité et expérience', 'Identity and experience', '身份和经验') + '</h3>' + txt('A.name', t('Nom ou nom d\'artiste', 'Name or artist name', '名字 / 品牌名')) + num('A.years', t('Depuis combien d\'années vous tatouez', 'How many years you have been tattooing', '纹了几年'), t('ans', 'years', '年'), ' style="max-width:120px"') + txt('A.instagram', t('Compte Instagram (facultatif, affiché sur le formulaire)', 'Instagram account (optional, shown on the form)', 'Instagram 账号（选填，会在表单上展示）'), t('par exemple hypnum.paris', 'e.g. hypnum.paris', '例如 hypnum.paris'));
+  h += '<h3>' + t('Façon de travailler', 'How you work', '工作方式') + '</h3>' + radio('A.work', t('Façon de travailler', 'How you work', '工作方式'), [['split', t('Pourcentage au studio', 'Studio takes a share', '工作室分成')], ['desk', t('Location de poste', 'Desk rental', '租工位')], ['own', t('Mon propre studio', 'My own studio', '自己的工作室')], ['home', t('À domicile', 'At home', '在家')], ['guest', t('Surtout en guest ou en convention', 'Mostly guest spots or conventions', 'guest 或展会为主')]]);
+  h += '<div data-show="split">' + num('A.cost.splitPct', t('Part prise par le studio', 'Share the studio takes', '工作室拿走多少'), '%') + '</div>';
+  h += '<div data-show="desk">' + radio('A.cost.deskUnit', t('Comment vous payez le poste', 'How you pay for the desk', '工位怎么付'), [['day', t('À la journée', 'Per day', '按天')], ['session', t('À la séance', 'Per session', '按次')], ['month', t('Au mois', 'Per month', '按月')]]) + '<div data-show="deskday">' + num('A.cost.deskPrice', t('Prix par jour', 'Price per day', '每天多少钱'), t('€ / jour', '€ / day', '€ / 天')) + num('A.cost.deskDays', t('Jours loués par mois, environ', 'Days rented per month, roughly', '每个月大约租几天'), DAYS) + '</div><div data-show="desksess">' + num('A.cost.deskPrice', t('Prix par séance', 'Price per session', '每次多少钱'), t('€ / séance', '€ / session', '€ / 次')) + '</div><div data-show="deskmonth">' + num('A.cost.deskPrice', t('Prix par mois', 'Price per month', '每月多少钱'), t('€ / mois', '€ / month', '€ / 月')) + num('A.daysPerMonth', t('Jours de travail par mois à ce poste', 'Days you work at this desk per month', '每个月在这个工位工作几天'), DAYS) + '</div></div>';
+  h += '<div data-show="own">' + num('A.cost.monthly', t('Loyer et charges par mois, environ', 'Rent and running costs per month, roughly', '每月房租和杂费大约多少'), t('€ / mois', '€ / month', '€ / 月')) + '</div>';
+  h += txt('A.location', t('Lieu (arrondissement ou ville)', 'Location (arrondissement or city)', '地点（巴黎几区或城市）'), t('par exemple Paris 11e', 'e.g. Paris 11e', '例如 Paris 11e'));
+  h += '<div data-show="notmonth">' + num('A.daysPerMonth', t('Jours de travail possibles par mois, environ', 'Days you can work per month, roughly', '每个月大约能工作几天'), DAYS) + '</div>' + '<p class="note" data-show="deskday">' + t('Pour un poste loué à la journée, c\'est par défaut le nombre de jours loués.', 'For a desk rented by the day, this defaults to the days rented.', '按天租工位时，默认等于每月租的天数。') + '</p>';
+  h += num('A.maxSession', t('Durée maximale d\'une séance', 'Longest session you do', '单次最长做几个小时'), H);
+  h += '<div class="f"><span>' + t('Délai de réponse (affiché sur le formulaire client)', 'Reply time (shown on the client form)', '回复时间（显示在客人表单上）') + '</span><div class="inline"><input type="number" min="1" data-p="A.reply.n" value="' + esc(A.reply.n) + '" style="width:90px"><select data-p="A.reply.unit" style="width:auto"><option value="h"' + (A.reply.unit === 'h' ? ' selected' : '') + '>' + H + '</option><option value="d"' + (A.reply.unit === 'd' ? ' selected' : '') + '>' + DAYS + '</option></select></div></div>';
+  h += '<h3>' + t('Styles et règles', 'Styles and rules', '风格和接单规则') + '</h3>' + multi('A.styles', t('Vos styles', 'Your styles', '擅长的风格'), D.STYLES.map(function(s){ return [s.k, lang === 'zh' ? s.l.zh + ' ' + s.l.fr : lab(s)]; }));
+  h += '<div data-show="styleother">' + txt('A.styleOther', t('Autre style (à préciser)', 'Other style (describe it)', '其他风格（自己填）')) + '</div>';
+  h += multi('A.refuse', t('Ce que vous refusez', 'What you don\'t do', '不接的类型'), D.REFUSE.map(function(r){ return [r.k, lab(r) + (r.k === 'minors' ? t(' (en France, accord écrit des parents obligatoire avant 18 ans)', ' (in France, under 18 needs written parental consent)', '（法国 18 岁以下需要家长书面同意）') : '')]; })) + txt('A.refuseOther', t('Autre refus (facultatif)', 'Anything else you refuse (optional)', '其他不接的（自己填，选填）'));
+  h += multi('A.languages', t('Langues parlées', 'Languages you speak', '会说的语言'), D.LANGS.map(function(x){ return [x.k, x.l]; }));
+  h += num('A.designFee.pct', t('Supplément dessin : de combien de pourcents un tatouage dessiné sur mesure est plus cher qu\'un tatouage normal (les flashs et les dessins du client ne sont pas concernés)', 'Design surcharge: how many percent more a custom-drawn tattoo costs than a regular one (flashes and the client\'s own designs aren\'t affected)', '设计费：需要我画设计稿的图比普通纹身贵百分之多少（纹身稿和客人自己的图不加）'), '%');
+  h += '<div class="f"><span>' + t('Retouches', 'Touch-ups', '补色政策') + '</span><div class="inline">' + t('Retouches offertes :', 'Free touch-ups:', '免费补色') + ' <input type="number" min="0" data-p="A.retouch.free" value="' + esc(A.retouch.free) + '" style="width:80px"> ' + t('fois, dans les', 'within', '次，在') + ' <input type="number" min="0" data-p="A.retouch.months" value="' + esc(A.retouch.months) + '" style="width:80px"> ' + t('mois', 'months', '个月内') + '</div></div>';
+  h += multi('A.payment', t('Moyens de paiement', 'Payment methods', '支付方式'), D.PAY.map(function(x){ return [x.k, lab(x)]; })) + txt('A.payOther', t('Autre moyen de paiement (facultatif)', 'Other payment method (optional)', '其他支付方式（选填）'));
   h += '</section>';
 
   /* ---------- Mode ---------- */
-  h += '<section><h2>第二步 · 选择模式</h2>' + radio('mode', '你的价格', [[1,'我已经有自己的价格'],[2,'我是新人纹身师，帮我定价']]) + '</section>';
+  h += '<section><h2>' + t('Étape 2 · Choisir le mode', 'Step 2 · Choose a mode', '第二步 · 选择模式') + '</h2>' + radio('mode', t('Vos prix', 'Your prices', '你的价格'), [[1, t('J\'ai déjà mes prix', 'I already have my prices', '我已经有自己的价格')], [2, t('Je débute, aidez-moi à fixer mes prix', 'I\'m new, help me set my prices', '我是新人纹身师，帮我定价')]]) + '</section>';
 
   /* ---------- Mode 2 ---------- */
-  h += '<section data-show="m2"><h2>帮我定价</h2><p class="why">回答下面的问题，系统算出一份建议价格表。这些答案只用于计算，绝不展示给客人，也不会出现在任何公开数据里。</p>';
-  h += num('M2.otherFixed', '其他每月固定开支（保险、软件、广告等，不含租金或分成）', '€ / 月');
-  h += '<div class="f"><span>耗材大约多少钱</span><div class="inline"><input type="number" min="0" step="any" data-p="M2.supplies.amount" value="' + esc(c.M2.supplies.amount) + '" style="width:110px"> € <select data-p="M2.supplies.per" style="width:auto"><option value="month"' + (c.M2.supplies.per === 'month' ? ' selected' : '') + '>每月</option><option value="session"' + (c.M2.supplies.per === 'session' ? ' selected' : '') + '>每次</option></select></div></div>';
-  h += radio('M2.status.k', '你的经营身份（决定要交多少社保和税）', D.STATUS.map(function(s){ return [s.k, s.l]; }));
-  h += num('M2.status.pct', '实际比例（默认值，可以改成你自己算过的比例）', '%');
-  h += num('M2.targetNet', '想每月净赚多少', '€ / 月');
-  h += num('M2.actualHours', '现在每月实际大约纹多少个小时（实际接到的活）', '小时 / 月') + num('M2.actualClients', '或者：每月大约多少个客人', '个 / 月');
-  h += num('M2.maxHours', '每月最多能纹多少个小时（时间上限）', '小时 / 月');
-  h += num('M2.speed.s', '一个 5–10 cm 的图你一般要几个小时', '小时') + num('M2.speed.m', '一个 10–15 cm 的呢', '小时');
-  h += '<div class="bar"><button type="button" class="btn solid" id="doSuggest">算出建议价格</button></div><div id="rep"></div></section>';
+  var PM = t('€ / mois', '€ / month', '€ / 月'), HM = t('heures / mois', 'hours / month', '小时 / 月');
+  h += '<section data-show="m2"><h2>' + t('Aidez-moi à fixer mes prix', 'Help me set my prices', '帮我定价') + '</h2><p class="why">' + t('Répondez aux questions ci-dessous pour obtenir une grille de prix conseillée. Ces réponses servent uniquement au calcul : elles ne sont jamais montrées aux clients ni publiées.', 'Answer the questions below to get a suggested price list. These answers are only used for the calculation: they are never shown to clients or published.', '回答下面的问题，系统算出一份建议价格表。这些答案只用于计算，绝不展示给客人，也不会出现在任何公开数据里。') + '</p>';
+  h += num('M2.otherFixed', t('Autres frais fixes par mois (assurance, logiciels, publicité…, sans le loyer ni la part du studio)', 'Other fixed costs per month (insurance, software, ads…, excluding rent or studio share)', '其他每月固定开支（保险、软件、广告等，不含租金或分成）'), PM);
+  h += '<div class="f"><span>' + t('Consommables, environ', 'Supplies, roughly', '耗材大约多少钱') + '</span><div class="inline"><input type="number" min="0" step="any" data-p="M2.supplies.amount" value="' + esc(c.M2.supplies.amount) + '" style="width:110px"> € <select data-p="M2.supplies.per" style="width:auto"><option value="month"' + (c.M2.supplies.per === 'month' ? ' selected' : '') + '>' + t('par mois', 'per month', '每月') + '</option><option value="session"' + (c.M2.supplies.per === 'session' ? ' selected' : '') + '>' + t('par séance', 'per session', '每次') + '</option></select></div></div>';
+  h += radio('M2.status.k', t('Votre statut (détermine les cotisations et impôts)', 'Your business status (sets social charges and tax)', '你的经营身份（决定要交多少社保和税）'), D.STATUS.map(function(s){ return [s.k, lab(s)]; }));
+  h += num('M2.status.pct', t('Taux réel (valeur par défaut, modifiable si vous avez votre propre calcul)', 'Actual rate (default value, change it if you have your own figure)', '实际比例（默认值，可以改成你自己算过的比例）'), '%');
+  h += num('M2.targetNet', t('Combien vous voulez gagner net par mois', 'How much you want to earn net per month', '想每月净赚多少'), PM);
+  h += num('M2.actualHours', t('Combien d\'heures vous tatouez vraiment par mois en ce moment (clients réels)', 'How many hours you actually tattoo per month right now (real bookings)', '现在每月实际大约纹多少个小时（实际接到的活）'), HM) + num('M2.actualClients', t('Ou : combien de clients par mois, environ', 'Or: how many clients per month, roughly', '或者：每月大约多少个客人'), t('clients / mois', 'clients / month', '个 / 月'));
+  h += num('M2.maxHours', t('Nombre d\'heures maximum que vous pouvez tatouer par mois', 'Most hours you could tattoo per month', '每月最多能纹多少个小时（时间上限）'), HM);
+  h += num('M2.speed.s', t('Combien d\'heures il vous faut en général pour un tatouage de 5 à 10 cm', 'How many hours a 5 to 10 cm tattoo usually takes you', '一个 5–10 cm 的图你一般要几个小时'), H) + num('M2.speed.m', t('Et pour un tatouage de 10 à 15 cm', 'And a 10 to 15 cm one', '一个 10–15 cm 的呢'), H);
+  h += '<div class="bar"><button type="button" class="btn solid" id="doSuggest">' + t('Calculer les prix conseillés', 'Work out suggested prices', '算出建议价格') + '</button></div><div id="rep"></div></section>';
 
   /* ---------- B ---------- */
-  h += '<section data-show="b"><h2>第三步 · 价格规则</h2><p class="why">这部分决定客人看到的估价。模式二算出的建议会填在这里，你可以逐项修改。</p>';
-  h += '<div data-show="m1">' + radio('pricing', '尺寸价格怎么填', [['table','我知道每档的价格'],['hourly','我只知道自己的时薪'],['none','我完全不知道（转到帮我定价）']]) + '</div>';
-  h += num('B.hourly', '时薪（大面积按小时算，也用来从时薪算价格表）', '€ / 小时');
-  h += '<div data-show="hourlyhelp"><p class="note">填了时薪以后，点下面的按钮，系统用「时薪 × 每档默认小时数」算出价格表，你再改。默认小时数：小于 5 cm 0.5–1，5–10 cm 1–2，10–15 cm 2–3.5，15–25 cm 3.5–6。</p>' + num('M2.speed.s', '（选填）一个 5–10 cm 的图你一般要几个小时', '小时') + num('M2.speed.m', '（选填）一个 10–15 cm 的呢', '小时') + '<div class="bar"><button type="button" class="btn" id="fromHourly">用时薪算出价格表</button></div></div>';
-  h += num('B.min', '最低起价（任何纹身都不低于这个价）', '€');
-  h += '<h3>按尺寸的基础价格（€，最低 – 最高）</h3><p class="note">填最基础的情况：黑灰、纯线条、普通部位、不需要设计（现成的纹身稿或客人自己的图）。彩色、阴影或填色、难做部位、cover-up 和设计费，都会在这个价格上往上加。</p>' + D.SIZES.map(function(s){ return pair('B.sizes.' + s.k, s.l.zh); }).join('');
-  h += '<h3>大面积需要的小时数</h3>' + D.LARGE.map(function(s){ return pair('B.large.' + s.k, s.l.zh); }).join('') + '<div class="bar"><button type="button" class="btn" id="defLarge">我不确定，用默认值</button></div><p class="note">默认：半臂 10–15，满臂 20–30，整背 25–40 小时。填了速度会按你的速度自动调整。</p>';
-  h += num('B.colorPct', '彩色加价', '%');
-  h += '<h3>难做部位加价</h3><div class="inline" style="margin-bottom:12px">难做的部位 +<input type="number" step="any" data-p="B.tiers.d" value="' + esc(B.tiers.d) + '" style="width:80px">%（普通部位不加价）</div>';
-  h += '<p class="note">难做的部位贴着骨头、皮肤会随关节移动、恢复差容易掉色。把部位拖到另一格就能换档；手机上点一下部位也能移到另一格。</p>';
-  h += '<div class="tbox">' + [['n','普通（不加价）'],['d','难做']].map(function(x){ return '<div class="tcol" data-drop="' + x[0] + '"><div class="tcol-h">' + x[1] + '</div><div class="tchips">' + D.PLACES.filter(function(p){ return (B.placeTier[p.k] || p.t) === x[0]; }).map(function(p){ return '<button type="button" class="tchip" draggable="true" data-place="' + p.k + '">' + p.l.zh + '</button>'; }).join('') + '</div></div>'; }).join('') + '</div>';
-  h += '<div data-show="cover">' + num('B.coverPct', 'cover-up / 修改旧图加价', '%') + '</div>';
-  h += '<h3>技法加价</h3><div class="inline">纯线条 +<input type="number" step="any" data-p="B.tech.line" value="' + esc(B.tech.line) + '" style="width:70px">%　线条 + 填色或阴影 +<input type="number" step="any" data-p="B.tech.shade" value="' + esc(B.tech.shade) + '" style="width:70px">%　纯填色 +<input type="number" step="any" data-p="B.tech.fill" value="' + esc(B.tech.fill) + '" style="width:70px">%</div><p class="note">客人选「我不确定」时按「线条 + 填色或阴影」算。</p>';
-  h += '<h3>定金</h3>' + radio('B.deposit.type', '定金方式', [['pct','按百分比'],['fixed','固定金额']]);
-  h += '<div data-show="dpct">' + num('B.deposit.pct', '价格下限的百分比', '%') + num('B.deposit.min', '最低多少', '€') + '</div><div data-show="dfix">' + num('B.deposit.amount', '固定金额', '€') + '</div>';
-  h += radio('B.deposit.refundable', '能不能退', [[true,'可以退'],[false,'不退']]);
-  h += num('B.flashDiscount', 'flash 折扣（flash 和定制图用同一张尺寸价格表，但不收设计费）', '%');
+  h += '<section data-show="b"><h2>' + t('Étape 3 · Règles de prix', 'Step 3 · Pricing rules', '第三步 · 价格规则') + '</h2><p class="why">' + t('Cette partie détermine l\'estimation que voient les clients. Les prix conseillés du mode 2 sont remplis ici, et vous pouvez tout modifier.', 'This part sets the estimate clients see. Suggested prices from mode 2 are filled in here, and you can change any of them.', '这部分决定客人看到的估价。模式二算出的建议会填在这里，你可以逐项修改。') + '</p>';
+  h += '<div data-show="m1">' + radio('pricing', t('Comment remplir les prix par taille', 'How to fill in prices by size', '尺寸价格怎么填'), [['table', t('Je connais mes prix pour chaque taille', 'I know my price for each size', '我知道每档的价格')], ['hourly', t('Je connais seulement mon taux horaire', 'I only know my hourly rate', '我只知道自己的时薪')], ['none', t('Je ne sais pas du tout (passer à « Aidez-moi »)', 'I have no idea (go to "Help me")', '我完全不知道（转到帮我定价）')]]) + '</div>';
+  h += num('B.hourly', t('Taux horaire (pour les grandes pièces, et pour calculer la grille à partir du taux)', 'Hourly rate (used for large pieces and to build the price list from it)', '时薪（大面积按小时算，也用来从时薪算价格表）'), t('€ / heure', '€ / hour', '€ / 小时'));
+  h += '<div data-show="hourlyhelp"><p class="note">' + t('Une fois le taux horaire rempli, cliquez sur le bouton ci-dessous : la grille est calculée avec « taux × heures par défaut de chaque taille », puis vous l\'ajustez. Heures par défaut : moins de 5 cm 0,5 à 1, 5 à 10 cm 1 à 2, 10 à 15 cm 2 à 3,5, 15 à 25 cm 3,5 à 6.', 'Once your hourly rate is filled in, press the button below: the list is worked out as "rate × default hours per size", then you adjust it. Default hours: under 5 cm 0.5 to 1, 5 to 10 cm 1 to 2, 10 to 15 cm 2 to 3.5, 15 to 25 cm 3.5 to 6.', '填了时薪以后，点下面的按钮，系统用「时薪 × 每档默认小时数」算出价格表，你再改。默认小时数：小于 5 cm 0.5–1，5–10 cm 1–2，10–15 cm 2–3.5，15–25 cm 3.5–6。') + '</p>' + num('M2.speed.s', t('(Facultatif) Heures pour un tatouage de 5 à 10 cm', '(Optional) Hours for a 5 to 10 cm tattoo', '（选填）一个 5–10 cm 的图你一般要几个小时'), H) + num('M2.speed.m', t('(Facultatif) Et pour 10 à 15 cm', '(Optional) And for 10 to 15 cm', '（选填）一个 10–15 cm 的呢'), H) + '<div class="bar"><button type="button" class="btn" id="fromHourly">' + t('Calculer la grille avec mon taux', 'Build the list from my rate', '用时薪算出价格表') + '</button></div></div>';
+  h += num('B.min', t('Prix minimum (aucun tatouage en dessous)', 'Minimum price (no tattoo below this)', '最低起价（任何纹身都不低于这个价）'), '€');
+  h += '<h3>' + t('Prix de base par taille (€, minimum à maximum)', 'Base price by size (€, low to high)', '按尺寸的基础价格（€，最低 – 最高）') + '</h3><p class="note">' + t('Indiquez le cas le plus simple : noir et gris, trait seul, emplacement normal, sans dessin à créer (flash existant ou dessin du client). La couleur, l\'ombrage ou le remplissage, les emplacements difficiles, le cover-up et le supplément dessin s\'ajoutent à ce prix.', 'Fill in the simplest case: black and grey, lines only, normal placement, no design to draw (an existing flash or the client\'s own design). Colour, shading or fill, difficult placements, cover-ups and the design surcharge are all added on top.', '填最基础的情况：黑灰、纯线条、普通部位、不需要设计（现成的纹身稿或客人自己的图）。彩色、阴影或填色、难做部位、cover-up 和设计费，都会在这个价格上往上加。') + '</p>' + D.SIZES.map(function(s){ return pair('B.sizes.' + s.k, lab(s)); }).join('');
+  h += '<h3>' + t('Heures nécessaires pour les grandes pièces', 'Hours needed for large pieces', '大面积需要的小时数') + '</h3>' + D.LARGE.map(function(s){ return pair('B.large.' + s.k, lab(s)); }).join('') + '<div class="bar"><button type="button" class="btn" id="defLarge">' + t('Je ne sais pas, utiliser les valeurs par défaut', 'Not sure, use the defaults', '我不确定，用默认值') + '</button></div><p class="note">' + t('Par défaut : demi-manche 10 à 15, manche complète 20 à 30, dos complet 25 à 40 heures. Si vous avez indiqué votre vitesse, ces valeurs s\'y adaptent.', 'Defaults: half sleeve 10 to 15, full sleeve 20 to 30, full back 25 to 40 hours. If you gave your speed, they adjust to it.', '默认：半臂 10–15，满臂 20–30，整背 25–40 小时。填了速度会按你的速度自动调整。') + '</p>';
+  h += num('B.colorPct', t('Supplément couleur', 'Colour surcharge', '彩色加价'), '%');
+  h += '<h3>' + t('Supplément emplacements difficiles', 'Difficult placement surcharge', '难做部位加价') + '</h3><div class="inline" style="margin-bottom:12px">' + t('Emplacements difficiles', 'Difficult placements', '难做的部位') + ' +<input type="number" step="any" data-p="B.tiers.d" value="' + esc(B.tiers.d) + '" style="width:80px">%' + t(' (pas de supplément pour les emplacements normaux)', ' (no surcharge for normal placements)', '（普通部位不加价）') + '</div>';
+  h += '<p class="note">' + t('Les emplacements difficiles sont près de l\'os, avec une peau qui bouge avec l\'articulation ou qui cicatrise mal. Faites glisser un emplacement vers l\'autre case pour le changer ; sur téléphone, touchez-le pour le déplacer.', 'Difficult placements sit close to bone, have skin that moves with a joint, or heal poorly. Drag a placement to the other box to switch it; on a phone, tap it to move it.', '难做的部位贴着骨头、皮肤会随关节移动、恢复差容易掉色。把部位拖到另一格就能换档；手机上点一下部位也能移到另一格。') + '</p>';
+  h += '<div class="tbox">' + [['n', t('Normal (sans supplément)', 'Normal (no surcharge)', '普通（不加价）')], ['d', t('Difficile', 'Difficult', '难做')]].map(function(x){ return '<div class="tcol" data-drop="' + x[0] + '"><div class="tcol-h">' + x[1] + '</div><div class="tchips">' + D.PLACES.filter(function(p){ return (B.placeTier[p.k] || p.t) === x[0]; }).map(function(p){ return '<button type="button" class="tchip" draggable="true" data-place="' + p.k + '">' + lab(p) + '</button>'; }).join('') + '</div></div>'; }).join('') + '</div>';
+  h += '<div data-show="cover">' + num('B.coverPct', t('Supplément cover-up ou retouche d\'un ancien tatouage', 'Cover-up or rework surcharge', 'cover-up / 修改旧图加价'), '%') + '</div>';
+  h += '<h3>' + t('Supplément technique', 'Technique surcharge', '技法加价') + '</h3><div class="inline">' + t('Trait seul', 'Lines only', '纯线条') + ' +<input type="number" step="any" data-p="B.tech.line" value="' + esc(B.tech.line) + '" style="width:70px">%　' + t('Trait avec remplissage ou ombrage', 'Lines with fill or shading', '线条 + 填色或阴影') + ' +<input type="number" step="any" data-p="B.tech.shade" value="' + esc(B.tech.shade) + '" style="width:70px">%　' + t('Remplissage seul', 'Fill only', '纯填色') + ' +<input type="number" step="any" data-p="B.tech.fill" value="' + esc(B.tech.fill) + '" style="width:70px">%</div><p class="note">' + t('Quand le client choisit « Je ne sais pas », le calcul utilise « Trait avec remplissage ou ombrage ».', 'When the client picks "Not sure", the estimate uses "Lines with fill or shading".', '客人选「我不确定」时按「线条 + 填色或阴影」算。') + '</p>';
+  h += '<h3>' + t('Acompte', 'Deposit', '定金') + '</h3>' + radio('B.deposit.type', t('Type d\'acompte', 'Deposit type', '定金方式'), [['pct', t('En pourcentage', 'A percentage', '按百分比')], ['fixed', t('Montant fixe', 'A fixed amount', '固定金额')]]);
+  h += '<div data-show="dpct">' + num('B.deposit.pct', t('Pourcentage du prix bas de l\'estimation', 'Percentage of the low estimate', '价格下限的百分比'), '%') + num('B.deposit.min', t('Minimum', 'Minimum', '最低多少'), '€') + '</div><div data-show="dfix">' + num('B.deposit.amount', t('Montant fixe', 'Fixed amount', '固定金额'), '€') + '</div>';
+  h += radio('B.deposit.refundable', t('Remboursable ?', 'Refundable?', '能不能退'), [[true, t('Remboursable', 'Refundable', '可以退')], [false, t('Non remboursable', 'Non-refundable', '不退')]]);
+  h += num('B.flashDiscount', t('Remise flash (les flashs utilisent la même grille que le sur-mesure, sans supplément dessin)', 'Flash discount (flashes use the same price list as custom work, without the design surcharge)', 'flash 折扣（flash 和定制图用同一张尺寸价格表，但不收设计费）'), '%');
   h += '</section>';
 
   /* ---------- Save ---------- */
-  h += '<section><h2>保存</h2><div id="status"></div><div class="bar"><a class="btn" href="/devis/?preview=1" target="_blank" rel="noopener">预览客人表单</a><button type="button" class="btn solid" id="copy">复制设置</button></div>' +
-    '<p class="note">「预览」用的是这台设备上的草稿。设置完成后点「复制设置」，把内容发给我，我放进网站，表单就正式开放。</p><textarea class="out hide" readonly></textarea></section>';
+  h += '<section><h2>' + t('Enregistrer', 'Save', '保存') + '</h2><div id="status"></div><div class="bar"><a class="btn" href="/devis/?preview=1" target="_blank" rel="noopener">' + t('Aperçu du formulaire client', 'Preview the client form', '预览客人表单') + '</a><button type="button" class="btn solid" id="copy">' + t('Copier les réglages', 'Copy settings', '复制设置') + '</button></div>' +
+    '<p class="note">' + t('L\'aperçu utilise le brouillon enregistré sur cet appareil. Une fois les réglages terminés, cliquez sur « Copier les réglages » et envoyez-moi le contenu : je le mets sur le site et le formulaire ouvre.', 'The preview uses the draft saved on this device. When you\'re done, press "Copy settings" and send me the result: I\'ll put it on the site and the form opens.', '「预览」用的是这台设备上的草稿。设置完成后点「复制设置」，把内容发给我，我放进网站，表单就正式开放。') + '</p><textarea class="out hide" readonly></textarea></section>';
   app.innerHTML = h;
-  bind(); vis(); status();
+  header(); bind(); vis(); status();
   if(rep) showRep();
 }
 
@@ -214,7 +235,7 @@ function bind(){
   });
   var s = document.getElementById('doSuggest'); if(s) s.onclick = doSuggest;
   document.getElementById('fromHourly').onclick = function(){
-    if(!(c.B.hourly > 0)){ alert('先填时薪。'); return; }
+    if(!(c.B.hourly > 0)){ alert(t('Indiquez d\'abord votre taux horaire.', 'Fill in your hourly rate first.', '先填时薪。')); return; }
     var g = HQ.fromHourly(c.B.hourly, c.M2.speed); c.B.sizes = g.sizes; c.B.large = g.large;
     if(!c.B.min) c.B.min = HQ.r10(c.B.hourly);
     persist(); render();
@@ -244,19 +265,19 @@ function clean(){
 function persist(){ try{ localStorage.setItem('hq-draft', JSON.stringify(clean())); }catch(e){} status(); }
 function status(){
   var el = document.getElementById('status'); if(!el) return;
-  var m = HQ.validate(clean());
-  el.innerHTML = m.length ? '<div class="miss">还缺 ' + m.length + ' 项：' + esc(m.join('；')) + '</div>' : '<div class="okk">设置完整，表单可以使用。</div>';
+  var m = HQ.validate(clean(), lang);
+  el.innerHTML = m.length ? '<div class="miss">' + t('Il manque ' + m.length + ' élément' + (m.length > 1 ? 's' : '') + ' : ', m.length + ' item' + (m.length > 1 ? 's' : '') + ' missing: ', '还缺 ' + m.length + ' 项：') + esc(m.join(lang === 'zh' ? '；' : ' ; ')) + '</div>' : '<div class="okk">' + t('Réglages complets, le formulaire peut être utilisé.', 'Settings complete, the form is ready to use.', '设置完整，表单可以使用。') + '</div>';
 }
 
 function doSuggest(){
   var A = c.A, M = c.M2, need = [];
-  if(!(A.years >= 0) || A.years === null) need.push('纹了几年');
-  if(!A.work) need.push('工作方式');
-  if(!A.styles.length) need.push('擅长的风格');
-  if(!(M.targetNet > 0)) need.push('想每月净赚多少');
-  if(!(M.actualHours > 0) && !(M.actualClients > 0)) need.push('每月实际纹多少小时或客人');
-  if(!(M.speed.s > 0) || !(M.speed.m > 0)) need.push('两个速度问题');
-  if(need.length){ document.getElementById('rep').innerHTML = '<div class="miss">先填：' + need.join('、') + '</div>'; return; }
+  if(!(A.years >= 0) || A.years === null) need.push(t('années d\'expérience', 'years of experience', '纹了几年'));
+  if(!A.work) need.push(t('façon de travailler', 'how you work', '工作方式'));
+  if(!A.styles.length) need.push(t('vos styles', 'your styles', '擅长的风格'));
+  if(!(M.targetNet > 0)) need.push(t('revenu net visé', 'target net income', '想每月净赚多少'));
+  if(!(M.actualHours > 0) && !(M.actualClients > 0)) need.push(t('heures ou clients par mois', 'hours or clients per month', '每月实际纹多少小时或客人'));
+  if(!(M.speed.s > 0) || !(M.speed.m > 0)) need.push(t('les deux questions de vitesse', 'the two speed questions', '两个速度问题'));
+  if(need.length){ document.getElementById('rep').innerHTML = '<div class="miss">' + t('À remplir d\'abord : ', 'Fill in first: ', '先填：') + need.join(sep()) + '</div>'; return; }
   var r = HQ.suggest(A, M), keep = c.B;
   r.B.placeTier = keep.placeTier || {};
   c.B = r.B; rep = r.rep; persist(); render();
@@ -264,16 +285,24 @@ function doSuggest(){
 }
 function showRep(){
   var r = rep, A = c.A, el = document.getElementById('rep'); if(!el) return;
-  var sty = A.styles.filter(function(k){ return k !== 'other'; }).map(function(k){ return D.STYLES.filter(function(x){ return x.k === k; })[0].l.zh; }).join('、');
-  var h = '<div class="rep"><p>巴黎纹了 ' + ({'0-1':'0–1 年','1-3':'1–3 年','3-5':'3–5 年','5+':'5 年以上'})[r.band.k] + '、做' + sty + '的纹身师，常见价格是 <b>' + r.market[0] + '–' + r.market[1] + ' €/小时</b>' + (r.junior ? '，经验还不长，建议先取区间的下半部分' : '') + '。建议你定 <b>' + r.rate + ' €/小时</b>。</p>';
-  h += '<p>按这个价格，你每月要纹 <b>' + r.needBE + ' 小时</b>才保本，<b>' + r.needT + ' 小时</b>才能赚到目标收入；你现在每月大约纹 <b>' + r.hours + ' 小时</b>。</p>';
-  if(r.verdict === 'a') h += '<p class="a">价格合适，甚至可以考虑涨价。</p>';
-  else if(r.verdict === 'b') h += '<p class="b">不亏，但离目标还差每月 ' + r.gapT + ' 小时。重点是多接客，不是改价格。</p>';
-  else h += '<p class="c">现在在亏钱，每月还差 ' + r.gapBE + ' 小时才保本。可以考虑降低固定成本（例如改成按次租工位、少租几天），或者先多花时间找客人。</p>';
-  if(r.overMax) h += '<p class="c">按现在的价格和成本，就算每月排满 ' + r.maxHours + ' 小时也达不到目标收入。可以考虑往市场区间上限（' + r.rateTop + ' €/小时，需要每月 ' + r.needTatTop + ' 小时）定价，或者调低目标。</p>';
-  if(r.rateIfAE) h += '<p>如果以后按 auto-entrepreneur 申报（约 21.5%），要拿到同样的收入，时薪要定到约 <b>' + r.rateIfAE + ' €/小时</b>。</p>';
-  h += '<p class="note">计算用到的每月成本：租金 ' + r.rent + ' €，耗材 ' + r.supplies + ' €，其他固定开支 ' + r.other + ' €' + (r.split ? '，工作室分成 ' + Math.round(r.split * 100) + '%' : '') + '，社保和税 ' + Math.round(r.soc * 100) + '%。保本营业额 ' + r.breakEven + ' €/月，目标营业额 ' + r.target + ' €/月。</p>';
-  h += '<p class="note">这是给你的建议，最终价格由你决定。下面的价格表已经按建议填好，可以逐项修改。</p></div>';
+  var sty = A.styles.filter(function(k){ return k !== 'other'; }).map(function(k){ return lab(D.STYLES.filter(function(x){ return x.k === k; })[0]); }).join(sep());
+  var yrs = ({'0-1':t('0 à 1 an', '0 to 1 year', '0–1 年'), '1-3':t('1 à 3 ans', '1 to 3 years', '1–3 年'), '3-5':t('3 à 5 ans', '3 to 5 years', '3–5 年'), '5+':t('plus de 5 ans', 'over 5 years', '5 年以上')})[r.band.k];
+  var u = t(' €/h', ' €/h', ' €/小时'), mk = '<b>' + r.market[0] + '–' + r.market[1] + u + '</b>', rt = '<b>' + r.rate + u + '</b>';
+  var h = '<div class="rep"><p>' + t('À Paris, un tatoueur avec ' + yrs + ' d\'expérience en ' + sty + ' facture en général ' + mk + (r.junior ? ' ; avec peu d\'expérience, mieux vaut viser la moitié basse' : '') + '. Prix conseillé : ' + rt + '.',
+    'In Paris, an artist with ' + yrs + ' of experience in ' + sty + ' usually charges ' + mk + (r.junior ? '; with little experience, aim for the lower half' : '') + '. Suggested rate: ' + rt + '.',
+    '巴黎纹了 ' + yrs + '、做' + sty + '的纹身师，常见价格是 ' + mk + (r.junior ? '，经验还不长，建议先取区间的下半部分' : '') + '。建议你定 ' + rt + '。') + '</p>';
+  h += '<p>' + t('À ce prix, il faut tatouer <b>' + r.needBE + ' h</b> par mois pour couvrir vos frais et <b>' + r.needT + ' h</b> pour atteindre votre revenu visé ; vous tatouez actuellement environ <b>' + r.hours + ' h</b> par mois.',
+    'At this rate you need <b>' + r.needBE + ' h</b> a month to break even and <b>' + r.needT + ' h</b> to reach your target income; you currently tattoo about <b>' + r.hours + ' h</b> a month.',
+    '按这个价格，你每月要纹 <b>' + r.needBE + ' 小时</b>才保本，<b>' + r.needT + ' 小时</b>才能赚到目标收入；你现在每月大约纹 <b>' + r.hours + ' 小时</b>。') + '</p>';
+  if(r.verdict === 'a') h += '<p class="a">' + t('Le prix est adapté, vous pourriez même l\'augmenter.', 'The price works, and you could even raise it.', '价格合适，甚至可以考虑涨价。') + '</p>';
+  else if(r.verdict === 'b') h += '<p class="b">' + t('Vous ne perdez pas d\'argent, mais il manque ' + r.gapT + ' h par mois pour atteindre l\'objectif. L\'enjeu est d\'avoir plus de clients, pas de changer de prix.', 'You aren\'t losing money, but you\'re ' + r.gapT + ' h a month short of your target. The key is more clients, not a different price.', '不亏，但离目标还差每月 ' + r.gapT + ' 小时。重点是多接客，不是改价格。') + '</p>';
+  else h += '<p class="c">' + t('Vous perdez de l\'argent pour l\'instant : il manque ' + r.gapBE + ' h par mois pour couvrir vos frais. Vous pouvez réduire vos frais fixes (louer le poste à la séance, louer moins de jours) ou consacrer d\'abord plus de temps à trouver des clients.', 'You\'re losing money for now: you\'re ' + r.gapBE + ' h a month short of breaking even. You could cut fixed costs (rent the desk per session, rent fewer days) or spend more time finding clients first.', '现在在亏钱，每月还差 ' + r.gapBE + ' 小时才保本。可以考虑降低固定成本（例如改成按次租工位、少租几天），或者先多花时间找客人。') + '</p>';
+  if(r.overMax) h += '<p class="c">' + t('Avec ces prix et ces frais, même ' + r.maxHours + ' h par mois ne suffisent pas pour atteindre votre objectif. Vous pouvez viser le haut de la fourchette (' + r.rateTop + ' €/h, soit ' + r.needTatTop + ' h par mois) ou baisser l\'objectif.', 'With these prices and costs, even a full ' + r.maxHours + ' h a month won\'t reach your target. You could price at the top of the range (' + r.rateTop + ' €/h, needing ' + r.needTatTop + ' h a month) or lower the target.', '按现在的价格和成本，就算每月排满 ' + r.maxHours + ' 小时也达不到目标收入。可以考虑往市场区间上限（' + r.rateTop + ' €/小时，需要每月 ' + r.needTatTop + ' 小时）定价，或者调低目标。') + '</p>';
+  if(r.rateIfAE) h += '<p>' + t('Si vous déclarez plus tard en auto-entrepreneur (environ 21,5 %), il faudra un taux d\'environ <b>' + r.rateIfAE + ' €/h</b> pour garder le même revenu.', 'If you later register as auto-entrepreneur (about 21.5%), you\'d need about <b>' + r.rateIfAE + ' €/h</b> to keep the same income.', '如果以后按 auto-entrepreneur 申报（约 21.5%），要拿到同样的收入，时薪要定到约 <b>' + r.rateIfAE + ' €/小时</b>。') + '</p>';
+  h += '<p class="note">' + t('Frais mensuels utilisés : loyer ' + r.rent + ' €, consommables ' + r.supplies + ' €, autres frais fixes ' + r.other + ' €' + (r.split ? ', part du studio ' + Math.round(r.split * 100) + ' %' : '') + ', cotisations et impôts ' + Math.round(r.soc * 100) + ' %. Chiffre d\'affaires pour couvrir les frais : ' + r.breakEven + ' €/mois ; pour l\'objectif : ' + r.target + ' €/mois.',
+    'Monthly costs used: rent ' + r.rent + ' €, supplies ' + r.supplies + ' €, other fixed costs ' + r.other + ' €' + (r.split ? ', studio share ' + Math.round(r.split * 100) + '%' : '') + ', social charges and tax ' + Math.round(r.soc * 100) + '%. Break-even turnover ' + r.breakEven + ' €/month; target turnover ' + r.target + ' €/month.',
+    '计算用到的每月成本：租金 ' + r.rent + ' €，耗材 ' + r.supplies + ' €，其他固定开支 ' + r.other + ' €' + (r.split ? '，工作室分成 ' + Math.round(r.split * 100) + '%' : '') + '，社保和税 ' + Math.round(r.soc * 100) + '%。保本营业额 ' + r.breakEven + ' €/月，目标营业额 ' + r.target + ' €/月。') + '</p>';
+  h += '<p class="note">' + t('C\'est un conseil : le prix final vous appartient. La grille ci-dessous est déjà remplie avec ces suggestions, et vous pouvez tout modifier.', 'This is a suggestion; the final price is your call. The list below is already filled in with it, and you can change anything.', '这是给你的建议，最终价格由你决定。下面的价格表已经按建议填好，可以逐项修改。') + '</p></div>';
   el.innerHTML = h;
 }
 
@@ -281,7 +310,7 @@ function copy(){
   var o = clean(), m = HQ.validate(o), ta = app.querySelector('textarea.out');
   var s = JSON.stringify(o, null, 2);
   ta.value = s; ta.classList.remove('hide');
-  var done = function(){ document.getElementById('copy').textContent = m.length ? '已复制（设置还没填完）' : '已复制'; };
+  var done = function(){ document.getElementById('copy').textContent = m.length ? t('Copié (réglages incomplets)', 'Copied (settings not finished)', '已复制（设置还没填完）') : t('Copié', 'Copied', '已复制'); };
   try{ navigator.clipboard.writeText(s).then(done, function(){ ta.select(); done(); }); }catch(e){ ta.select(); done(); }
 }
 render();
