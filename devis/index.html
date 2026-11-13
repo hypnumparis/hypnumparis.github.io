@@ -94,7 +94,7 @@ if(!cfg) cfg = (window.HQ_ARTISTS || {})[window.HQ_ACTIVE];
 var missing = HQ.validate(cfg);
 
 var T = {
-fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'affiche tout de suite. Envoyez ensuite votre demande : je vous réponds sous {r} pour confirmer le prix et la date, et le rendez-vous est réservé dès le versement de l\'acompte.',
+fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'affiche tout de suite. Si vous êtes décidé·e, envoyez une demande de rendez-vous ; sinon, posez-moi simplement vos questions. Je réponds sous {r}.',
  type:'Type de projet', types:{custom:'Un dessin sur mesure', flash:'Un de mes flashs', own:'Votre propre dessin', cover:'Cover-up ou retouche d\'un ancien tatouage'},
  flashHint:'Ajoutez une capture du flash dans les images de référence.', ownHint:'Ajoutez votre dessin dans les images de référence.',
  tech:'Technique', size:'Taille', place:'Emplacement', pick:'Choisir…', color:'Couleur', colors:{bw:'Noir et gris', col:'Couleur'},
@@ -109,6 +109,10 @@ fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'af
  fee:'Frais de dessin', feeDed:'déduits du prix final', feeAdd:'en plus du tatouage', incl:'Frais de dessin inclus : {a}', depD:'déduit du prix total', depX:'en plus du prix total',
  hours:'Environ {a} à {b} heures, en {c} séances', note:'Estimation indicative : le prix final dépend du dessin et du temps réel.',
  refused:'Je ne réalise pas ce type de projet : {x}. Merci de votre compréhension.',
+ next:'Et ensuite ?', nextBook:'Je veux réserver', nextAsk:'J\'ai d\'abord des questions', datesReq:'Vos dates possibles',
+ sendBook:'Envoyer ma demande de rendez-vous', sendAsk:'Envoyer ma question',
+ okBook:'Merci, votre demande de rendez-vous est envoyée. Je vous réponds sous {r} pour confirmer le prix et la date, avec le lien pour verser l\'acompte. Le rendez-vous est réservé dès que l\'acompte est versé.',
+ okAsk:'Merci, votre question est envoyée. Je vous réponds sous {r}.',
  send:'Envoyer ma demande', sending:'Envoi…', ok:'Merci, votre demande est bien envoyée. Je vous réponds sous {r}.',
  err:'L\'envoi n\'a pas fonctionné. Réessayez, ou écrivez-moi à contact@hypnum.fr.', demo:'Mode démo : rien n\'a été envoyé.',
  need:'Il manque : {x}.', closed:'Ce formulaire n\'est pas encore ouvert. Pour une demande, écrivez-moi à <a href="mailto:contact@hypnum.fr">contact@hypnum.fr</a>.',
@@ -116,7 +120,7 @@ fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'af
  styles:'Styles', where:'Lieu', langs:'Langues', retouch:'Retouches', rt:'{n} retouche offerte dans les {m} mois', rtn:'{n} retouches offertes dans les {m} mois', rt0:'Pas de retouche offerte',
  reply:'Réponse sous', h:'{n} h', d:'{n} jours', d1:'{n} jour', pay:'Paiement', refuse:'Ne réalise pas', fees:'Frais de dessin',
  feeP:'{a}, déduits du prix final', feeA:'{a}, en plus du tatouage', feeE:'{a} €', feePc:'{p} % du prix du tatouage', feeN:'Aucun'},
-en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate right away. Then send your request: I\'ll reply within {r} to confirm the price and date, and your appointment is booked once the deposit is paid.',
+en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate right away. If you\'ve decided, send a booking request; if not, just ask me your questions. I reply within {r}.',
  type:'Project type', types:{custom:'A custom design', flash:'One of my flashes', own:'Your own design', cover:'Cover-up or rework of an old tattoo'},
  flashHint:'Add a screenshot of the flash in the reference images.', ownHint:'Add your design in the reference images.',
  tech:'Technique', size:'Size', place:'Placement', pick:'Choose…', color:'Colour', colors:{bw:'Black and grey', col:'Colour'},
@@ -131,6 +135,10 @@ en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate
  fee:'Design fee', feeDed:'deducted from the final price', feeAdd:'on top of the tattoo', incl:'Includes a design fee of {a}', depD:'deducted from the total', depX:'on top of the total',
  hours:'About {a} to {b} hours, over {c} sessions', note:'Rough estimate: the final price depends on the design and the actual time.',
  refused:'I don\'t do this kind of project: {x}. Thank you for understanding.',
+ next:'What next?', nextBook:'I want to book', nextAsk:'I have questions first', datesReq:'Dates that suit you',
+ sendBook:'Send my booking request', sendAsk:'Send my question',
+ okBook:'Thank you, your booking request has been sent. I\'ll reply within {r} to confirm the price and date, with a link to pay the deposit. Your appointment is booked once the deposit is paid.',
+ okAsk:'Thank you, your question has been sent. I\'ll reply within {r}.',
  send:'Send my request', sending:'Sending…', ok:'Thank you, your request has been sent. I\'ll reply within {r}.',
  err:'Sending failed. Please try again, or write to contact@hypnum.fr.', demo:'Demo mode: nothing was sent.',
  need:'Missing: {x}.', closed:'This form is not open yet. To ask for a quote, write to <a href="mailto:contact@hypnum.fr">contact@hypnum.fr</a>.',
@@ -138,7 +146,7 @@ en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate
  styles:'Styles', where:'Location', langs:'Languages', retouch:'Touch-ups', rt:'{n} free touch-up within {m} months', rtn:'{n} free touch-ups within {m} months', rt0:'No free touch-up',
  reply:'Reply within', h:'{n} h', d:'{n} days', d1:'{n} day', pay:'Payment', refuse:'Does not do', fees:'Design fee',
  feeP:'{a}, deducted from the final price', feeA:'{a}, on top of the tattoo', feeE:'€{a}', feePc:'{p}% of the tattoo price', feeN:'None'},
-zh:{title:'纹身询价', sub:'描述你的想法，马上就能看到预估价格。然后提交询价，我会在{r}内回复你，确认最终价格和时间；付了定金，预约就定下来了。',
+zh:{title:'纹身询价', sub:'描述你的想法，马上就能看到预估价格。想好了就直接发预约请求；还没想好，也可以先问问。我会在 {r} 内回复。',
  type:'类型', types:{custom:'定制图', flash:'我的纹身稿', own:'你自己的图', cover:'cover-up 或修改旧图'},
  flashHint:'请在参考图里上传那张纹身稿的截图。', ownHint:'请在参考图里上传你的图。',
  tech:'技法', size:'大小', place:'部位', pick:'请选择', color:'颜色', colors:{bw:'黑灰', col:'彩色'},
@@ -153,7 +161,11 @@ zh:{title:'纹身询价', sub:'描述你的想法，马上就能看到预估价�
  fee:'设计费', feeDed:'从总价里扣', feeAdd:'另外收取', incl:'含设计费 {a}', depD:'从总价里扣', depX:'不抵扣总价，另外收',
  hours:'约 {a}–{b} 小时，分 {c} 次完成', note:'仅为大概估价，最终价格取决于图案和实际时长。',
  refused:'这类项目我不接：{x}。谢谢理解。',
- send:'发送询价', sending:'发送中…', ok:'谢谢！询价已发送，我会在{r}内回复。',
+ next:'接下来', nextBook:'我想直接预约', nextAsk:'我还想先问问', datesReq:'你方便的日期',
+ sendBook:'发送预约请求', sendAsk:'发送问题',
+ okBook:'谢谢！预约请求已发送。我会在 {r} 内回复，确认最终价格和日期，并发给你定金付款链接。付了定金，预约就定下来了。',
+ okAsk:'谢谢！问题已发送，我会在 {r} 内回复。',
+ send:'发送询价', sending:'发送中…', ok:'谢谢！询价已发送，我会在 {r} 内回复。',
  err:'发送失败，请再试一次，或写信到 contact@hypnum.fr。', demo:'演示模式：没有真的发送。',
  need:'还缺：{x}。', closed:'询价表还没有开放。如需询价，请写信到 <a href="mailto:contact@hypnum.fr">contact@hypnum.fr</a>。',
  since:'纹身 {y}', y0:'不到一年', y1:'{n} 年', yn:'{n} 年', yp1:'一年多', ypn:'{n} 年多',
@@ -233,10 +245,11 @@ function render(){
    '<fieldset id="firstQ" hidden><legend>' + t.first + '</legend><div class="chips">' + chip('first', 'yes', t.yes) + chip('first', 'no', t.no) + '</div></fieldset>' +
    '<fieldset><legend>' + t.color + '</legend><div class="chips">' + chip('color', 'bw', t.colors.bw) + chip('color', 'col', t.colors.col) + '</div></fieldset>' +
    '<div class="est" aria-live="polite" hidden></div>' +
+   '<fieldset><legend>' + t.next + '</legend><div class="chips">' + chip('intent', 'book', t.nextBook) + chip('intent', 'ask', t.nextAsk) + '</div></fieldset>' +
+   '<div id="datesQ" hidden><label class="lb" for="q-dates">' + t.datesReq + ' <span class="req">*</span></label><input id="q-dates" type="text" name="dates" placeholder="' + esc(t.datesPh) + '" value="' + esc(st.dates) + '"></div>' +
    '<div><label class="lb" for="q-idea">' + t.idea + '</label><textarea id="q-idea" name="idea" placeholder="' + esc(t.ideaPh) + '">' + esc(st.idea) + '</textarea></div>' +
    '<div><label class="lb" for="q-refs">' + t.ref + '</label><input id="q-refs" type="file" name="refs" accept="image/*" multiple><p class="hint">' + t.refHint + '</p><div class="thumbs"></div></div>' +
-   '<div class="row"><div><label class="lb" for="q-budget">' + t.budget + '</label><input id="q-budget" type="number" min="0" inputmode="numeric" name="budget" value="' + esc(st.budget) + '"></div>' +
-   '<div><label class="lb" for="q-dates">' + t.dates + '</label><input id="q-dates" type="text" name="dates" placeholder="' + esc(t.datesPh) + '" value="' + esc(st.dates) + '"></div></div>' +
+   '<div><label class="lb" for="q-budget">' + t.budget + '</label><input id="q-budget" type="number" min="0" inputmode="numeric" name="budget" value="' + esc(st.budget) + '" style="max-width:200px"></div>' +
    '<div class="row"><div><label class="lb" for="q-name">' + t.name + ' <span class="req">*</span></label><input id="q-name" type="text" name="name" autocomplete="given-name" value="' + esc(st.name) + '"></div>' +
    '<div><label class="lb" for="q-email">' + t.email + ' <span class="req">*</span></label><input id="q-email" type="email" name="email" autocomplete="email" value="' + esc(st.email) + '"></div></div>' +
    '<div><label class="lb" for="q-contact">' + t.contact + '</label><input id="q-contact" type="text" name="contact" value="' + esc(st.contact) + '"></div>' +
@@ -265,6 +278,8 @@ function update(){
   var t = T[lang], fm = app.querySelector('form'), q = read(), box = fm.querySelector('.est');
   fm.querySelector('#flashHint').hidden = q.type !== 'flash';
   fm.querySelector('#ownHint').hidden = q.type !== 'own';
+  fm.querySelector('#datesQ').hidden = q.intent !== 'book';
+  fm.querySelector('button[type=submit]').textContent = q.intent === 'book' ? t.sendBook : q.intent === 'ask' ? t.sendAsk : t.send;
   var fv = find(D.REFUSE, 'first_visible');
   var askFirst = (cfg.A.refuse || []).indexOf('first_visible') > -1 && fv.p.indexOf(q.place) > -1;
   fm.querySelector('#firstQ').hidden = !askFirst;
@@ -292,30 +307,31 @@ function submit(ev){
   var miss = [];
   if(!q.type) miss.push(t.type); if(!q.size) miss.push(t.size); if(!q.place) miss.push(t.place); if(!q.color) miss.push(t.color);
   if(!fm.querySelector('#firstQ').hidden && !q.first) miss.push(t.first);
+  if(!q.intent) miss.push(t.next); if(q.intent === 'book' && !(q.dates || '').trim()) miss.push(t.datesReq);
   if(!q.name) miss.push(t.name); if(!/.+@.+\..+/.test(q.email || '')) miss.push(t.email);
   if(fm.querySelector('[name=adult]') && !q.adult) miss.push(t.adult);
   if(!q.consent) miss.push(t.consent.split('.')[0]);
   if(miss.length){ msg.className = 'msg err'; msg.textContent = f(t.need, {x:miss.join(', ')}); return; }
   var e = HQ.estimate(cfg, q) || {};
   if(e.refused){ msg.className = 'msg err'; msg.textContent = f(t.refused, {x:lab(find(D.REFUSE, e.refused)).toLowerCase()}); return; }
-  var d = {artist:cfg.id, config_version:cfg.version, lang:lang, page:location.href,
+  var d = {artist:cfg.id, config_version:cfg.version, lang:lang, page:location.href, intent:q.intent,
     type:q.type, technique:q.tech || 'unsure', size:q.size, place:q.place, place_tier:HQ.tierOf(cfg, q.place), color:q.color, first_tattoo:q.first || '',
-    idea:q.idea || '', budget:q.budget || '', dates:q.dates || '', name:q.name, email:q.email, contact:q.contact || '',
+    idea:q.idea || '', budget:q.budget || '', dates:q.intent === 'book' ? q.dates || '' : '', name:q.name, email:q.email, contact:q.contact || '',
     adult:q.adult ? 'oui' : '', consent:'oui',
     estimate_low:e.lo, estimate_high:e.hi, deposit:e.dep, design_fee:e.fee ? e.fee.lo + '-' + e.fee.hi : '', coef:Math.round(e.coef * 100) / 100,
     est_hours:e.hours ? e.hours.join('-') : '', est_sessions:e.sessions ? e.sessions.join('-') : ''};
   var ep = window.HQ_ENDPOINT;
-  if(!ep || preview){ msg.className = 'msg ok'; msg.textContent = t.demo + ' ' + f(t.ok, {r:replyTxt()}); return; }
+  if(!ep || preview){ msg.className = 'msg ok'; msg.textContent = t.demo + ' ' + f(q.intent === 'book' ? t.okBook : t.okAsk, {r:replyTxt()}); return; }
   btn.disabled = true; btn.textContent = t.sending;
   Promise.all(files.map(toB64)).then(function(imgs){
     d.images = imgs;
     return fetch(ep, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(d)});
   }).then(function(r){ return r.json(); }).then(function(j){
     if(!j.ok) throw 0;
-    msg.className = 'msg ok'; msg.textContent = f(t.ok, {r:replyTxt()});
+    msg.className = 'msg ok'; msg.textContent = f(q.intent === 'book' ? t.okBook : t.okAsk, {r:replyTxt()});
     fm.reset(); files = []; st = {}; fm.querySelector('.thumbs').innerHTML = ''; update();
   }).catch(function(){ msg.className = 'msg err'; msg.textContent = t.err; })
-  .then(function(){ btn.disabled = false; btn.textContent = t.send; });
+  .then(function(){ btn.disabled = false; update(); });
 }
 render();
 })();
