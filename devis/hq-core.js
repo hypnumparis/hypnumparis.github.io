@@ -47,7 +47,8 @@ function validate(c, lg){
   if(!B.tech || !num(B.tech.line) || !num(B.tech.shade) || !num(B.tech.fill)) V('B · Supplément technique', 'B · Technique surcharge', 'B · 技法加价', 'B.tech.shade');
   if((A.refuse || []).indexOf('coverup') < 0 && !num(B.coverPct)) V('B · Supplément cover-up', 'B · Cover-up surcharge', 'B · cover-up 加价', 'B.coverPct');
   var dp = B.deposit || {};
-  if(!(dp.type === 'pct' ? pos(dp.pct) && num(dp.min) : dp.type === 'fixed' ? pos(dp.amount) : false) || typeof dp.refundable !== 'boolean') V('B · Acompte', 'B · Deposit', 'B · 定金', 'B.deposit.type');
+  var dpOk = dp.type === 'pct' ? pos(dp.pct) && num(dp.min) : dp.type === 'fixed' ? pos(dp.amount) : false;
+  if(!dpOk || typeof dp.refundable !== 'boolean' || typeof dp.deducted !== 'boolean') V('B · Acompte', 'B · Deposit', 'B · 定金', !dpOk ? 'B.deposit.type' : typeof dp.refundable !== 'boolean' ? 'B.deposit.refundable' : 'B.deposit.deducted');
   if(!num(B.flashDiscount)) V('B · Remise flash', 'B · Flash discount', 'B · flash 折扣', 'B.flashDiscount');
   m.at = at;  /* chemin du champ correspondant, pour y aller depuis la page de réglages */
   return m;
@@ -93,12 +94,18 @@ function estimate(c, q){
     var s = B.sizes[q.size]; if(!s) return null;
     lo = s[0] * coef * flash; hi = s[1] * coef * flash;
   }
-  out.lo = r10(Math.max(B.min, lo)); out.hi = r10(Math.max(B.min, hi));
+  /* prix du tatouage, puis frais de dessin inclus dans le total affiché */
+  var tlo = r10(Math.max(B.min, lo)), thi = r10(Math.max(B.min, hi));
+  out.tattoo = [tlo, thi]; out.lo = tlo; out.hi = thi;
+  var dfe = A.designFee;
+  if(dfe && dfe.pct > 0 && q.type !== 'flash' && q.type !== 'own'){
+    out.fee = {pct:dfe.pct, lo:r10(tlo * dfe.pct / 100), hi:r10(thi * dfe.pct / 100)};
+    out.lo += out.fee.lo; out.hi += out.fee.hi;
+  }
   var dp = B.deposit;
   out.dep = dp.type === 'fixed' ? dp.amount : r10(Math.max(dp.min || 0, out.lo * dp.pct / 100));
   out.refundable = dp.refundable;
-  var dfe = A.designFee;
-  if(dfe && dfe.pct > 0 && q.type !== 'flash' && q.type !== 'own') out.fee = {pct:dfe.pct, lo:r10(out.lo * dfe.pct / 100), hi:r10(out.hi * dfe.pct / 100)};
+  out.deducted = dp.deducted !== false;
   return out;
 }
 
@@ -163,7 +170,7 @@ function suggest(A, M){
   if(M.status && M.status.k === 'none') rep.rateIfAE = r5(rate / (1 - 0.215));
 
   return {B:{min:min, sizes:g.sizes, hourly:rate, large:g.large, colorPct:20, tiers:{n:0, d:20}, placeTier:{}, coverPct:30,
-    tech:{line:0, shade:15, fill:30}, stylePct:stylePct, deposit:{type:'pct', pct:30, min:30, refundable:false}, flashDiscount:0}, rep:rep};
+    tech:{line:0, shade:15, fill:30}, stylePct:stylePct, deposit:{type:'pct', pct:30, min:30, refundable:false, deducted:null}, flashDiscount:0}, rep:rep};
 }
 
 window.HQ = {validate:validate, estimate:estimate, suggest:suggest, fromHourly:fromHourly, defaultLarge:defaultLarge, speedRatio:speedRatio, band:band, tierOf:tierOf, refusedPlaces:refusedPlaces, r10:r10};

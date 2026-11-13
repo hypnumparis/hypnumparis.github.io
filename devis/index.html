@@ -106,7 +106,7 @@ fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'af
  adult:'J\'ai 18 ans ou plus.',
  consent:'J\'accepte que ces informations soient utilisées pour répondre à ma demande. Mes images de référence pourront être analysées par un service d\'intelligence artificielle (prestataire externe) pour reconnaître le style. <a href="/mentions-legales.html" target="_blank" rel="noopener">En savoir plus</a>',
  est:'Estimation', dep:'Acompte pour réserver', depR:'remboursable', depNR:'non remboursable',
- fee:'Frais de dessin', feeDed:'déduits du prix final', feeAdd:'en plus du tatouage',
+ fee:'Frais de dessin', feeDed:'déduits du prix final', feeAdd:'en plus du tatouage', incl:'Frais de dessin inclus : {a}', depD:'déduit du prix total', depX:'en plus du prix total',
  hours:'Environ {a} à {b} heures, en {c} séances', note:'Estimation indicative : le prix final dépend du dessin et du temps réel.',
  refused:'Je ne réalise pas ce type de projet : {x}. Merci de votre compréhension.',
  send:'Envoyer ma demande', sending:'Envoi…', ok:'Merci, votre demande est bien envoyée. Je vous réponds sous {r}.',
@@ -128,7 +128,7 @@ en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate
  adult:'I am 18 or older.',
  consent:'I agree that this information is used to answer my request. My reference images may be analysed by an artificial intelligence service (external provider) to recognise the style. <a href="/mentions-legales.html" target="_blank" rel="noopener">Learn more</a>',
  est:'Estimate', dep:'Deposit to book', depR:'refundable', depNR:'non-refundable',
- fee:'Design fee', feeDed:'deducted from the final price', feeAdd:'on top of the tattoo',
+ fee:'Design fee', feeDed:'deducted from the final price', feeAdd:'on top of the tattoo', incl:'Includes a design fee of {a}', depD:'deducted from the total', depX:'on top of the total',
  hours:'About {a} to {b} hours, over {c} sessions', note:'Rough estimate: the final price depends on the design and the actual time.',
  refused:'I don\'t do this kind of project: {x}. Thank you for understanding.',
  send:'Send my request', sending:'Sending…', ok:'Thank you, your request has been sent. I\'ll reply within {r}.',
@@ -150,7 +150,7 @@ zh:{title:'纹身询价', sub:'描述你的想法，马上看到大概价格。{
  adult:'我已年满 18 岁。',
  consent:'我同意这些信息用于回复我的询价。我的参考图可能会交给人工智能服务商（外部服务）分析风格。<a href="/mentions-legales.html" target="_blank" rel="noopener">了解更多</a>',
  est:'预估价格', dep:'预约定金', depR:'可退', depNR:'不退',
- fee:'设计费', feeDed:'从总价里扣', feeAdd:'另外收取',
+ fee:'设计费', feeDed:'从总价里扣', feeAdd:'另外收取', incl:'含设计费 {a}', depD:'从总价里扣', depX:'不抵扣总价，另外收',
  hours:'约 {a}–{b} 小时，分 {c} 次完成', note:'仅为大概估价，最终价格取决于图案和实际时长。',
  refused:'这类项目我不接：{x}。谢谢理解。',
  send:'发送询价', sending:'发送中…', ok:'谢谢！询价已发送，我会在{r}内回复。',
@@ -181,17 +181,13 @@ function langBar(){
 
 function profile(){
   var t = T[lang], A = cfg.A;
-  var sty = A.styles.map(function(k){ return k === 'other' ? (A.styleOther || lab(find(D.STYLES, k))) : lab(find(D.STYLES, k)); }).join(', ');
   var lg = A.languages.map(function(k){ var x = find(D.LANGS, k); return x ? x.l : k; }).join(', ');
   var rt = A.retouch.free > 0 ? f(A.retouch.free > 1 ? t.rtn : t.rt, {n:A.retouch.free, m:A.retouch.months}) : t.rt0;
   var pay = A.payment.map(function(k){ var x = find(D.PAY, k); return x ? lab(x) : k; }).concat(A.payOther ? [A.payOther] : []).join(', ');
   var rf = (A.refuse || []).map(function(k){ return lab(find(D.REFUSE, k)); }).concat(A.refuseOther ? [A.refuseOther] : []);
-  var fee = A.designFee.pct > 0 ? f(t.feeA, {a:f(t.feePc, {p:A.designFee.pct})}) : t.feeN;
-  return '<aside class="pf"><h2>' + esc(A.name) + '</h2><p class="pf-n">' + esc(f(t.since, {y:yearsTxt(A.years)})) + '</p><dl>' +
-    '<div><dt>' + t.styles + '</dt><dd>' + esc(sty) + '</dd></div>' +
-    '<div><dt>' + t.where + '</dt><dd>' + esc(A.location) + '</dd></div>' +
+  /* fiche client : langues, retouches, paiement, refus, délai de réponse et Instagram */
+  return '<aside class="pf"><h2>' + esc(A.name) + '</h2><dl>' +
     '<div><dt>' + t.langs + '</dt><dd>' + esc(lg) + '</dd></div>' +
-    '<div><dt>' + t.fees + '</dt><dd>' + esc(fee) + '</dd></div>' +
     '<div><dt>' + t.retouch + '</dt><dd>' + esc(rt) + '</dd></div>' +
     '<div><dt>' + t.pay + '</dt><dd>' + esc(pay) + '</dd></div>' +
     (rf.length ? '<div><dt>' + t.refuse + '</dt><dd>' + esc(rf.join(', ')) + '</dd></div>' : '') +
@@ -283,8 +279,8 @@ function update(){
   box.hidden = false; box.className = 'est';
   box.innerHTML = '<span class="k">' + t.est + '</span><span class="v">' + e.lo + ' – ' + e.hi + ' €</span>' +
     (e.hours ? '<span class="l">' + esc(f(t.hours, {a:e.hours[0], b:e.hours[1], c:e.sessions[0] === e.sessions[1] ? e.sessions[0] : e.sessions[0] + '–' + e.sessions[1]})) + '</span>' : '') +
-    '<span class="l">' + t.dep + ' : ' + e.dep + ' € (' + (e.refundable ? t.depR : t.depNR) + ')</span>' +
-    (e.fee ? '<span class="l">' + t.fee + ' : ' + e.fee.lo + ' – ' + e.fee.hi + ' € (' + t.feeAdd + ')</span>' : '') +
+    (e.fee ? '<span class="l">' + esc(f(t.incl, {a:e.fee.lo + ' – ' + e.fee.hi + ' €'})) + '</span>' : '') +
+    '<span class="l">' + t.dep + ' : ' + e.dep + ' € (' + (e.refundable ? t.depR : t.depNR) + (lang === 'zh' ? '，' : ', ') + (e.deducted ? t.depD : t.depX) + ')</span>' +
     '<span class="n">' + t.note + '</span>';
 }
 

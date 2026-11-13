@@ -97,7 +97,7 @@ B.placeTier = B.placeTier || {};
 if(B.coverPct == null) B.coverPct = 30;
 B.tech = B.tech || {line:0, shade:15, fill:30}; B.tech.line = 0;
 B.stylePct = B.stylePct || {};
-B.deposit = B.deposit || {type:'pct', pct:30, min:30, amount:null, refundable:false};
+B.deposit = B.deposit || {type:'pct', pct:30, min:30, amount:null, refundable:false, deducted:null};
 if(B.flashDiscount == null) B.flashDiscount = 0;
 c.pricing = c.pricing || 'table';
 var rep = null;
@@ -185,6 +185,7 @@ function render(){
   h += '<h3>' + t('Acompte', 'Deposit', '定金') + '</h3>' + radio('B.deposit.type', t('Type d\'acompte', 'Deposit type', '定金方式'), [['pct', t('En pourcentage', 'A percentage', '按百分比')], ['fixed', t('Montant fixe', 'A fixed amount', '固定金额')]]);
   h += '<div data-show="dpct">' + num('B.deposit.pct', t('Pourcentage du prix bas de l\'estimation', 'Percentage of the low estimate', '价格下限的百分比'), '%') + num('B.deposit.min', t('Minimum', 'Minimum', '最低多少'), '€') + '</div><div data-show="dfix">' + num('B.deposit.amount', t('Montant fixe', 'Fixed amount', '固定金额'), '€') + '</div>';
   h += radio('B.deposit.refundable', t('Remboursable ?', 'Refundable?', '能不能退'), [[true, t('Remboursable', 'Refundable', '可以退')], [false, t('Non remboursable', 'Non-refundable', '不退')]]);
+  h += radio('B.deposit.deducted', t('L\'acompte est-il déduit du prix total ?', 'Is the deposit deducted from the total price?', '定金能不能抵扣总价'), [[true, t('Oui, déduit du total', 'Yes, deducted from the total', '可以，从总价里扣')], [false, t('Non, payé en plus du total', 'No, paid on top of the total', '不能，另外收')]]);
   h += num('B.flashDiscount', t('Remise flash (les flashs utilisent la même grille que le sur-mesure, sans supplément dessin)', 'Flash discount (flashes use the same price list as custom work, without the design surcharge)', 'flash 折扣（flash 和定制图用同一张尺寸价格表，但不收设计费）'), '%');
   h += '</section>';
 
@@ -299,6 +300,7 @@ function doSuggest(){
   if(need.length){ document.getElementById('rep').innerHTML = '<div class="miss">' + t('À remplir d\'abord : ', 'Fill in first: ', '先填：') + need.join(sep()) + '</div>'; return; }
   var r = HQ.suggest(A, M), keep = c.B;
   r.B.placeTier = keep.placeTier || {};
+  if(keep.deposit){ ['refundable','deducted'].forEach(function(k){ if(typeof keep.deposit[k] === 'boolean') r.B.deposit[k] = keep.deposit[k]; }); }
   c.B = r.B; rep = r.rep; persist(); render();
   var s = document.querySelector('[data-show="b"]'); if(s) s.scrollIntoView({behavior:'smooth'});
 }
