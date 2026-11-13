@@ -77,7 +77,7 @@ var B = c.B;
 B.sizes = B.sizes || {xs:[null,null], s:[null,null], m:[null,null], l:[null,null]};
 B.large = B.large || HQ.defaultLarge(c.M2.speed);
 if(B.colorPct == null) B.colorPct = 20;
-B.tiers = B.tiers || {n:0, d:20};
+B.tiers = B.tiers || {n:0, d:20}; B.tiers.n = 0;
 B.placeTier = B.placeTier || {};
 if(B.coverPct == null) B.coverPct = 30;
 B.tech = B.tech || {line:0, shade:15, fill:30};
@@ -145,7 +145,7 @@ function render(){
   h += '<h3>按尺寸的价格区间（€，最低 – 最高）</h3>' + D.SIZES.map(function(s){ return pair('B.sizes.' + s.k, s.l.zh); }).join('');
   h += '<h3>大面积需要的小时数</h3>' + D.LARGE.map(function(s){ return pair('B.large.' + s.k, s.l.zh); }).join('') + '<div class="bar"><button type="button" class="btn" id="defLarge">我不确定，用默认值</button></div><p class="note">默认：半臂 10–15，满臂 20–30，整背 25–40 小时。填了速度会按你的速度自动调整。</p>';
   h += num('B.colorPct', '彩色加价', '%');
-  h += '<h3>部位加价</h3><div class="inline" style="margin-bottom:12px">普通 +<input type="number" step="any" data-p="B.tiers.n" value="' + esc(B.tiers.n) + '" style="width:80px">%　难做 +<input type="number" step="any" data-p="B.tiers.d" value="' + esc(B.tiers.d) + '" style="width:80px">%</div>';
+  h += '<h3>难做部位加价</h3><div class="inline" style="margin-bottom:12px">难做的部位 +<input type="number" step="any" data-p="B.tiers.d" value="' + esc(B.tiers.d) + '" style="width:80px">%（普通部位不加价）</div>';
   h += '<p class="note">难做的部位贴着骨头、皮肤会随关节移动、恢复差容易掉色。每个部位可以挪到另一档。</p>';
   h += D.ZONES.map(function(z){ return '<h3>' + z.l.zh + '</h3><div class="tiers">' + D.PLACES.filter(function(p){ return p.z === z.k; }).map(function(p){ var t = B.placeTier[p.k] || p.t; return '<label>' + p.l.zh + '<select data-tier="' + p.k + '"><option value="n"' + (t === 'n' ? ' selected' : '') + '>普通</option><option value="d"' + (t === 'd' ? ' selected' : '') + '>难做</option></select></label>'; }).join('') + '</div>'; }).join('');
   h += '<div data-show="cover">' + num('B.coverPct', 'cover-up / 修改旧图加价', '%') + '</div>';
