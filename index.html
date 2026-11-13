@@ -4163,4 +4163,29 @@ document.addEventListener('click', function(e){
   window.scrollTo({top: tg.getBoundingClientRect().top + window.pageYOffset - off - 10, behavior: 'smooth'});
 });
 </script>
+<script>
+(function(){
+  function bar(r){
+    var b = r.nextElementSibling;
+    if(!b || !b.classList.contains('ap-prog')){ b = document.createElement('div'); b.className = 'ap-prog'; b.setAttribute('aria-hidden', 'true'); b.innerHTML = '<i></i>'; r.parentNode.insertBefore(b, r.nextSibling); r.addEventListener('scroll', function(){ upd(r, b); }, {passive:true}); }
+    upd(r, b);
+  }
+  function upd(r, b){
+    var sw = r.scrollWidth, cw = r.clientWidth;
+    if(!sw || sw <= cw + 4){ b.style.visibility = 'hidden'; return; }
+    b.style.visibility = '';
+    var w = Math.max(.12, cw / sw), x = r.scrollLeft / (sw - cw);
+    var i = b.firstChild; i.style.width = (w * 100) + '%'; i.style.transform = 'translateX(' + (Math.min(1, Math.max(0, x)) * (1 - w) / w * 100) + '%)';
+  }
+  function all(){ document.querySelectorAll('#apercu .ap-strip').forEach(bar); }
+  all(); window.addEventListener('load', all); window.addEventListener('resize', all);
+  var root = document.getElementById('apercu'); if(root) new MutationObserver(function(){ requestAnimationFrame(all); }).observe(root, {childList:true});
+  document.addEventListener('load', function(e){ if(e.target.tagName === 'IMG' && e.target.closest('#apercu')) requestAnimationFrame(all); }, true);
+})();
+</script>
+<style>
+#apercu .ap-prog{position:relative;width:96px;height:3px;margin:4px 0 0;background:rgba(42,28,21,.12);border-radius:3px;overflow:hidden;}
+#apercu .ap-prog i{position:absolute;left:0;top:0;bottom:0;background:currentColor;opacity:.75;border-radius:3px;}
+@media (min-width:861px){ #apercu .ap-prog{width:140px;} }
+</style>
 </body></html>
