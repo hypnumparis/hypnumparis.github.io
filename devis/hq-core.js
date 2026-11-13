@@ -26,7 +26,7 @@ function validate(c, lg){
     if(!co.deskUnit || !num(co.deskPrice)) V('A · Location du poste : formule et prix', 'A · Desk rental: unit and price', 'A · 工位怎么付、每次多少钱');
     if(co.deskUnit === 'day' && !pos(co.deskDays)) V('A · Jours loués par mois', 'A · Days rented per month', 'A · 每个月大约租几天');
   }
-  else if((A.work === 'own' || A.work === 'home' || A.work === 'guest') && !num(co.monthly)) V('A · Loyer et charges par mois', 'A · Monthly rent and costs', 'A · 每月房租和杂费');
+  else if((A.work === 'own' || A.work === 'home') && !num(co.monthly)) V('A · Loyer et charges par mois', 'A · Monthly rent and costs', 'A · 每月房租和杂费');
   if(!A.location) V('A · Lieu', 'A · Location', 'A · 地点');
   if(!pos(A.daysPerMonth)) V('A · Jours de travail par mois', 'A · Working days per month', 'A · 每个月能工作几天');
   if(!pos(A.maxSession)) V('A · Durée maximale d\'une séance', 'A · Longest session', 'A · 单次最长几小时');

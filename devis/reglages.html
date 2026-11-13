@@ -82,6 +82,7 @@ if(!c || c.id !== base.id) c = base;
 c.A = c.A || {}; c.A.cost = c.A.cost || {}; c.A.reply = c.A.reply || {n:24, unit:'h'};
 ['styles','refuse','languages','payment'].forEach(function(k){ c.A[k] = c.A[k] || []; });
 c.A.designFee = c.A.designFee || {pct:null};
+if(c.A.work === 'guest') c.A.work = null;
 c.A.retouch = c.A.retouch || {free:null, months:null};
 c.M2 = c.M2 || {otherFixed:null, supplies:{per:'month', amount:null}, status:{k:'ae', pct:21.5}, targetNet:null, actualHours:null, actualClients:null, maxHours:null, speed:{s:null, m:null}};
 c.B = c.B || {};
@@ -132,7 +133,7 @@ function render(){
   /* ---------- A ---------- */
   h += '<section><h2>' + t('Étape 1 · Votre profil', 'Step 1 · Your profile', '第一步 · 纹身师资料') + '</h2><p class="why">' + t('Cette partie n\'entre pas dans le calcul des estimations. Elle sert à vous présenter aux clients, à calculer un prix conseillé dans « Aidez-moi à fixer mes prix », et plus tard à analyser les données.', 'This part doesn\'t affect the estimates. It is shown to clients, used to work out a suggested price in "Help me set my prices", and later for data analysis.', '这部分不参与估价。用来展示给客人、在「帮我定价」里算建议价，以及以后做数据分析。') + '</p>';
   h += '<h3>' + t('Identité et expérience', 'Identity and experience', '身份和经验') + '</h3>' + txt('A.name', t('Nom ou nom d\'artiste', 'Name or artist name', '名字 / 品牌名')) + num('A.years', t('Depuis combien d\'années vous tatouez', 'How many years you have been tattooing', '纹了几年'), t('ans', 'years', '年'), ' style="max-width:120px"') + txt('A.instagram', t('Compte Instagram (facultatif, affiché sur le formulaire)', 'Instagram account (optional, shown on the form)', 'Instagram 账号（选填，会在表单上展示）'), t('par exemple hypnum.paris', 'e.g. hypnum.paris', '例如 hypnum.paris'));
-  h += '<h3>' + t('Façon de travailler', 'How you work', '工作方式') + '</h3>' + radio('A.work', t('Façon de travailler', 'How you work', '工作方式'), [['split', t('Pourcentage au studio', 'Studio takes a share', '工作室分成')], ['desk', t('Location de poste', 'Desk rental', '租工位')], ['own', t('Mon propre studio', 'My own studio', '自己的工作室')], ['home', t('À domicile', 'At home', '在家')], ['guest', t('Surtout en guest ou en convention', 'Mostly guest spots or conventions', 'guest 或展会为主')]]);
+  h += '<h3>' + t('Façon de travailler', 'How you work', '工作方式') + '</h3>' + radio('A.work', t('Façon de travailler', 'How you work', '工作方式'), [['split', t('Pourcentage au studio', 'Studio takes a share', '工作室分成')], ['desk', t('Location de poste', 'Desk rental', '租工位')], ['own', t('Mon propre studio', 'My own studio', '自己的工作室')], ['home', t('À domicile', 'At home', '在家')]]);
   h += '<div data-show="split">' + num('A.cost.splitPct', t('Part prise par le studio', 'Share the studio takes', '工作室拿走多少'), '%') + '</div>';
   h += '<div data-show="desk">' + radio('A.cost.deskUnit', t('Comment vous payez le poste', 'How you pay for the desk', '工位怎么付'), [['day', t('À la journée', 'Per day', '按天')], ['session', t('À la séance', 'Per session', '按次')], ['month', t('Au mois', 'Per month', '按月')]]) + '<div data-show="deskday">' + num('A.cost.deskPrice', t('Prix par jour', 'Price per day', '每天多少钱'), t('€ / jour', '€ / day', '€ / 天')) + num('A.cost.deskDays', t('Jours loués par mois, environ', 'Days rented per month, roughly', '每个月大约租几天'), DAYS) + '</div><div data-show="desksess">' + num('A.cost.deskPrice', t('Prix par séance', 'Price per session', '每次多少钱'), t('€ / séance', '€ / session', '€ / 次')) + '</div><div data-show="deskmonth">' + num('A.cost.deskPrice', t('Prix par mois', 'Price per month', '每月多少钱'), t('€ / mois', '€ / month', '€ / 月')) + num('A.daysPerMonth', t('Jours de travail par mois à ce poste', 'Days you work at this desk per month', '每个月在这个工位工作几天'), DAYS) + '</div></div>';
   h += '<div data-show="own">' + num('A.cost.monthly', t('Loyer et charges par mois, environ', 'Rent and running costs per month, roughly', '每月房租和杂费大约多少'), t('€ / mois', '€ / month', '€ / 月')) + '</div>';
@@ -247,7 +248,7 @@ function bind(){
 function vis(){
   var A = c.A, m = {
     split:A.work === 'split', desk:A.work === 'desk', deskday:A.work === 'desk' && A.cost.deskUnit === 'day', desksess:A.work === 'desk' && A.cost.deskUnit === 'session', deskmonth:A.work === 'desk' && A.cost.deskUnit === 'month', notmonth:!(A.work === 'desk' && A.cost.deskUnit === 'month'),
-    own:A.work === 'own' || A.work === 'home' || A.work === 'guest', styleother:A.styles.indexOf('other') > -1,
+    own:A.work === 'own' || A.work === 'home', styleother:A.styles.indexOf('other') > -1,
     fee:A.designFee.has === true, m1:c.mode === 1, m2:c.mode === 2, b:c.mode === 1 || (c.mode === 2 && (!!rep || c.B.min > 0)),
     hourlyhelp:c.mode === 1 && c.pricing === 'hourly', cover:A.refuse.indexOf('coverup') < 0,
     dpct:c.B.deposit.type === 'pct', dfix:c.B.deposit.type === 'fixed'};
@@ -259,7 +260,7 @@ function clean(){
   if(o.mode !== 2) o.M2 = null;
   if(o.A.work !== 'split') delete o.A.cost.splitPct;
   if(o.A.work !== 'desk'){ delete o.A.cost.deskUnit; delete o.A.cost.deskPrice; delete o.A.cost.deskDays; }
-  if(['own','home','guest'].indexOf(o.A.work) < 0) delete o.A.cost.monthly;
+  if(['own','home'].indexOf(o.A.work) < 0) delete o.A.cost.monthly;
   return o;
 }
 function persist(){ try{ localStorage.setItem('hq-draft', JSON.stringify(clean())); }catch(e){} status(); }
