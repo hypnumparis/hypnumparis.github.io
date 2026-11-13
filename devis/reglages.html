@@ -150,7 +150,7 @@ function render(){
   h += num('B.hourly', '时薪（大面积按小时算，也用来从时薪算价格表）', '€ / 小时');
   h += '<div data-show="hourlyhelp"><p class="note">填了时薪以后，点下面的按钮，系统用「时薪 × 每档默认小时数」算出价格表，你再改。默认小时数：小于 5 cm 0.5–1，5–10 cm 1–2，10–15 cm 2–3.5，15–25 cm 3.5–6。</p>' + num('M2.speed.s', '（选填）一个 5–10 cm 的图你一般要几个小时', '小时') + num('M2.speed.m', '（选填）一个 10–15 cm 的呢', '小时') + '<div class="bar"><button type="button" class="btn" id="fromHourly">用时薪算出价格表</button></div></div>';
   h += num('B.min', '最低起价（任何纹身都不低于这个价）', '€');
-  h += '<h3>按尺寸的价格区间（€，最低 – 最高）</h3><p class="note">这里填不需要设计的图的价格：现成的纹身稿，或者客人自己带来的图。需要你画设计稿的定制图，会在这个价格上再加设计费。</p>' + D.SIZES.map(function(s){ return pair('B.sizes.' + s.k, s.l.zh); }).join('');
+  h += '<h3>按尺寸的基础价格（€，最低 – 最高）</h3><p class="note">填最基础的情况：黑灰、纯线条、普通部位、不需要设计（现成的纹身稿或客人自己的图）。彩色、阴影或填色、难做部位、cover-up 和设计费，都会在这个价格上往上加。</p>' + D.SIZES.map(function(s){ return pair('B.sizes.' + s.k, s.l.zh); }).join('');
   h += '<h3>大面积需要的小时数</h3>' + D.LARGE.map(function(s){ return pair('B.large.' + s.k, s.l.zh); }).join('') + '<div class="bar"><button type="button" class="btn" id="defLarge">我不确定，用默认值</button></div><p class="note">默认：半臂 10–15，满臂 20–30，整背 25–40 小时。填了速度会按你的速度自动调整。</p>';
   h += num('B.colorPct', '彩色加价', '%');
   h += '<h3>难做部位加价</h3><div class="inline" style="margin-bottom:12px">难做的部位 +<input type="number" step="any" data-p="B.tiers.d" value="' + esc(B.tiers.d) + '" style="width:80px">%（普通部位不加价）</div>';
