@@ -150,7 +150,6 @@ function suggest(A, M){
   var g = fromHourly(rate, M.speed);
   var min = r10(Math.max(rate, b.min[0]));
   var stylePct = {};
-  styles.forEach(function(k, i){ var p = Math.round((fs[i] / fBase - 1) * 100); if(p > 0) stylePct[k] = p; });
 
   rep = {band:b, fBase:fBase, market:[r5(mk[0]), r5(mk[1])], rate:rate, junior:junior,
     rent:Math.round(rent), split:split, supplies:Math.round(sup), other:other, soc:soc, clients:Math.round(clients), hours:Math.round(hours),
