@@ -37,6 +37,14 @@ input[type=number]{max-width:160px;}
 @media (max-width:560px){ .tiers{grid-template-columns:1fr;} .pair{grid-template-columns:minmax(0,1fr) 80px 12px 80px;} }
 .tiers label{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:15px;}
 .tiers select{width:auto;padding:4px 26px 4px 8px;font-size:14px;}
+.tbox{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0 18px;}
+.tcol{border:1px solid var(--line);background:var(--card);padding:10px;min-height:120px;transition:background .15s;}
+.tcol.over{background:#efe6d6;border-color:var(--ink);}
+.tcol-h{font-size:14px;color:var(--soft);margin-bottom:8px;}
+.tchips{display:flex;flex-wrap:wrap;gap:6px;}
+.tchip{font:inherit;font-size:14px;line-height:1.3;padding:6px 10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:grab;text-align:left;}
+.tchip.drag{opacity:.4;}
+.tcol[data-drop=d] .tchip{background:var(--ink);color:var(--bg);border-color:var(--ink);}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 16px;border:1px solid var(--ink);background:var(--card);color:var(--ink);font:inherit;font-size:15px;cursor:pointer;text-decoration:none;}
 .btn.solid{background:var(--ink);color:var(--bg);}
 .rep{border:1px solid var(--ink);background:var(--card);padding:16px 18px;margin:14px 0 6px;}
@@ -146,8 +154,8 @@ function render(){
   h += '<h3>大面积需要的小时数</h3>' + D.LARGE.map(function(s){ return pair('B.large.' + s.k, s.l.zh); }).join('') + '<div class="bar"><button type="button" class="btn" id="defLarge">我不确定，用默认值</button></div><p class="note">默认：半臂 10–15，满臂 20–30，整背 25–40 小时。填了速度会按你的速度自动调整。</p>';
   h += num('B.colorPct', '彩色加价', '%');
   h += '<h3>难做部位加价</h3><div class="inline" style="margin-bottom:12px">难做的部位 +<input type="number" step="any" data-p="B.tiers.d" value="' + esc(B.tiers.d) + '" style="width:80px">%（普通部位不加价）</div>';
-  h += '<p class="note">难做的部位贴着骨头、皮肤会随关节移动、恢复差容易掉色。每个部位可以挪到另一档。</p>';
-  h += D.ZONES.map(function(z){ return '<h3>' + z.l.zh + '</h3><div class="tiers">' + D.PLACES.filter(function(p){ return p.z === z.k; }).map(function(p){ var t = B.placeTier[p.k] || p.t; return '<label>' + p.l.zh + '<select data-tier="' + p.k + '"><option value="n"' + (t === 'n' ? ' selected' : '') + '>普通</option><option value="d"' + (t === 'd' ? ' selected' : '') + '>难做</option></select></label>'; }).join('') + '</div>'; }).join('');
+  h += '<p class="note">难做的部位贴着骨头、皮肤会随关节移动、恢复差容易掉色。把部位拖到另一格就能换档；手机上点一下部位也能移到另一格。</p>';
+  h += '<div class="tbox">' + [['n','普通（不加价）'],['d','难做']].map(function(x){ return '<div class="tcol" data-drop="' + x[0] + '"><div class="tcol-h">' + x[1] + '</div><div class="tchips">' + D.PLACES.filter(function(p){ return (B.placeTier[p.k] || p.t) === x[0]; }).map(function(p){ return '<button type="button" class="tchip" draggable="true" data-place="' + p.k + '">' + p.l.zh + '</button>'; }).join('') + '</div></div>'; }).join('') + '</div>';
   h += '<div data-show="cover">' + num('B.coverPct', 'cover-up / 修改旧图加价', '%') + '</div>';
   h += '<h3>技法加价</h3><div class="inline">纯线条 +<input type="number" step="any" data-p="B.tech.line" value="' + esc(B.tech.line) + '" style="width:70px">%　线条 + 填色或阴影 +<input type="number" step="any" data-p="B.tech.shade" value="' + esc(B.tech.shade) + '" style="width:70px">%　纯填色 +<input type="number" step="any" data-p="B.tech.fill" value="' + esc(B.tech.fill) + '" style="width:70px">%</div><p class="note">客人选「我不确定」时按「线条 + 填色或阴影」算。</p>';
   h += '<h3>风格加价（选填，不进即时估价，你回复时自己确认）</h3>' + (A.styles.length ? A.styles.filter(function(k){ return k !== 'other'; }).map(function(k){ var s = D.STYLES.filter(function(x){ return x.k === k; })[0]; return num('B.stylePct.' + k, s.l.zh, '%'); }).join('') : '<p class="note">先在第一步选擅长的风格。</p>');
@@ -188,12 +196,22 @@ function bind(){
       if(p === 'A.styles' || p === 'A.refuse') render(); else vis();
     });
   });
-  app.querySelectorAll('[data-tier]').forEach(function(el){
-    el.addEventListener('change', function(){
-      var k = el.getAttribute('data-tier'), d = D.PLACES.filter(function(p){ return p.k === k; })[0].t;
-      if(el.value === d) delete c.B.placeTier[k]; else c.B.placeTier[k] = el.value;
-      persist();
-    });
+  function moveTier(k, to){
+    var d = D.PLACES.filter(function(p){ return p.k === k; })[0].t;
+    if(to === d) delete c.B.placeTier[k]; else c.B.placeTier[k] = to;
+    persist();
+    var y = window.scrollY; render(); window.scrollTo(0, y);
+  }
+  app.querySelectorAll('.tchip').forEach(function(el){
+    var k = el.getAttribute('data-place');
+    el.addEventListener('dragstart', function(e){ e.dataTransfer.setData('text/plain', k); e.dataTransfer.effectAllowed = 'move'; el.classList.add('drag'); });
+    el.addEventListener('dragend', function(){ el.classList.remove('drag'); });
+    el.addEventListener('click', function(){ var cur = el.closest('[data-drop]').getAttribute('data-drop'); moveTier(k, cur === 'n' ? 'd' : 'n'); });
+  });
+  app.querySelectorAll('[data-drop]').forEach(function(box){
+    box.addEventListener('dragover', function(e){ e.preventDefault(); box.classList.add('over'); });
+    box.addEventListener('dragleave', function(){ box.classList.remove('over'); });
+    box.addEventListener('drop', function(e){ e.preventDefault(); box.classList.remove('over'); var k = e.dataTransfer.getData('text/plain'); if(k) moveTier(k, box.getAttribute('data-drop')); });
   });
   var s = document.getElementById('doSuggest'); if(s) s.onclick = doSuggest;
   document.getElementById('fromHourly').onclick = function(){
