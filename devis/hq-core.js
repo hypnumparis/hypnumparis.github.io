@@ -95,7 +95,7 @@ function estimate(c, q){
   out.dep = dp.type === 'fixed' ? dp.amount : r10(Math.max(dp.min || 0, out.lo * dp.pct / 100));
   out.refundable = dp.refundable;
   var dfe = A.designFee;
-  if(dfe && dfe.pct > 0 && q.type !== 'flash') out.fee = {pct:dfe.pct, lo:r10(out.lo * dfe.pct / 100), hi:r10(out.hi * dfe.pct / 100)};
+  if(dfe && dfe.pct > 0 && q.type !== 'flash' && q.type !== 'own') out.fee = {pct:dfe.pct, lo:r10(out.lo * dfe.pct / 100), hi:r10(out.hi * dfe.pct / 100)};
   return out;
 }
 

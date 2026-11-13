@@ -95,8 +95,8 @@ var missing = HQ.validate(cfg);
 
 var T = {
 fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'affiche tout de suite. Réponse sous {r}.',
- type:'Type de projet', types:{custom:'Un dessin sur mesure', flash:'Un de mes flashs', cover:'Cover-up ou retouche d\'un ancien tatouage'},
- flashHint:'Ajoutez une capture du flash dans les images de référence.',
+ type:'Type de projet', types:{custom:'Un dessin sur mesure', flash:'Un de mes flashs', own:'Votre propre dessin', cover:'Cover-up ou retouche d\'un ancien tatouage'},
+ flashHint:'Ajoutez une capture du flash dans les images de référence.', ownHint:'Ajoutez votre dessin dans les images de référence.',
  tech:'Technique', size:'Taille', place:'Emplacement', pick:'Choisir…', color:'Couleur', colors:{bw:'Noir et gris', col:'Couleur'},
  first:'Est-ce votre premier tatouage ?', yes:'Oui', no:'Non',
  idea:'Votre idée', ideaPh:'Le sujet, l\'ambiance, ce qui compte pour vous…',
@@ -117,8 +117,8 @@ fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'af
  reply:'Réponse sous', h:'{n} h', d:'{n} jours', d1:'{n} jour', pay:'Paiement', refuse:'Ne réalise pas', fees:'Frais de dessin',
  feeP:'{a}, déduits du prix final', feeA:'{a}, en plus du tatouage', feeE:'{a} €', feePc:'{p} % du prix du tatouage', feeN:'Aucun'},
 en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate right away. Reply within {r}.',
- type:'Project type', types:{custom:'A custom design', flash:'One of my flashes', cover:'Cover-up or rework of an old tattoo'},
- flashHint:'Add a screenshot of the flash in the reference images.',
+ type:'Project type', types:{custom:'A custom design', flash:'One of my flashes', own:'Your own design', cover:'Cover-up or rework of an old tattoo'},
+ flashHint:'Add a screenshot of the flash in the reference images.', ownHint:'Add your design in the reference images.',
  tech:'Technique', size:'Size', place:'Placement', pick:'Choose…', color:'Colour', colors:{bw:'Black and grey', col:'Colour'},
  first:'Is this your first tattoo?', yes:'Yes', no:'No',
  idea:'Your idea', ideaPh:'Subject, mood, what matters to you…',
@@ -139,8 +139,8 @@ en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate
  reply:'Reply within', h:'{n} h', d:'{n} days', d1:'{n} day', pay:'Payment', refuse:'Does not do', fees:'Design fee',
  feeP:'{a}, deducted from the final price', feeA:'{a}, on top of the tattoo', feeE:'€{a}', feePc:'{p}% of the tattoo price', feeN:'None'},
 zh:{title:'纹身询价', sub:'描述你的想法，马上看到大概价格。{r}内回复。',
- type:'类型', types:{custom:'定制图', flash:'我的纹身稿', cover:'cover-up 或修改旧图'},
- flashHint:'请在参考图里上传那张纹身稿的截图。',
+ type:'类型', types:{custom:'定制图', flash:'我的纹身稿', own:'你自己的图', cover:'cover-up 或修改旧图'},
+ flashHint:'请在参考图里上传那张纹身稿的截图。', ownHint:'请在参考图里上传你的图。',
  tech:'技法', size:'大小', place:'部位', pick:'请选择', color:'颜色', colors:{bw:'黑灰', col:'彩色'},
  first:'这是你的第一个纹身吗？', yes:'是', no:'不是',
  idea:'你的想法', ideaPh:'图案、感觉、对你重要的点……',
@@ -223,14 +223,14 @@ function render(){
     return;
   }
   var A = cfg.A, cover = (A.refuse || []).indexOf('coverup') < 0;
-  var types = ['custom', 'flash'].concat(cover ? ['cover'] : []);
+  var types = ['custom', 'flash', 'own'].concat(cover ? ['cover'] : []);
   var places = D.ZONES.map(function(z){
     return '<optgroup label="' + esc(lab(z)) + '">' + D.PLACES.filter(function(p){ return p.z === z.k; }).map(function(p){
       return '<option value="' + p.k + '"' + (st.place === p.k ? ' selected' : '') + '>' + esc(lab(p)) + '</option>'; }).join('') + '</optgroup>';
   }).join('');
   app.innerHTML = '<h1>' + t.title + '</h1><p class="sub">' + esc(f(t.sub, {r:replyTxt()})) + '</p>' +
    '<div class="grid">' + profile() + '<form novalidate>' +
-   '<fieldset><legend>' + t.type + '</legend><div class="chips">' + types.map(function(k){ return chip('type', k, t.types[k]); }).join('') + '</div><p class="hint" id="flashHint"' + (st.type === 'flash' ? '' : ' hidden') + '>' + t.flashHint + '</p></fieldset>' +
+   '<fieldset><legend>' + t.type + '</legend><div class="chips">' + types.map(function(k){ return chip('type', k, t.types[k]); }).join('') + '</div><p class="hint" id="flashHint"' + (st.type === 'flash' ? '' : ' hidden') + '>' + t.flashHint + '</p><p class="hint" id="ownHint"' + (st.type === 'own' ? '' : ' hidden') + '>' + t.ownHint + '</p></fieldset>' +
    '<fieldset><legend>' + t.tech + '</legend><div class="chips tech">' + D.TECH.map(function(x){ return chip('tech', x.k, lab(x), 'radio', ICON[x.k]); }).join('') + '</div></fieldset>' +
    '<fieldset><legend>' + t.size + '</legend><div class="chips">' + D.SIZES.concat(D.LARGE).map(function(x){ return chip('size', x.k, lab(x)); }).join('') + '</div></fieldset>' +
    '<div><label class="lb" for="q-place">' + t.place + '</label><select id="q-place" name="place"><option value="">' + t.pick + '</option>' + places + '</select></div>' +
@@ -268,6 +268,7 @@ function save(){ var d = read(); if(Object.keys(d).length) st = d; }
 function update(){
   var t = T[lang], fm = app.querySelector('form'), q = read(), box = fm.querySelector('.est');
   fm.querySelector('#flashHint').hidden = q.type !== 'flash';
+  fm.querySelector('#ownHint').hidden = q.type !== 'own';
   var fv = find(D.REFUSE, 'first_visible');
   var askFirst = (cfg.A.refuse || []).indexOf('first_visible') > -1 && fv.p.indexOf(q.place) > -1;
   fm.querySelector('#firstQ').hidden = !askFirst;
