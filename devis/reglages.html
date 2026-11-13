@@ -55,6 +55,8 @@ input[type=number]{max-width:160px;}
 .okk{border:1px solid var(--good);color:var(--good);padding:12px 16px;margin:12px 0;}
 textarea.out{min-height:160px;font-family:ui-monospace,Menlo,monospace;font-size:12px;}
 .hide{display:none !important;}
+.miss .go{font:inherit;color:inherit;background:none;border:0;padding:0;text-decoration:underline;text-underline-offset:3px;cursor:pointer;}
+.flash{outline:2px solid var(--bad);outline-offset:4px;transition:outline-color 1.2s;}
 .bar{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;}
 .lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
@@ -267,9 +269,25 @@ function persist(){ try{ localStorage.setItem('hq-draft', JSON.stringify(clean()
 function status(){
   var el = document.getElementById('status'); if(!el) return;
   var m = HQ.validate(clean(), lang);
-  el.innerHTML = m.length ? '<div class="miss">' + t('Il manque ' + m.length + ' élément' + (m.length > 1 ? 's' : '') + ' : ', m.length + ' item' + (m.length > 1 ? 's' : '') + ' missing: ', '还缺 ' + m.length + ' 项：') + esc(m.join(lang === 'zh' ? '；' : ' ; ')) + '</div>' : '<div class="okk">' + t('Réglages complets, le formulaire peut être utilisé.', 'Settings complete, the form is ready to use.', '设置完整，表单可以使用。') + '</div>';
+  el.innerHTML = m.length ? '<div class="miss">' + t('Il manque ' + m.length + ' élément' + (m.length > 1 ? 's' : '') + ' : ', m.length + ' item' + (m.length > 1 ? 's' : '') + ' missing: ', '还缺 ' + m.length + ' 项：') + m.map(function(x, i){ return '<button type="button" class="go" data-go="' + esc(m.at[i]) + '">' + esc(x) + '</button>'; }).join(lang === 'zh' ? '；' : ' ; ') + '</div>' : '<div class="okk">' + t('Réglages complets, le formulaire peut être utilisé.', 'Settings complete, the form is ready to use.', '设置完整，表单可以使用。') + '</div>';
 }
 
+function jump(p){
+  if(!p) return;
+  var els = app.querySelectorAll('[data-p="' + p + '"],[data-arr="' + p + '"]'), el = null;
+  for(var i = 0; i < els.length; i++){ if(els[i].closest('.hide') == null){ el = els[i]; break; } }
+  if(!el){
+    /* section des prix encore cachée : aller à l'étape qui la débloque */
+    if(p.charAt(0) === 'B' && c.mode === 2){ el = document.getElementById('doSuggest'); }
+    else if(p.charAt(0) === 'B' && p !== 'mode'){ return jump('mode'); }
+    if(!el) return;
+  }
+  var box = el.closest('.f, .pair, .inline') || el;
+  box.scrollIntoView({behavior:'smooth', block:'center'});
+  box.classList.add('flash'); setTimeout(function(){ box.classList.remove('flash'); }, 1600);
+  if(el.type !== 'radio' && el.type !== 'checkbox') setTimeout(function(){ el.focus({preventScroll:true}); }, 400);
+}
+app.addEventListener('click', function(e){ var b = e.target.closest('[data-go]'); if(b) jump(b.getAttribute('data-go')); });
 function doSuggest(){
   var A = c.A, M = c.M2, need = [];
   if(!(A.years >= 0) || A.years === null) need.push(t('années d\'expérience', 'years of experience', '纹了几年'));

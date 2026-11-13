@@ -14,41 +14,42 @@ function pair(p){ return p && num(p[0]) && num(p[1]) && p[0] > 0 && p[1] >= p[0]
 /* ---------- Réglages complets ? ---------- */
 function validate(c, lg){
   lg = lg === 'fr' || lg === 'en' ? lg : 'zh';
-  var m = [];
-  function V(fr, en, zh){ m.push(lg === 'fr' ? fr : lg === 'en' ? en : zh); }
+  var m = [], at = [];
+  function V(fr, en, zh, p){ m.push(lg === 'fr' ? fr : lg === 'en' ? en : zh); at.push(p || ''); }
   if(!c){ return [lg === 'fr' ? 'Aucun réglage' : lg === 'en' ? 'No settings' : '没有设置']; }
   var A = c.A || {}, B = c.B || {}, co = A.cost || {};
-  if(!A.name) V('A · Nom ou nom d\'artiste', 'A · Name or artist name', 'A · 名字 / 品牌名');
-  if(!num(A.years) || A.years < 0) V('A · Années d\'expérience', 'A · Years of experience', 'A · 纹了几年');
-  if(!A.work) V('A · Façon de travailler', 'A · How you work', 'A · 工作方式');
-  else if(A.work === 'split' && !(num(co.splitPct) && co.splitPct >= 0 && co.splitPct < 100)) V('A · Part du studio', 'A · Studio share', 'A · 工作室分成比例');
+  if(!A.name) V('A · Nom ou nom d\'artiste', 'A · Name or artist name', 'A · 名字 / 品牌名', 'A.name');
+  if(!num(A.years) || A.years < 0) V('A · Années d\'expérience', 'A · Years of experience', 'A · 纹了几年', 'A.years');
+  if(!A.work) V('A · Façon de travailler', 'A · How you work', 'A · 工作方式', 'A.work');
+  else if(A.work === 'split' && !(num(co.splitPct) && co.splitPct >= 0 && co.splitPct < 100)) V('A · Part du studio', 'A · Studio share', 'A · 工作室分成比例', 'A.cost.splitPct');
   else if(A.work === 'desk'){
-    if(!co.deskUnit || !num(co.deskPrice)) V('A · Location du poste : formule et prix', 'A · Desk rental: unit and price', 'A · 工位怎么付、每次多少钱');
-    if(co.deskUnit === 'day' && !pos(co.deskDays)) V('A · Jours loués par mois', 'A · Days rented per month', 'A · 每个月大约租几天');
+    if(!co.deskUnit || !num(co.deskPrice)) V('A · Location du poste : formule et prix', 'A · Desk rental: unit and price', 'A · 工位怎么付、每次多少钱', co.deskUnit ? 'A.cost.deskPrice' : 'A.cost.deskUnit');
+    if(co.deskUnit === 'day' && !pos(co.deskDays)) V('A · Jours loués par mois', 'A · Days rented per month', 'A · 每个月大约租几天', 'A.cost.deskDays');
   }
-  else if((A.work === 'own' || A.work === 'home') && !num(co.monthly)) V('A · Loyer et charges par mois', 'A · Monthly rent and costs', 'A · 每月房租和杂费');
-  if(!A.location) V('A · Lieu', 'A · Location', 'A · 地点');
-  if(!pos(A.daysPerMonth)) V('A · Jours de travail par mois', 'A · Working days per month', 'A · 每个月能工作几天');
-  if(!pos(A.maxSession)) V('A · Durée maximale d\'une séance', 'A · Longest session', 'A · 单次最长几小时');
-  if(!A.reply || !pos(A.reply.n) || !A.reply.unit) V('A · Délai de réponse', 'A · Reply time', 'A · 回复时间');
-  if(!A.styles || !A.styles.length) V('A · Styles', 'A · Styles', 'A · 擅长的风格');
-  if(!A.languages || !A.languages.length) V('A · Langues parlées', 'A · Languages spoken', 'A · 会说的语言');
+  else if((A.work === 'own' || A.work === 'home') && !num(co.monthly)) V('A · Loyer et charges par mois', 'A · Monthly rent and costs', 'A · 每月房租和杂费', 'A.cost.monthly');
+  if(!A.location) V('A · Lieu', 'A · Location', 'A · 地点', 'A.location');
+  if(!pos(A.daysPerMonth)) V('A · Jours de travail par mois', 'A · Working days per month', 'A · 每个月能工作几天', 'A.daysPerMonth');
+  if(!pos(A.maxSession)) V('A · Durée maximale d\'une séance', 'A · Longest session', 'A · 单次最长几小时', 'A.maxSession');
+  if(!A.reply || !pos(A.reply.n) || !A.reply.unit) V('A · Délai de réponse', 'A · Reply time', 'A · 回复时间', 'A.reply.n');
+  if(!A.styles || !A.styles.length) V('A · Styles', 'A · Styles', 'A · 擅长的风格', 'A.styles');
+  if(!A.languages || !A.languages.length) V('A · Langues parlées', 'A · Languages spoken', 'A · 会说的语言', 'A.languages');
   var df = A.designFee;
-  if(!df || !num(df.pct) || df.pct < 0) V('A · Supplément dessin (%)', 'A · Design surcharge (%)', 'A · 设计稿加价百分比');
-  if(!A.retouch || !num(A.retouch.free) || !num(A.retouch.months)) V('A · Retouches', 'A · Touch-up policy', 'A · 补色政策');
-  if(!A.payment || !A.payment.length) V('A · Moyens de paiement', 'A · Payment methods', 'A · 支付方式');
-  if(c.mode !== 1 && c.mode !== 2) V('Mode (j\'ai mes prix / aidez-moi)', 'Mode (I have prices / help me)', '模式（已有价格 / 帮我定价）');
-  if(!pos(B.min)) V('B · Prix minimum', 'B · Minimum price', 'B · 最低起价');
-  D.SIZES.forEach(function(s){ if(!pair((B.sizes || {})[s.k])) V('B · Prix ' + s.l.fr, 'B · Price ' + s.l.en, 'B · 价格 ' + s.l.zh); });
-  if(!pos(B.hourly)) V('B · Taux horaire', 'B · Hourly rate', 'B · 时薪');
-  D.LARGE.forEach(function(s){ if(!pair((B.large || {})[s.k])) V('B · Heures ' + s.l.fr, 'B · Hours ' + s.l.en, 'B · 小时数 ' + s.l.zh); });
-  if(!num(B.colorPct)) V('B · Supplément couleur', 'B · Colour surcharge', 'B · 彩色加价');
-  if(!B.tiers || !num(B.tiers.n) || !num(B.tiers.d)) V('B · Supplément emplacement', 'B · Placement surcharge', 'B · 部位加价');
-  if(!B.tech || !num(B.tech.line) || !num(B.tech.shade) || !num(B.tech.fill)) V('B · Supplément technique', 'B · Technique surcharge', 'B · 技法加价');
-  if((A.refuse || []).indexOf('coverup') < 0 && !num(B.coverPct)) V('B · Supplément cover-up', 'B · Cover-up surcharge', 'B · cover-up 加价');
+  if(!df || !num(df.pct) || df.pct < 0) V('A · Supplément dessin (%)', 'A · Design surcharge (%)', 'A · 设计稿加价百分比', 'A.designFee.pct');
+  if(!A.retouch || !num(A.retouch.free) || !num(A.retouch.months)) V('A · Retouches', 'A · Touch-up policy', 'A · 补色政策', 'A.retouch.free');
+  if(!A.payment || !A.payment.length) V('A · Moyens de paiement', 'A · Payment methods', 'A · 支付方式', 'A.payment');
+  if(c.mode !== 1 && c.mode !== 2) V('Mode (j\'ai mes prix / aidez-moi)', 'Mode (I have prices / help me)', '模式（已有价格 / 帮我定价）', 'mode');
+  if(!pos(B.min)) V('B · Prix minimum', 'B · Minimum price', 'B · 最低起价', 'B.min');
+  D.SIZES.forEach(function(s){ if(!pair((B.sizes || {})[s.k])) V('B · Prix ' + s.l.fr, 'B · Price ' + s.l.en, 'B · 价格 ' + s.l.zh, 'B.sizes.' + s.k + '.0'); });
+  if(!pos(B.hourly)) V('B · Taux horaire', 'B · Hourly rate', 'B · 时薪', 'B.hourly');
+  D.LARGE.forEach(function(s){ if(!pair((B.large || {})[s.k])) V('B · Heures ' + s.l.fr, 'B · Hours ' + s.l.en, 'B · 小时数 ' + s.l.zh, 'B.large.' + s.k + '.0'); });
+  if(!num(B.colorPct)) V('B · Supplément couleur', 'B · Colour surcharge', 'B · 彩色加价', 'B.colorPct');
+  if(!B.tiers || !num(B.tiers.n) || !num(B.tiers.d)) V('B · Supplément emplacement', 'B · Placement surcharge', 'B · 部位加价', 'B.tiers.d');
+  if(!B.tech || !num(B.tech.line) || !num(B.tech.shade) || !num(B.tech.fill)) V('B · Supplément technique', 'B · Technique surcharge', 'B · 技法加价', 'B.tech.shade');
+  if((A.refuse || []).indexOf('coverup') < 0 && !num(B.coverPct)) V('B · Supplément cover-up', 'B · Cover-up surcharge', 'B · cover-up 加价', 'B.coverPct');
   var dp = B.deposit || {};
-  if(!(dp.type === 'pct' ? pos(dp.pct) && num(dp.min) : dp.type === 'fixed' ? pos(dp.amount) : false) || typeof dp.refundable !== 'boolean') V('B · Acompte', 'B · Deposit', 'B · 定金');
-  if(!num(B.flashDiscount)) V('B · Remise flash', 'B · Flash discount', 'B · flash 折扣');
+  if(!(dp.type === 'pct' ? pos(dp.pct) && num(dp.min) : dp.type === 'fixed' ? pos(dp.amount) : false) || typeof dp.refundable !== 'boolean') V('B · Acompte', 'B · Deposit', 'B · 定金', 'B.deposit.type');
+  if(!num(B.flashDiscount)) V('B · Remise flash', 'B · Flash discount', 'B · flash 折扣', 'B.flashDiscount');
+  m.at = at;  /* chemin du champ correspondant, pour y aller depuis la page de réglages */
   return m;
 }
 
