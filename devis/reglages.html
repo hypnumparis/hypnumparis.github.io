@@ -335,6 +335,9 @@ function copy(){
   try{ navigator.clipboard.writeText(s).then(done, function(){ ta.select(); done(); }); }catch(e){ ta.select(); done(); }
 }
 render();
+/* lien depuis l'aperçu client : reglages.html#go=<champ> */
+var hg = /#go=([^&]+)/.exec(location.hash);
+if(hg) setTimeout(function(){ jump(decodeURIComponent(hg[1])); }, 300);
 })();
 </script>
 </body></html>
