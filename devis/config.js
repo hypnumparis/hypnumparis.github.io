@@ -6,30 +6,27 @@ window.HQ_ENDPOINT = "";
 window.HQ_ACTIVE = "hypnum";
 window.HQ_ARTISTS = {
   hypnum: {
-    id: "hypnum",
-    version: 1,
-    mode: null,
+    id: "hypnum", version: 1, mode: 1,
     A: {
-      name: "Hypnum Paris",
-      years: 1.5,
-      instagram: "hypnum.paris",
-      work: "",
-      cost: {},
-      location: "Paris",
-      daysPerMonth: null,
-      maxSession: null,
+      name: "Hypnum Paris", years: 1.5, instagram: "hypnum.paris",
+      work: "desk", cost: {}, location: "Paris", daysPerMonth: 8, maxSession: 6,
       reply: {n: 24, unit: "h"},
-      styles: [],
-      styleOther: "",
-      refuse: [],
-      refuseOther: "",
+      styles: ["fine", "black", "mini", "letter", "realbw"], styleOther: "",
+      refuse: ["coverup", "intimate", "hate"], refuseOther: "",
       languages: ["fr", "en", "zh"],
-      designFee: null,
-      retouch: null,
-      payment: [],
-      payOther: ""
+      designFee: {pct: 35},
+      retouch: {free: 2, months: 5},
+      payment: ["cash", "card", "transfer", "online"], payOther: ""
     },
     M2: null,
-    B: null
+    B: {
+      min: 60, hourly: 100,
+      sizes: {xs: [60, 90], s: [80, 180], m: [180, 320], l: [250, 550]},
+      large: {half: [9, 13], full: [18, 26], back: [22, 35]},
+      colorPct: 20, tiers: {n: 0, d: 10}, placeTier: {}, coverPct: 30,
+      tech: {line: 0, shade: 15, fill: 30}, stylePct: {},
+      deposit: {type: "pct", pct: 30, min: 30, amount: null, refundable: false, deducted: true},
+      flashDiscount: 0
+    }
   }
 };

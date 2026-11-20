@@ -96,6 +96,8 @@ function tell(o){ if(embed && window.parent !== window){ o.hq = 1; try{ window.p
 if(preview){ try{ cfg = JSON.parse(localStorage.getItem('hq-draft') || 'null'); }catch(e){} }
 if(!cfg) cfg = (window.HQ_ARTISTS || {})[window.HQ_ACTIVE];
 var missing = HQ.validate(cfg);
+/* sans adresse de script, le formulaire reste fermé (sauf aperçu) : rien ne serait envoyé */
+if(!missing.length && !window.HQ_ENDPOINT && !preview) missing = ['endpoint'];
 
 var T = {
 fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'affiche tout de suite. Si vous êtes décidé·e, envoyez une demande de rendez-vous ; sinon, posez-moi simplement vos questions. Je réponds sous {r}.',
