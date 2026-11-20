@@ -12,6 +12,9 @@
 :root{--bg:#f8f3e9;--card:#fbf8f2;--ink:#2a1c15;--soft:#6a5a4e;--line:rgba(42,28,21,.2);--good:#3d5a40;--bad:#8a2f24;}
 *{box-sizing:border-box}
 [hidden]{display:none !important}
+input[type=number]{-moz-appearance:textfield;appearance:textfield;}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+
 body{margin:0;background:var(--bg);color:var(--ink);font-family:'IM Fell English','Songti SC','STSong','Noto Serif SC',Georgia,serif;font-size:17px;line-height:1.55;-webkit-text-size-adjust:100%;}
 a{color:inherit}
 .wrap{max-width:1040px;margin:0 auto;padding:28px 22px 56px;}
