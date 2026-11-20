@@ -93,6 +93,7 @@ c.M2 = c.M2 || {otherFixed:null, supplies:{per:'month', amount:null}, status:{k:
 c.B = c.B || {};
 var B = c.B;
 B.sizes = B.sizes || {xs:[null,null], s:[null,null], m:[null,null], l:[null,null]};
+clampMin();
 B.large = B.large || HQ.defaultLarge(c.M2.speed);
 if(B.colorPct == null) B.colorPct = 20;
 B.tiers = B.tiers || {n:0, d:20}; B.tiers.n = 0;
@@ -129,6 +130,7 @@ function num(p, label, unit, extra){ var v = get(p); return '<label class="f"><s
 function txt(p, label, ph){ return '<label class="f"><span>' + label + '</span><input type="text" data-p="' + p + '" value="' + esc(get(p)) + '" placeholder="' + esc(ph || '') + '"></label>'; }
 function radio(p, label, opts){ var v = get(p); return '<div class="f"><span>' + label + '</span><div class="chips">' + opts.map(function(o){ return '<label><input type="radio" name="' + p + '" data-p="' + p + '" data-t="' + (typeof o[0]) + '" value="' + o[0] + '"' + (String(v) === String(o[0]) ? ' checked' : '') + '><span>' + o[1] + '</span></label>'; }).join('') + '</div></div>'; }
 function multi(p, label, opts){ var v = get(p) || []; return '<div class="f"><span>' + label + '</span><div class="chips">' + opts.map(function(o){ return '<label><input type="checkbox" data-arr="' + p + '" value="' + o[0] + '"' + (v.indexOf(o[0]) > -1 ? ' checked' : '') + '><span>' + o[1] + '</span></label>'; }).join('') + '</div></div>'; }
+function clampMin(){ var m = c.B.min; if(!(m > 0)) return; D.SIZES.forEach(function(z){ var v = c.B.sizes[z.k]; if(!v) return; [0, 1].forEach(function(i){ if(v[i] != null && v[i] !== '' && +v[i] < m){ v[i] = m; var e = window.app && app.querySelector('[data-p="B.sizes.' + z.k + '.' + i + '"]'); if(e) e.value = m; } }); }); }
 function pair(p, label){ var v = get(p) || []; return '<div class="pair"><span>' + label + '</span><input type="number" step="any" min="0" data-p="' + p + '.0" value="' + (v[0] == null ? '' : v[0]) + '"><span>–</span><input type="number" step="any" min="0" data-p="' + p + '.1" value="' + (v[1] == null ? '' : v[1]) + '"></div>'; }
 
 function render(){
@@ -216,6 +218,7 @@ function bind(){
       vis(); persist();
     });
   });
+  var mi = app.querySelector('[data-p="B.min"]'); if(mi) mi.addEventListener('change', function(){ clampMin(); persist(); });
   app.querySelectorAll('[data-arr]').forEach(function(el){
     el.addEventListener('change', function(){
       var p = el.getAttribute('data-arr'), a = get(p) || [];
@@ -246,6 +249,7 @@ function bind(){
     if(!(c.B.hourly > 0)){ alert(t('Indiquez d\'abord votre taux horaire.', 'Fill in your hourly rate first.', '先填时薪。')); return; }
     var g = HQ.fromHourly(c.B.hourly, c.M2.speed); c.B.sizes = g.sizes; c.B.large = g.large;
     if(!c.B.min) c.B.min = HQ.r10(c.B.hourly);
+    clampMin();
     persist(); render();
   };
   document.getElementById('defLarge').onclick = function(){ c.B.large = HQ.defaultLarge(c.M2.speed); persist(); render(); };
