@@ -36,6 +36,9 @@ function validate(c, lg){
   var df = A.designFee;
   if(!df || !num(df.pct) || df.pct < 0) V('A · Supplément dessin (%)', 'A · Design surcharge (%)', 'A · 设计稿加价百分比', 'A.designFee.pct');
   if(!A.retouch || !num(A.retouch.free) || !num(A.retouch.months)) V('A · Retouches', 'A · Touch-up policy', 'A · 补色政策', 'A.retouch.free');
+  var cl = A.calendar || {};
+  if(cl.mode === 'weekly' && !(cl.days || []).length) V('A · Jours de travail du calendrier', 'A · Calendar working days', 'A · 日历：每周哪几天', 'A.calendar.days');
+  if(cl.mode === 'dates' && !(cl.dates || []).length) V('A · Dates ouvertes du calendrier', 'A · Calendar open dates', 'A · 日历：开放的日期', 'A.calendar.mode');
   if(!A.payment || !A.payment.length) V('A · Moyens de paiement', 'A · Payment methods', 'A · 支付方式', 'A.payment');
   if(c.mode !== 1 && c.mode !== 2) V('Mode (j\'ai mes prix / aidez-moi)', 'Mode (I have prices / help me)', '模式（已有价格 / 帮我定价）', 'mode');
   if(!pos(B.min)) V('B · Prix minimum', 'B · Minimum price', 'B · 最低起价', 'B.min');
@@ -109,6 +112,46 @@ function estimate(c, q){
   return out;
 }
 
+
+/* ---------- Calendrier (facultatif) ----------
+   cal.mode : 'none' = pas de calendrier (le client indique ses préférences)
+              'weekly' = jours fixes chaque semaine (cal.days : 0 = dimanche … 6 = samedi), à partir de cal.from
+              'dates' = dates ouvertes une par une (cal.dates : 'AAAA-MM-JJ') */
+function ymd(d){ return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+var CAL_DAYS = 120;
+function calOpen(cal, day){
+  if(!cal || cal.mode === 'none' || !cal.mode) return false;
+  var t = new Date(); t.setHours(0, 0, 0, 0);
+  var d = new Date(day + 'T00:00:00');
+  if(!(d > t) || d - t > CAL_DAYS * 864e5) return false;
+  if(cal.mode === 'weekly') return (cal.days || []).indexOf(d.getDay()) > -1 && (!cal.from || day >= cal.from);
+  return (cal.dates || []).indexOf(day) > -1;
+}
+/* Grille d'un mois, semaine commençant le lundi. cell(day) → {cls, dis} pour chaque jour. */
+function calHTML(y, m, lg, cell){
+  var loc = lg === 'zh' ? 'zh-CN' : lg === 'en' ? 'en-GB' : 'fr-FR';
+  var first = new Date(y, m, 1), n = new Date(y, m + 1, 0).getDate(), pad = (first.getDay() + 6) % 7;
+  var title = first.toLocaleDateString(loc, {month:'long', year:'numeric'});
+  var wd = [], i; for(i = 0; i < 7; i++) wd.push(new Date(2024, 0, 1 + i).toLocaleDateString(loc, {weekday:'narrow'}));
+  var h = '<div class="cal"><div class="cal-h"><button type="button" class="cal-nav" data-nav="-1" aria-label="‹">‹</button><span>' + title + '</span><button type="button" class="cal-nav" data-nav="1" aria-label="›">›</button></div><div class="cal-g">';
+  h += wd.map(function(w){ return '<span class="cal-w">' + w + '</span>'; }).join('');
+  for(i = 0; i < pad; i++) h += '<span></span>';
+  for(i = 1; i <= n; i++){
+    var day = ymd(new Date(y, m, i)), c = cell(day) || {};
+    h += '<button type="button" class="cal-d ' + (c.cls || '') + '" data-day="' + day + '"' + (c.dis ? ' disabled' : '') + '>' + i + '</button>';
+  }
+  return h + '</div></div>';
+}
+var CAL_CSS = '.cal{max-width:340px;border:1px solid var(--line);background:var(--card);padding:10px;margin-top:8px;}' +
+  '.cal-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;text-transform:capitalize;}' +
+  '.cal-nav{border:0;background:none;font:inherit;font-size:22px;line-height:1;padding:4px 10px;cursor:pointer;color:var(--ink);}' +
+  '.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;}' +
+  '.cal-w{font-size:12px;color:var(--soft);padding:2px 0;}' +
+  '.cal-d{font:inherit;font-size:14px;padding:7px 0;border:1px solid transparent;background:none;color:var(--ink);cursor:pointer;}' +
+  '.cal-d[disabled]{color:var(--line);cursor:default;}' +
+  '.cal-d.open{border-color:var(--line);}' +
+  '.cal-d.on{background:var(--ink);color:var(--bg);border-color:var(--ink);}';
+
 /* ---------- Grille à partir d'un taux horaire ---------- */
 function speedRatio(sp){
   var r = [];
@@ -173,5 +216,5 @@ function suggest(A, M){
     tech:{line:0, shade:15, fill:30}, stylePct:stylePct, deposit:{type:'pct', pct:30, min:30, refundable:false, deducted:null}, flashDiscount:0}, rep:rep};
 }
 
-window.HQ = {validate:validate, estimate:estimate, suggest:suggest, fromHourly:fromHourly, defaultLarge:defaultLarge, speedRatio:speedRatio, band:band, tierOf:tierOf, refusedPlaces:refusedPlaces, r10:r10};
+window.HQ = {ymd:ymd, calOpen:calOpen, calHTML:calHTML, CAL_CSS:CAL_CSS, CAL_DAYS:CAL_DAYS, validate:validate, estimate:estimate, suggest:suggest, fromHourly:fromHourly, defaultLarge:defaultLarge, speedRatio:speedRatio, band:band, tierOf:tierOf, refusedPlaces:refusedPlaces, r10:r10};
 })();
