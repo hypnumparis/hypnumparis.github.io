@@ -12,6 +12,7 @@
 :root{--bg:#f8f3e9;--card:#fbf8f2;--ink:#2a1c15;--soft:#6a5a4e;--line:rgba(42,28,21,.2);--good:#3d5a40;--bad:#8a2f24;}
 *{box-sizing:border-box}
 [hidden]{display:none !important}
+html.embed body{background:transparent;}html.embed .wrap{padding:0;max-width:none;}html.embed .top,html.embed .foot,html.embed .pf,html.embed #app > h1{display:none !important;}html.embed .grid{display:block;margin-top:0;}
 input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 
@@ -88,6 +89,10 @@ html[lang=zh] .btn{font-size:17px;letter-spacing:.1em;}
 (function(){
 var D = HQ_DATA, app = document.getElementById('app');
 var preview = /[?&]preview=1/.test(location.search), cfg = null;
+/* ?embed=1 : formulaire intégré dans la page de réservation (iframe). ?type=custom|own présélectionne le type. */
+var embed = /[?&]embed=1/.test(location.search), qtype = (/[?&]type=(custom|own|cover)/.exec(location.search) || [])[1];
+if(embed) document.documentElement.classList.add('embed');
+function tell(o){ if(embed && window.parent !== window){ o.hq = 1; try{ window.parent.postMessage(o, location.origin); }catch(e){} } }
 if(preview){ try{ cfg = JSON.parse(localStorage.getItem('hq-draft') || 'null'); }catch(e){} }
 if(!cfg) cfg = (window.HQ_ARTISTS || {})[window.HQ_ACTIVE];
 var missing = HQ.validate(cfg);
@@ -224,7 +229,8 @@ function render(){
     return;
   }
   var A = cfg.A, cover = (A.refuse || []).indexOf('coverup') < 0;
-  var types = ['custom', 'flash', 'own'].concat(cover ? ['cover'] : []);
+  var types = (embed ? [qtype || 'custom'] : ['custom', 'flash', 'own']).concat(cover ? ['cover'] : []);
+  if(embed && qtype && !st.type) st.type = qtype;
   var places = D.ZONES.map(function(z){
     return '<optgroup label="' + esc(lab(z)) + '">' + D.PLACES.filter(function(p){ return p.z === z.k; }).map(function(p){
       return '<option value="' + p.k + '"' + (st.place === p.k ? ' selected' : '') + '>' + esc(lab(p)) + '</option>'; }).join('') + '</optgroup>';
@@ -336,11 +342,18 @@ function submit(ev){
   }).then(function(r){ return r.json(); }).then(function(j){
     if(!j.ok) throw 0;
     msg.className = 'msg ok'; msg.textContent = f(q.intent === 'book' ? t.okBook : t.okAsk, {r:replyTxt()});
+    tell({sent:1});
     fm.reset(); files = []; st = {}; fm.querySelector('.thumbs').innerHTML = ''; update();
   }).catch(function(){ msg.className = 'msg err'; msg.textContent = t.err; })
   .then(function(){ btn.disabled = false; update(); });
 }
 render();
+if(embed){
+  tell({open:!missing.length});
+  var lastH = 0, post = function(){ var h = document.documentElement.scrollHeight; if(h !== lastH){ lastH = h; tell({h:h}); } };
+  if(window.ResizeObserver) new ResizeObserver(post).observe(document.body); else setInterval(post, 500);
+  post();
+}
 })();
 </script>
 </body></html>

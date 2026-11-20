@@ -4188,4 +4188,41 @@ document.addEventListener('click', function(e){
 #apercu .ap-prog i{position:absolute;left:0;top:0;bottom:0;background:currentColor;opacity:.75;border-radius:3px;}
 @media (min-width:861px){ #apercu .ap-prog{width:140px;} }
 </style>
+<style>.resa-hq-box{margin-top:6px;}.resa-hq-box iframe{display:block;width:100%;border:0;min-height:400px;background:transparent;}.resa-hq-box[hidden]{display:none;}#resaForm.resa-hq .resa-step:not(:first-of-type),#resaForm.resa-hq .lt-close,#resaForm.resa-hq #resaError,#resaForm.resa-hq .lt-seal-wrap,#resaForm.resa-hq .resa-hq-hide{display:none !important;}</style>
+<script>
+/* Réservation : pour un projet sur mesure (dessin + tatouage) ou votre propre dessin, la lettre laisse place
+   au formulaire de devis (/devis/, estimation + images), dès que ses réglages sont complets.
+   Tant que /devis/ est fermé, la lettre reste exactement comme avant. hypnum.fr/?preview=1 teste avec le brouillon des réglages. */
+(function(){
+  var form = document.getElementById('resaForm'); if(!form) return;
+  var pv = /[?&]preview=1/.test(location.search), box = null, fr = null, cur = '', open = false;
+  function val(n){ var c = form.querySelector('input[name="' + n + '"]:checked'); return c ? c.value : ''; }
+  ['customDesc', 'ownNote'].forEach(function(id){ var el = document.getElementById(id); if(el){ (el.closest('.resa-field') || el).classList.add('resa-hq-hide'); } });
+  form.querySelectorAll('.resa-panel[data-for="custom"] .resa-hint, .resa-panel[data-for="own"] .resa-hint').forEach(function(el){ el.classList.add('resa-hq-hide'); });
+  function want(){ var t = val('type'); return t === 'own' ? 'own' : t === 'custom' && val('customMode') !== 'seul' ? 'custom' : ''; }
+  function apply(){ form.classList.toggle('resa-hq', open && !!cur); if(box) box.hidden = !(open && cur); }
+  function sync(force){
+    var w = want();
+    if(w === cur && !force){ apply(); return; }
+    cur = w;
+    if(!w){ apply(); return; }
+    if(!box){
+      box = document.createElement('div'); box.className = 'resa-hq-box'; box.hidden = true;
+      var first = form.querySelector('.resa-step'); first.parentNode.insertBefore(box, first.nextSibling);
+    }
+    box.innerHTML = '<iframe title="Devis" loading="eager"></iframe>'; fr = box.firstChild;
+    fr.src = '/devis/?embed=1&type=' + w + (pv ? '&preview=1' : '');
+    apply();
+  }
+  window.addEventListener('message', function(e){
+    if(e.origin !== location.origin || !fr || e.source !== fr.contentWindow || !e.data || !e.data.hq) return;
+    if('open' in e.data){ open = !!e.data.open; apply(); }
+    if(e.data.h) fr.style.height = e.data.h + 'px';
+    if(e.data.sent) box.scrollIntoView({behavior:'smooth', block:'end'});
+  });
+  form.addEventListener('change', function(e){ if(e.target.name === 'type' || e.target.name === 'customMode') sync(); });
+  new MutationObserver(function(){ if(cur) sync(true); }).observe(document.documentElement, {attributes:true, attributeFilter:['data-lang']});
+  sync();
+})();
+</script>
 </body></html>
