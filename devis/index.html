@@ -101,7 +101,7 @@ fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'af
  idea:'Votre idée', ideaPh:'Le sujet, l\'ambiance, ce qui compte pour vous…',
  ref:'Images de référence', refHint:'Jusqu\'à 3 images, 5 Mo maximum chacune.',
  budget:'Budget (€)', dates:'Disponibilités', datesPh:'ex. les samedis de janvier',
- name:'Prénom', email:'E-mail', contact:'Téléphone, Instagram ou WeChat',
+ name:'Prénom', email:'E-mail', contact:'Téléphone, Instagram ou WeChat', ctWay:'Comment préférez-vous être contacté ?', ways:{email:'E-mail', tel:'Téléphone', sms:'SMS', wa:'WhatsApp', wx:'WeChat', ig:'Instagram'}, hTel:'Numéro de téléphone', hWx:'Identifiant WeChat', hIg:'Compte Instagram', opt:'(facultatif)',
  adult:'J\'ai 18 ans ou plus.',
  consent:'J\'accepte que ces informations soient utilisées pour répondre à ma demande. Mes images de référence pourront être analysées par un service d\'intelligence artificielle (prestataire externe) pour reconnaître le style. <a href="/mentions-legales.html" target="_blank" rel="noopener">En savoir plus</a>',
  est:'Estimation', dep:'Acompte pour réserver', depR:'remboursable', depNR:'non remboursable',
@@ -127,7 +127,7 @@ en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate
  idea:'Your idea', ideaPh:'Subject, mood, what matters to you…',
  ref:'Reference images', refHint:'Up to 3 images, 5 MB each.',
  budget:'Budget (€)', dates:'Availability', datesPh:'e.g. Saturdays in January',
- name:'First name', email:'Email', contact:'Phone, Instagram or WeChat',
+ name:'First name', email:'Email', contact:'Phone, Instagram or WeChat', ctWay:'How would you like to be contacted?', ways:{email:'Email', tel:'Phone', sms:'SMS', wa:'WhatsApp', wx:'WeChat', ig:'Instagram'}, hTel:'Phone number', hWx:'WeChat ID', hIg:'Instagram account', opt:'(optional)',
  adult:'I am 18 or older.',
  consent:'I agree that this information is used to answer my request. My reference images may be analysed by an artificial intelligence service (external provider) to recognise the style. <a href="/mentions-legales.html" target="_blank" rel="noopener">Learn more</a>',
  est:'Estimate', dep:'Deposit to book', depR:'refundable', depNR:'non-refundable',
@@ -153,7 +153,7 @@ zh:{title:'纹身询价', sub:'描述你的想法，马上就能看到预估价�
  idea:'你的想法', ideaPh:'图案、感觉、对你重要的点……',
  ref:'参考图', refHint:'最多 3 张，每张不超过 5 MB。',
  budget:'预算（€）', dates:'方便的时间', datesPh:'例如：1 月的周六',
- name:'名字', email:'邮箱', contact:'电话、Instagram 或微信',
+ name:'名字', email:'邮箱', contact:'电话、Instagram 或微信', ctWay:'你希望我怎么联系你？', ways:{email:'邮箱', tel:'电话', sms:'短信', wa:'WhatsApp', wx:'微信', ig:'Instagram'}, hTel:'电话号码', hWx:'微信号', hIg:'Instagram 账号', opt:'（选填）',
  adult:'我已年满 18 岁。',
  consent:'我同意这些信息用于回复我的询价。我的参考图可能会交给人工智能服务商（外部服务）分析风格。<a href="/mentions-legales.html" target="_blank" rel="noopener">了解更多</a>',
  est:'预估价格', dep:'预约定金', depR:'可退', depNR:'不退',
@@ -229,6 +229,7 @@ function render(){
     return '<optgroup label="' + esc(lab(z)) + '">' + D.PLACES.filter(function(p){ return p.z === z.k; }).map(function(p){
       return '<option value="' + p.k + '"' + (st.place === p.k ? ' selected' : '') + '>' + esc(lab(p)) + '</option>'; }).join('') + '</optgroup>';
   }).join('');
+  if(!st.ctWay) st.ctWay = 'email';
   app.innerHTML = '<h1>' + t.title + '</h1><p class="sub">' + esc(f(t.sub, {r:replyTxt()})) + '</p>' +
    '<div class="grid">' + profile() + '<form novalidate>' +
    '<fieldset><legend>' + t.type + '</legend><div class="chips">' + types.map(function(k){ return chip('type', k, t.types[k]); }).join('') + '</div><p class="hint" id="flashHint"' + (st.type === 'flash' ? '' : ' hidden') + '>' + t.flashHint + '</p><p class="hint" id="ownHint"' + (st.type === 'own' ? '' : ' hidden') + '>' + t.ownHint + '</p></fieldset>' +
@@ -242,8 +243,9 @@ function render(){
    '<div><label class="lb" for="q-refs">' + t.ref + '</label><input id="q-refs" type="file" name="refs" accept="image/*" multiple><p class="hint">' + t.refHint + '</p><div class="thumbs"></div></div>' +
    '<div><label class="lb" for="q-budget">' + t.budget + '</label><input id="q-budget" type="number" min="0" inputmode="numeric" name="budget" value="' + esc(st.budget) + '" style="max-width:200px"></div>' +
    '<div class="row"><div><label class="lb" for="q-name">' + t.name + ' <span class="req">*</span></label><input id="q-name" type="text" name="name" autocomplete="given-name" value="' + esc(st.name) + '"></div>' +
-   '<div><label class="lb" for="q-email">' + t.email + ' <span class="req">*</span></label><input id="q-email" type="email" name="email" autocomplete="email" value="' + esc(st.email) + '"></div></div>' +
-   '<div><label class="lb" for="q-contact">' + t.contact + '</label><input id="q-contact" type="text" name="contact" value="' + esc(st.contact) + '"></div>' +
+   '<div><label class="lb" for="q-email">' + t.email + ' <span class="req" id="emReq">*</span><span class="req" id="emOpt" hidden style="color:var(--soft)">' + t.opt + '</span></label><input id="q-email" type="email" name="email" autocomplete="email" value="' + esc(st.email) + '"></div></div>' +
+   '<fieldset><legend>' + t.ctWay + '</legend><div class="chips">' + ['email','tel','sms','wa','wx','ig'].map(function(k){ return chip('ctWay', k, t.ways[k]); }).join('') + '</div></fieldset>' +
+   '<div id="ctQ" hidden><label class="lb" for="q-contact" id="ctLb"></label><input id="q-contact" type="text" name="contact" value="' + esc(st.contact) + '"></div>' +
    '<fieldset><legend>' + t.next + '</legend><div class="chips">' + chip('intent', 'book', t.nextBook) + chip('intent', 'ask', t.nextAsk) + '</div></fieldset>' +
    '<div id="datesQ" hidden><label class="lb" for="q-dates">' + t.datesReq + ' <span class="req">*</span></label><input id="q-dates" type="text" name="dates" placeholder="' + esc(t.datesPh) + '" value="' + esc(st.dates) + '"></div>' +
    ((A.refuse || []).indexOf('minors') > -1 ? '<label class="check"><input type="checkbox" name="adult"' + (st.adult ? ' checked' : '') + '> ' + t.adult + '</label>' : '') +
@@ -272,6 +274,11 @@ function update(){
   fm.querySelector('#flashHint').hidden = q.type !== 'flash';
   fm.querySelector('#ownHint').hidden = q.type !== 'own';
   fm.querySelector('#datesQ').hidden = q.intent !== 'book';
+  var way = q.ctWay || 'email', wk = way === 'wx' ? 'wx' : way === 'ig' ? 'ig' : 'tel', ci = fm.querySelector('#q-contact');
+  fm.querySelector('#ctQ').hidden = way === 'email';
+  fm.querySelector('#emReq').hidden = way !== 'email'; fm.querySelector('#emOpt').hidden = way === 'email';
+  fm.querySelector('#ctLb').innerHTML = esc(wk === 'wx' ? t.hWx : wk === 'ig' ? t.hIg : t.hTel) + ' <span class="req">*</span>';
+  ci.type = wk === 'tel' ? 'tel' : 'text'; ci.autocomplete = wk === 'tel' ? 'tel' : 'off'; ci.placeholder = wk === 'tel' ? '+33 6 …' : wk === 'ig' ? '@' : '';
   fm.querySelector('button[type=submit]').textContent = q.intent === 'book' ? t.sendBook : q.intent === 'ask' ? t.sendAsk : t.send;
   var fv = find(D.REFUSE, 'first_visible');
   var askFirst = (cfg.A.refuse || []).indexOf('first_visible') > -1 && fv.p.indexOf(q.place) > -1;
@@ -301,7 +308,10 @@ function submit(ev){
   if(!q.type) miss.push(t.type); if(!q.size) miss.push(t.size); if(!q.place) miss.push(t.place); if(!q.color) miss.push(t.color);
   if(!fm.querySelector('#firstQ').hidden && !q.first) miss.push(t.first);
   if(!q.intent) miss.push(t.next); if(q.intent === 'book' && !(q.dates || '').trim()) miss.push(t.datesReq);
-  if(!q.name) miss.push(t.name); if(!/.+@.+\..+/.test(q.email || '')) miss.push(t.email);
+  var way = q.ctWay || 'email';
+  if(!q.name) miss.push(t.name);
+  if(way === 'email' ? !/.+@.+\..+/.test(q.email || '') : (q.email && !/.+@.+\..+/.test(q.email))) miss.push(t.email);
+  if(way !== 'email' && !(q.contact || '').trim()) miss.push(fm.querySelector('#ctLb').textContent.replace('*', '').trim());
   if(fm.querySelector('[name=adult]') && !q.adult) miss.push(t.adult);
   if(!q.consent) miss.push(t.consent.split('.')[0]);
   if(miss.length){ msg.className = 'msg err'; msg.textContent = f(t.need, {x:miss.join(', ')}); return; }
@@ -309,7 +319,7 @@ function submit(ev){
   if(e.refused){ msg.className = 'msg err'; msg.textContent = f(t.refused, {x:lab(find(D.REFUSE, e.refused)).toLowerCase()}); return; }
   var d = {artist:cfg.id, config_version:cfg.version, lang:lang, page:location.href, intent:q.intent,
     type:q.type, technique:q.tech || 'unsure', size:q.size, place:q.place, place_tier:HQ.tierOf(cfg, q.place), color:q.color, first_tattoo:q.first || '',
-    idea:q.idea || '', budget:q.budget || '', dates:q.intent === 'book' ? q.dates || '' : '', name:q.name, email:q.email, contact:q.contact || '',
+    idea:q.idea || '', budget:q.budget || '', dates:q.intent === 'book' ? q.dates || '' : '', name:q.name, email:q.email || '', contact:way === 'email' ? 'E-mail' : T.en.ways[way] + ' : ' + (q.contact || '').trim(),
     adult:q.adult ? 'oui' : '', consent:'oui',
     estimate_low:e.lo, estimate_high:e.hi, deposit:e.dep, design_fee:e.fee ? e.fee.lo + '-' + e.fee.hi : '', coef:Math.round(e.coef * 100) / 100,
     est_hours:e.hours ? e.hours.join('-') : '', est_sessions:e.sessions ? e.sessions.join('-') : ''};
