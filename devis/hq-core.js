@@ -21,6 +21,8 @@ function validate(c, lg){
   if(!A.name) V('A · Nom ou nom d\'artiste', 'A · Name or artist name', 'A · 名字 / 品牌名', 'A.name');
   if(!num(A.years) || A.years < 0) V('A · Années d\'expérience', 'A · Years of experience', 'A · 纹了几年', 'A.years');
   if(!A.work) V('A · Façon de travailler', 'A · How you work', 'A · 工作方式', 'A.work');
+  /* les frais (part du studio, poste, loyer) ne servent qu'au mode 2 « aidez-moi à fixer mes prix » */
+  else if(c.mode !== 2){}
   else if(A.work === 'split' && !(num(co.splitPct) && co.splitPct >= 0 && co.splitPct < 100)) V('A · Part du studio', 'A · Studio share', 'A · 工作室分成比例', 'A.cost.splitPct');
   else if(A.work === 'desk'){
     if(!co.deskUnit || !num(co.deskPrice)) V('A · Location du poste : formule et prix', 'A · Desk rental: unit and price', 'A · 工位怎么付、每次多少钱', co.deskUnit ? 'A.cost.deskPrice' : 'A.cost.deskUnit');
