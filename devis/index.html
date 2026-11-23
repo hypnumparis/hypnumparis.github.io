@@ -97,7 +97,7 @@ if(preview){ try{ cfg = JSON.parse(localStorage.getItem('hq-draft') || 'null'); 
 if(!cfg) cfg = (window.HQ_ARTISTS || {})[window.HQ_ACTIVE];
 var missing = HQ.validate(cfg);
 /* sans adresse de script, le formulaire reste fermé (sauf aperçu) : rien ne serait envoyé */
-if(!missing.length && !window.HQ_ENDPOINT && !preview) missing = ['endpoint'];
+if(!missing.length && (!window.HQ_ENDPOINT || window.HQ_OPEN === false) && !preview) missing = ['endpoint'];
 
 var T = {
 fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'affiche tout de suite. Si vous êtes décidé·e, envoyez une demande de rendez-vous ; sinon, posez-moi simplement vos questions. Je réponds sous {r}.',
@@ -336,7 +336,7 @@ function submit(ev){
     estimate_low:e.lo, estimate_high:e.hi, deposit:e.dep, design_fee:e.fee ? e.fee.lo + '-' + e.fee.hi : '', coef:Math.round(e.coef * 100) / 100,
     est_hours:e.hours ? e.hours.join('-') : '', est_sessions:e.sessions ? e.sessions.join('-') : ''};
   var ep = window.HQ_ENDPOINT;
-  if(!ep || preview){ msg.className = 'msg ok'; msg.textContent = t.demo + ' ' + f(q.intent === 'book' ? t.okBook : t.okAsk, {r:replyTxt()}); return; }
+  if(!ep || (preview && !/[?&]send=1/.test(location.search))){ msg.className = 'msg ok'; msg.textContent = t.demo + ' ' + f(q.intent === 'book' ? t.okBook : t.okAsk, {r:replyTxt()}); return; }
   btn.disabled = true; btn.textContent = t.sending;
   Promise.all(files.map(toB64)).then(function(imgs){
     d.images = imgs;
