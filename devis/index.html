@@ -38,6 +38,7 @@ html[lang=zh] .sub,html[lang=zh] .pf-n,html[lang=zh] .hint{font-style:normal}
 html[lang=zh] .pf dt,html[lang=zh] .lb{letter-spacing:.08em;font-size:13px;}
 form{display:grid;gap:26px;grid-template-columns:minmax(0,1fr);}
 fieldset{border:0;margin:0;padding:0;display:grid;gap:10px;min-width:0;}
+legend{width:100%;box-sizing:border-box;}
 legend,.lb{display:block;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);padding:0;margin-bottom:10px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;}
 .chips label{position:relative;}
@@ -240,7 +241,7 @@ function render(){
   if(!st.ctWay) st.ctWay = 'email';
   app.innerHTML = '<h1>' + t.title + '</h1><p class="sub">' + esc(f(t.sub, {r:replyTxt()})) + '</p>' +
    '<div class="grid">' + profile() + '<form novalidate>' +
-   '<fieldset><legend>' + t.type + '</legend><div class="chips">' + types.map(function(k){ return chip('type', k, t.types[k]); }).join('') + '</div></fieldset>' +
+   '<fieldset' + (types.length < 2 ? ' hidden' : '') + '><legend>' + t.type + '</legend><div class="chips">' + types.map(function(k){ return chip('type', k, t.types[k]); }).join('') + '</div></fieldset>' +
    '<fieldset><legend>' + t.tech + '</legend><div class="chips tech">' + D.TECH.map(function(x){ return chip('tech', x.k, lab(x), 'radio'); }).join('') + '</div><p class="hint" id="unsureHint" hidden>' + t.unsureHint + '</p></fieldset>' +
    '<fieldset><legend>' + t.size + '</legend><div class="chips">' + D.SIZES.concat(D.LARGE).map(function(x){ return chip('size', x.k, lab(x)); }).join('') + '</div></fieldset>' +
    '<div><label class="lb" for="q-place">' + t.place + '</label><select id="q-place" name="place"><option value="">' + t.pick + '</option>' + places + '</select></div>' +
