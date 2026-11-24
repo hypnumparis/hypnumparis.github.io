@@ -12,7 +12,7 @@
 :root{--bg:#f8f3e9;--card:#fbf8f2;--ink:#2a1c15;--soft:#6a5a4e;--line:rgba(42,28,21,.2);--good:#3d5a40;--bad:#8a2f24;}
 *{box-sizing:border-box}
 [hidden]{display:none !important}
-html.embed body{background:transparent;}html.embed .wrap{padding:0;max-width:none;}html.embed .top,html.embed .foot,html.embed .pf,html.embed #app > h1{display:none !important;}html.embed .grid{display:block;margin-top:0;}
+html.embed{--card:transparent;--line:rgba(43,32,26,.32);}html.embed select{background-color:transparent;}html.embed legend,html.embed .lb{font-size:16px;letter-spacing:.02em;text-transform:none;color:var(--ink);}html.embed .sub{margin-bottom:28px;}html.embed body{background:transparent;}html.embed .wrap{padding:0;max-width:none;}html.embed .top,html.embed .foot,html.embed .pf,html.embed #app > h1{display:none !important;}html.embed .grid{display:block;margin-top:0;}
 input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 
@@ -397,8 +397,8 @@ function submit(ev){
 render();
 if(embed){
   tell({open:!missing.length});
-  var lastH = 0, post = function(){ var h = document.documentElement.scrollHeight; if(h !== lastH){ lastH = h; tell({h:h}); } };
-  if(window.ResizeObserver) new ResizeObserver(post).observe(document.body); else setInterval(post, 500);
+  var lastH = 0, post = function(){ var w = document.querySelector('.wrap') || document.body, h = Math.ceil(w.getBoundingClientRect().bottom + window.scrollY) + 24;  /* hauteur du contenu, pas de la fenêtre (sinon elle ne rétrécit jamais) */ if(h !== lastH){ lastH = h; tell({h:h}); } };
+  if(window.ResizeObserver) new ResizeObserver(post).observe(document.querySelector('.wrap') || document.body); else setInterval(post, 500);
   post();
 }
 })();
