@@ -311,6 +311,45 @@ function update(){
     '<span class="n">' + t.note + '</span>';
 }
 
+/* E-mail lisible pour le tatoueur, dans sa langue (cfg.A.mailLang, sinon fr) */
+var ML = {
+  fr:{book:'Demande de rendez-vous', ask:'Question', head:{book:'Nouvelle demande : la personne veut réserver', ask:'Nouvelle question : la personne veut d\'abord se renseigner'},
+    client:'Client', contact:'Contact', lang:'Langue du formulaire', type:'Type', tech:'Technique', size:'Taille', place:'Emplacement', tier:{n:'normal', d:'difficile'}, color:'Couleur',
+    first:'Premier tatouage', yn:{yes:'oui', no:'non'}, idea:'Idée', budget:'Budget', dates:'Disponibilités', est:'Estimation', fee:'dont dessin {a}', dep:'Acompte', imgs:'Images de référence :', sheet:'Tableau : ', reply:'Répondez directement à ce mail pour écrire au client.',
+    types:{custom:'Dessin sur mesure', flash:'Flash', own:'Son propre dessin', cover:'Cover-up ou retouche'}, colors:{bw:'Noir et gris', col:'Couleur'}, ways:{email:'E-mail', tel:'Téléphone', sms:'SMS', wa:'WhatsApp', wx:'WeChat', ig:'Instagram'}, langs:{fr:'français', en:'anglais', zh:'chinois'}},
+  en:{book:'Booking request', ask:'Question', head:{book:'New request: they want to book', ask:'New question: they want to ask first'},
+    client:'Client', contact:'Contact', lang:'Form language', type:'Type', tech:'Technique', size:'Size', place:'Placement', tier:{n:'normal', d:'difficult'}, color:'Colour',
+    first:'First tattoo', yn:{yes:'yes', no:'no'}, idea:'Idea', budget:'Budget', dates:'Availability', est:'Estimate', fee:'incl. design {a}', dep:'Deposit', imgs:'Reference images:', sheet:'Sheet: ', reply:'Reply to this email to write to the client.',
+    types:{custom:'Custom design', flash:'Flash', own:'Their own design', cover:'Cover-up or rework'}, colors:{bw:'Black and grey', col:'Colour'}, ways:{email:'Email', tel:'Phone', sms:'SMS', wa:'WhatsApp', wx:'WeChat', ig:'Instagram'}, langs:{fr:'French', en:'English', zh:'Chinese'}},
+  zh:{book:'预约请求', ask:'询价问题', head:{book:'新询价：客人想直接预约', ask:'新询价：客人想先问问'},
+    client:'客人', contact:'联系方式', lang:'填表语言', type:'类型', tech:'技法', size:'大小', place:'部位', tier:{n:'普通部位', d:'难做部位'}, color:'颜色',
+    first:'第一个纹身', yn:{yes:'是', no:'不是'}, idea:'想法', budget:'预算', dates:'方便的时间', est:'估价', fee:'含设计费 {a}', dep:'定金', imgs:'参考图：', sheet:'表格：', reply:'直接回复这封邮件就能写给客人。',
+    types:{custom:'定制图', flash:'纹身稿', own:'客人自己的图', cover:'cover-up 或修改旧图'}, colors:{bw:'黑灰', col:'彩色'}, ways:{email:'邮箱', tel:'电话', sms:'短信', wa:'WhatsApp', wx:'微信', ig:'Instagram'}, langs:{fr:'法语', en:'英语', zh:'中文'}}
+};
+function mailFor(q, e, way){
+  var ml = (cfg.A && cfg.A.mailLang) || 'fr', m = ML[ml] || ML.fr, zh = ml === 'zh', c = zh ? '：' : ' : ';
+  var L = function(x){ return x ? (x.l[ml] || x.l.fr) : ''; };
+  var sz = L(find(D.SIZES.concat(D.LARGE), q.size)), pl = find(D.PLACES, q.place), tier = HQ.tierOf(cfg, q.place);
+  var ct = way === 'email' ? m.ways.email + ' ' + (q.email || '') : m.ways[way] + ' ' + (q.contact || '').trim() + (q.email ? ' · ' + m.ways.email + ' ' + q.email : '');
+  var price = e.lo ? e.lo + '–' + e.hi + ' €' : '';
+  var rows = [
+    m.head[q.intent], '',
+    m.client + c + q.name, m.contact + c + ct, m.lang + c + (m.langs[lang] || lang), '',
+    m.type + c + (m.types[q.type] || q.type),
+    m.tech + c + L(find(D.TECH, q.tech || 'unsure')),
+    m.size + c + sz,
+    m.place + c + L(pl) + (pl ? (zh ? '（' + m.tier[tier] + '）' : ' (' + m.tier[tier] + ')') : ''),
+    m.color + c + (m.colors[q.color] || q.color)
+  ];
+  if(q.first) rows.push(m.first + c + m.yn[q.first]);
+  if(q.idea) rows.push('', m.idea + c + q.idea);
+  if(q.budget) rows.push(m.budget + c + q.budget);
+  if(q.intent === 'book' && q.dates) rows.push(m.dates + c + q.dates);
+  if(price) rows.push('', m.est + c + price + (e.fee ? (zh ? '（' : ' (') + f(m.fee, {a:e.fee.lo + '–' + e.fee.hi + ' €'}) + (zh ? '）' : ')') : ''), m.dep + c + e.dep + ' €');
+  rows.push('', m.reply);
+  return {subject:m[q.intent] + ' · ' + q.name + ' · ' + sz + ' · ' + L(pl) + (price ? ' · ' + price : ''), text:rows.join('\n'), imgs:m.imgs, sheet:m.sheet};
+}
+
 function toB64(file){ return new Promise(function(res, rej){ var r = new FileReader(); r.onload = function(){ res({name:file.name, type:file.type, data:String(r.result).split(',')[1]}); }; r.onerror = rej; r.readAsDataURL(file); }); }
 
 function submit(ev){
@@ -335,6 +374,7 @@ function submit(ev){
     adult:q.adult ? 'oui' : '', consent:'oui',
     estimate_low:e.lo, estimate_high:e.hi, deposit:e.dep, design_fee:e.fee ? e.fee.lo + '-' + e.fee.hi : '', coef:Math.round(e.coef * 100) / 100,
     est_hours:e.hours ? e.hours.join('-') : '', est_sessions:e.sessions ? e.sessions.join('-') : ''};
+  var mm = mailFor(q, e, way); d.mail_subject = mm.subject; d.mail_text = mm.text; d.mail_imgs = mm.imgs; d.mail_sheet = mm.sheet;
   var ep = window.HQ_ENDPOINT;
   if(!ep || (preview && !/[?&]send=1/.test(location.search))){ msg.className = 'msg ok'; msg.textContent = t.demo + ' ' + f(q.intent === 'book' ? t.okBook : t.okAsk, {r:replyTxt()}); return; }
   btn.disabled = true; btn.textContent = t.sending;

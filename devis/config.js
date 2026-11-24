@@ -9,7 +9,7 @@ window.HQ_ARTISTS = {
   hypnum: {
     id: "hypnum", version: 1, mode: 1,
     A: {
-      name: "Hypnum Paris", years: 1.5, instagram: "hypnum.paris",
+      name: "Hypnum Paris", mailLang: "zh", years: 1.5, instagram: "hypnum.paris",
       work: "desk", cost: {}, location: "Paris", daysPerMonth: 8, maxSession: 6,
       reply: {n: 24, unit: "h"},
       styles: ["fine", "black", "mini", "letter", "realbw"], styleOther: "",
