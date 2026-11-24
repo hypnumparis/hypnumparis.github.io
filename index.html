@@ -4188,7 +4188,7 @@ document.addEventListener('click', function(e){
 #apercu .ap-prog i{position:absolute;left:0;top:0;bottom:0;background:currentColor;opacity:.75;border-radius:3px;}
 @media (min-width:861px){ #apercu .ap-prog{width:140px;} }
 </style>
-<style>.resa-hq-box{margin-top:6px;}.resa-hq-box iframe{display:block;width:100%;border:0;min-height:400px;background:transparent;}.resa-hq-box[hidden]{display:none;}#resaForm.resa-hq .resa-step:not(:first-of-type),#resaForm.resa-hq .lt-close,#resaForm.resa-hq #resaError,#resaForm.resa-hq .lt-seal-wrap,#resaForm.resa-hq .resa-hq-hide{display:none !important;}</style>
+<style>.resa-hq-box{margin-top:6px;}.resa-hq-box iframe{display:block;width:100%;border:0;min-height:400px;background:transparent;}.resa-hq-box[hidden]{display:none;}#resaForm.resa-hq .resa-step:not(:first-of-type),#resaForm.resa-hq .lt-close,#resaForm.resa-hq #resaError,#resaForm.resa-hq .resa-hq-hide{display:none !important;}</style>
 <script>
 /* Réservation : pour un projet sur mesure (dessin + tatouage) ou votre propre dessin, la lettre laisse place
    au formulaire de devis (/devis/, estimation + images), dès que ses réglages sont complets.
@@ -4210,7 +4210,7 @@ document.addEventListener('click', function(e){
       box = document.createElement('div'); box.className = 'resa-hq-box'; box.hidden = true;
       var first = form.querySelector('.resa-step'); first.parentNode.insertBefore(box, first.nextSibling);
     }
-    box.innerHTML = '<iframe title="Devis" loading="eager"></iframe>'; fr = box.firstChild;
+    box.innerHTML = '<iframe loading="eager"></iframe>'; fr = box.firstChild;
     fr.src = '/devis/?embed=1&type=' + w + (pv ? '&preview=1' : '');
     apply();
   }
@@ -4220,6 +4220,14 @@ document.addEventListener('click', function(e){
     if(e.data.h) fr.style.height = e.data.h + 'px';
     if(e.data.sent) box.scrollIntoView({behavior:'smooth', block:'end'});
   });
+  /* en mode devis, le cachet envoie le formulaire de devis (pas la lettre) */
+  document.addEventListener('submit', function(e){
+    if(e.target !== form || !form.classList.contains('resa-hq') || !fr) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    var seal = form.querySelector('.lt-seal'); if(seal){ seal.classList.add('press'); setTimeout(function(){ seal.classList.remove('press'); }, 250); }
+    fr.contentWindow.postMessage({hqSubmit:1}, location.origin);
+    setTimeout(function(){ box.scrollIntoView({behavior:'smooth', block:'end'}); }, 300);
+  }, true);
   form.addEventListener('change', function(e){ if(e.target.name === 'type' || e.target.name === 'customMode') sync(); });
   new MutationObserver(function(){ if(cur) sync(true); }).observe(document.documentElement, {attributes:true, attributeFilter:['data-lang']});
   sync();
