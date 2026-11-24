@@ -3,7 +3,7 @@
    Remplir avec la page /devis/reglages.html, puis coller ici le résultat (bouton « 复制设置 »).
    HQ_ENDPOINT : adresse du script Google (vide = mode démo, rien n'est envoyé). */
 window.HQ_ENDPOINT = "https://script.google.com/macros/s/AKfycbznPgXKwpIQt_Pu5epX7UaCpF4OdcaZwCYEdjOHwv4wQd_iQZYe6QBfNim7OzjLuD0O/exec";
-window.HQ_OPEN = false;  /* true = ouvert aux clients (après un essai réussi avec ?preview=1&send=1) */
+window.HQ_OPEN = true;   /* true = ouvert aux clients (après un essai réussi avec ?preview=1&send=1) */
 window.HQ_ACTIVE = "hypnum";
 window.HQ_ARTISTS = {
   hypnum: {
