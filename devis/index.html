@@ -101,7 +101,7 @@ if(!missing.length && (!window.HQ_ENDPOINT || window.HQ_OPEN === false) && !prev
 
 var T = {
 fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'affiche tout de suite. Si vous êtes décidé·e, envoyez une demande de rendez-vous ; sinon, posez-moi simplement vos questions. Je réponds sous {r}.',
- type:'Type de projet', types:{custom:'Un dessin sur mesure', flash:'Un de mes flashs', own:'Votre propre dessin', cover:'Cover-up ou retouche d\'un ancien tatouage'},
+ type:'Type de projet', types:{custom:'Un dessin sur mesure', flash:'Un flash déjà dessiné', own:'Un dessin que vous apportez', cover:'Cover-up ou retouche d\'un ancien tatouage'},
  flashHint:'Ajoutez une capture du flash dans les images de référence.', ownHint:'Ajoutez votre dessin dans les images de référence.',
  tech:'Technique', size:'Taille', place:'Emplacement', pick:'Choisir…', color:'Couleur', colors:{bw:'Noir et gris', col:'Couleur'},
  first:'Est-ce votre premier tatouage ?', yes:'Oui', no:'Non',
@@ -127,7 +127,7 @@ fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'af
  reply:'Réponse sous', h:'{n} h', d:'{n} jours', d1:'{n} jour', pay:'Paiement', refuse:'Ne réalise pas', fees:'Frais de dessin',
  feeP:'{a}, déduits du prix final', feeA:'{a}, en plus du tatouage', feeE:'{a} €', feePc:'{p} % du prix du tatouage', feeN:'Aucun'},
 en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate right away. If you\'ve decided, send a booking request; if not, just ask me your questions. I reply within {r}.',
- type:'Project type', types:{custom:'A custom design', flash:'One of my flashes', own:'Your own design', cover:'Cover-up or rework of an old tattoo'},
+ type:'Project type', types:{custom:'A custom design', flash:'A ready-made flash', own:'A design you bring', cover:'Cover-up or rework of an old tattoo'},
  flashHint:'Add a screenshot of the flash in the reference images.', ownHint:'Add your design in the reference images.',
  tech:'Technique', size:'Size', place:'Placement', pick:'Choose…', color:'Colour', colors:{bw:'Black and grey', col:'Colour'},
  first:'Is this your first tattoo?', yes:'Yes', no:'No',
@@ -153,7 +153,7 @@ en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate
  reply:'Reply within', h:'{n} h', d:'{n} days', d1:'{n} day', pay:'Payment', refuse:'Does not do', fees:'Design fee',
  feeP:'{a}, deducted from the final price', feeA:'{a}, on top of the tattoo', feeE:'€{a}', feePc:'{p}% of the tattoo price', feeN:'None'},
 zh:{title:'纹身询价', sub:'描述你的想法，马上就能看到预估价格。想好了就直接发预约请求；还没想好，也可以先问问。我会在 {r}内回复。',
- type:'类型', types:{custom:'定制图', flash:'我的纹身稿', own:'你自己的图', cover:'cover-up 或修改旧图'},
+ type:'类型', types:{custom:'定制设计', flash:'现成的纹身稿', own:'自带的图', cover:'cover-up 或修改旧图'},
  flashHint:'请在参考图里上传那张纹身稿的截图。', ownHint:'请在参考图里上传你的图。',
  tech:'技法', size:'大小', place:'部位', pick:'请选择', color:'颜色', colors:{bw:'黑灰', col:'彩色'},
  first:'这是你的第一个纹身吗？', yes:'是', no:'不是',
@@ -324,7 +324,7 @@ var ML = {
   zh:{book:'预约请求', ask:'询价问题', head:{book:'新询价：客人想直接预约', ask:'新询价：客人想先问问'},
     client:'客人', contact:'联系方式', lang:'填表语言', type:'类型', tech:'技法', size:'大小', place:'部位', tier:{n:'普通部位', d:'难做部位'}, color:'颜色',
     first:'第一个纹身', yn:{yes:'是', no:'不是'}, idea:'想法', budget:'预算', dates:'方便的时间', est:'估价', fee:'含设计费 {a}', dep:'定金', imgs:'参考图：', sheet:'表格：', reply:'直接回复这封邮件就能写给客人。', noMail:'客人没留邮箱，请用{w}联系。',
-    types:{custom:'定制图', flash:'纹身稿', own:'客人自己的图', cover:'cover-up 或修改旧图'}, colors:{bw:'黑灰', col:'彩色'}, ways:{email:'邮箱', tel:'电话', sms:'短信', wa:'WhatsApp', wx:'微信', ig:'Instagram'}, langs:{fr:'法语', en:'英语', zh:'中文'}, cols:{date:'日期', intent:'类别', status:'状态', name:'客人', contact:'联系方式', email:'邮箱', type:'类型', technique:'技法', size:'大小', place:'部位', color:'颜色', first_tattoo:'第一个纹身', idea:'想法', budget:'预算', dates:'方便的时间', estimate:'估价', deposit:'定金', design_fee:'设计费', images:'参考图', final_price:'最终价格（你填）', actual_hours:'实际用时（你填）', notes:'备注', estimate_low:'估价下限', estimate_high:'估价上限', place_tier:'部位难度', coef:'系数', est_hours:'预计小时', est_sessions:'预计次数', lang:'填表语言', artist:'纹身师', config_version:'设置版本', adult:'成年', consent:'同意', page:'页面', style_ai:'风格'}, intents:{book:'预约', ask:'问问'}, newSt:'新'}
+    types:{custom:'定制图', flash:'纹身稿', own:'客人自带的图', cover:'cover-up 或修改旧图'}, colors:{bw:'黑灰', col:'彩色'}, ways:{email:'邮箱', tel:'电话', sms:'短信', wa:'WhatsApp', wx:'微信', ig:'Instagram'}, langs:{fr:'法语', en:'英语', zh:'中文'}, cols:{date:'日期', intent:'类别', status:'状态', name:'客人', contact:'联系方式', email:'邮箱', type:'类型', technique:'技法', size:'大小', place:'部位', color:'颜色', first_tattoo:'第一个纹身', idea:'想法', budget:'预算', dates:'方便的时间', estimate:'估价', deposit:'定金', design_fee:'设计费', images:'参考图', final_price:'最终价格（你填）', actual_hours:'实际用时（你填）', notes:'备注', estimate_low:'估价下限', estimate_high:'估价上限', place_tier:'部位难度', coef:'系数', est_hours:'预计小时', est_sessions:'预计次数', lang:'填表语言', artist:'纹身师', config_version:'设置版本', adult:'成年', consent:'同意', page:'页面', style_ai:'风格'}, intents:{book:'预约', ask:'问问'}, newSt:'新'}
 };
 function mailFor(q, e, way){
   var base = (window.HQ_ARTISTS || {})[cfg.id] || {}, ml = (cfg.A && cfg.A.mailLang) || (base.A && base.A.mailLang) || 'fr', m = ML[ml] || ML.fr, zh = ml === 'zh', c = zh ? '：' : ' : ';
