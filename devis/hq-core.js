@@ -69,6 +69,7 @@ function refusedPlaces(c){
   return out;
 }
 
+var CX_DEF = {simple:0, medium:10, complex:25};
 /* ---------- Estimation client ---------- */
 function estimate(c, q){
   var A = c.A, B = c.B, rf = A.refuse || [];
@@ -84,7 +85,8 @@ function estimate(c, q){
   var coef = 1 + (q.color === 'col' ? B.colorPct : 0) / 100
                + (B.tech[tech] || 0) / 100
                + (q.place ? (B.tiers[tierOf(c, q.place)] || 0) : 0) / 100
-               + (q.type === 'cover' ? (B.coverPct || 0) : 0) / 100;
+               + (q.type === 'cover' ? (B.coverPct || 0) : 0) / 100
+               + (q.cx && q.type !== 'custom' ? ((B.cxPct || CX_DEF)[q.cx] || 0) : 0) / 100;  /* complexité lue sur l'image par l'IA */
   var flash = q.type === 'flash' ? 1 - (B.flashDiscount || 0) / 100 : 1;
   var lo, hi, out = {coef:coef};
   var lg = B.large[q.size];

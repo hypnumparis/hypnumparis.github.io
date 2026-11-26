@@ -4211,7 +4211,7 @@ document.addEventListener('click', function(e){
       var first = form.querySelector('.resa-step'); first.parentNode.insertBefore(box, first.nextSibling);
     }
     box.innerHTML = '<iframe loading="eager"></iframe>'; fr = box.firstChild;
-    fr.src = '/devis/?embed=1&type=' + w + (pv ? '&preview=1' : '');
+    fr.src = '/devis/?embed=1&type=' + w + (pv ? '&preview=1' : '') + (/[?&]send=1/.test(location.search) ? '&send=1' : '');
     apply();
   }
   window.addEventListener('message', function(e){

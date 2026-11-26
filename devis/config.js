@@ -25,7 +25,7 @@ window.HQ_ARTISTS = {
       sizes: {xs: [60, 90], s: [80, 180], m: [180, 320], l: [250, 550]},
       large: {half: [9, 13], full: [18, 26], back: [22, 35]},
       colorPct: 20, tiers: {n: 0, d: 10}, placeTier: {}, coverPct: 30,
-      tech: {line: 0, shade: 15, fill: 30}, stylePct: {},
+      tech: {line: 0, shade: 15, fill: 30}, stylePct: {}, cxPct: {simple: 0, medium: 10, complex: 25},
       deposit: {type: "pct", pct: 30, min: 30, amount: null, refundable: false, deducted: true},
       flashDiscount: 0
     }

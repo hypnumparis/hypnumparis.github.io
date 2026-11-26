@@ -107,7 +107,7 @@ fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'af
  tech:'Technique', size:'Taille', place:'Emplacement', pick:'Choisir…', color:'Couleur', colors:{bw:'Noir et gris', col:'Couleur'},
  first:'Est-ce votre premier tatouage ?', yes:'Oui', no:'Non',
  idea:'Votre idée', ideaPh:'Le sujet, l\'ambiance, ce qui compte pour vous…',
- ref:'Images de référence (facultatif)', refFlash:'Image du flash (facultatif)', refOwn:'Votre dessin (facultatif)', refMore:'Ajoutez une image : l\'estimation sera plus précise.', unsureHint:'Estimation calculée pour un trait avec ombrage ; le prix est confirmé après avoir vu l\'image.', refHint:'Jusqu\'à 3 images, 5 Mo maximum chacune.',
+ ref:'Images de référence (facultatif)', refFlash:'Image du flash (facultatif)', refOwn:'Votre dessin (facultatif)', refMore:'Ajoutez une image : l\'estimation sera plus précise.', unsureHint:'Estimation calculée pour un trait avec ombrage ; le prix est confirmé après avoir vu l\'image.', refHint:'Jusqu\'à 3 images, 5 Mo maximum chacune.', aiBusy:'Lecture de l\'image…', aiSaw:'D\'après l\'image : ', aiAdj:'L\'estimation tient compte de l\'image ; le prix est confirmé par le tatoueur.', cx:{simple:'peu de détails', medium:'détails moyens', complex:'beaucoup de détails'},
  budget:'Budget (€)', dates:'Disponibilités', datesPh:'ex. les samedis de janvier',
  name:'Prénom', email:'E-mail', contact:'Téléphone, Instagram ou WeChat', ctWay:'Comment préférez-vous être contacté ?', ways:{email:'E-mail', tel:'Téléphone', sms:'SMS', wa:'WhatsApp', wx:'WeChat', ig:'Instagram'}, hTel:'Numéro de téléphone', hWx:'Identifiant WeChat', hIg:'Compte Instagram', opt:'(facultatif)',
  adult:'J\'ai 18 ans ou plus.',
@@ -133,7 +133,7 @@ en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate
  tech:'Technique', size:'Size', place:'Placement', pick:'Choose…', color:'Colour', colors:{bw:'Black and grey', col:'Colour'},
  first:'Is this your first tattoo?', yes:'Yes', no:'No',
  idea:'Your idea', ideaPh:'Subject, mood, what matters to you…',
- ref:'Reference images (optional)', refFlash:'Flash image (optional)', refOwn:'Your design (optional)', refMore:'Add an image for a more accurate estimate.', unsureHint:'Estimated as lines with shading; the price is confirmed after seeing the image.', refHint:'Up to 3 images, 5 MB each.',
+ ref:'Reference images (optional)', refFlash:'Flash image (optional)', refOwn:'Your design (optional)', refMore:'Add an image for a more accurate estimate.', unsureHint:'Estimated as lines with shading; the price is confirmed after seeing the image.', refHint:'Up to 3 images, 5 MB each.', aiBusy:'Reading the image…', aiSaw:'From the image: ', aiAdj:'The estimate takes the image into account; the artist confirms the price.', cx:{simple:'few details', medium:'some detail', complex:'lots of detail'},
  budget:'Budget (€)', dates:'Availability', datesPh:'e.g. Saturdays in January',
  name:'First name', email:'Email', contact:'Phone, Instagram or WeChat', ctWay:'How would you like to be contacted?', ways:{email:'Email', tel:'Phone', sms:'SMS', wa:'WhatsApp', wx:'WeChat', ig:'Instagram'}, hTel:'Phone number', hWx:'WeChat ID', hIg:'Instagram account', opt:'(optional)',
  adult:'I am 18 or older.',
@@ -159,7 +159,7 @@ zh:{title:'纹身询价', sub:'描述你的想法，马上就能看到预估价�
  tech:'技法', size:'大小', place:'部位', pick:'请选择', color:'颜色', colors:{bw:'黑灰', col:'彩色'},
  first:'这是你的第一个纹身吗？', yes:'是', no:'不是',
  idea:'你的想法', ideaPh:'图案、感觉、对你重要的点……',
- ref:'参考图（选填）', refFlash:'纹身稿图片（选填）', refOwn:'你的图（选填）', refMore:'上传图片，估价会更准。', unsureHint:'按线条加阴影估算，纹身师看图后确认。', refHint:'最多 3 张，每张不超过 5 MB。',
+ ref:'参考图（选填）', refFlash:'纹身稿图片（选填）', refOwn:'你的图（选填）', refMore:'上传图片，估价会更准。', unsureHint:'按线条加阴影估算，纹身师看图后确认。', refHint:'最多 3 张，每张不超过 5 MB。', aiBusy:'正在看图…', aiSaw:'根据图片：', aiAdj:'估价已按图片调整，最终价格由纹身师确认。', cx:{simple:'细节简单', medium:'细节中等', complex:'细节多'},
  budget:'预算（€）', dates:'方便的时间', datesPh:'例如：1 月的周六',
  name:'名字', email:'邮箱', contact:'电话、Instagram 或微信', ctWay:'你希望我怎么联系你？', ways:{email:'邮箱', tel:'电话', sms:'短信', wa:'WhatsApp', wx:'微信', ig:'Instagram'}, hTel:'电话号码', hWx:'微信号', hIg:'Instagram 账号', opt:'（选填）',
  adult:'我已年满 18 岁。',
@@ -183,7 +183,8 @@ zh:{title:'纹身询价', sub:'描述你的想法，马上就能看到预估价�
 var lang = 'fr';
 try{ var nl = (navigator.language || '').slice(0, 2); if(T[nl]) lang = nl; }catch(e){}
 try{ var sl = localStorage.getItem('hyp-lang'); if(sl && T[sl]) lang = sl; }catch(e){}
-var files = [], st = {};
+var files = [], st = {}, ai = null, aiSeq = 0;
+function aiType(tp){ return tp === 'flash' || tp === 'own' || tp === 'cover'; }
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 function f(s, o){ return s.replace(/\{(\w)\}/g, function(_, k){ return o[k]; }); }
 function lab(x){ return x.l[lang] || x.l.fr; }
@@ -249,7 +250,7 @@ function render(){
    '<fieldset><legend>' + t.color + '</legend><div class="chips">' + chip('color', 'bw', t.colors.bw) + chip('color', 'col', t.colors.col) + '</div></fieldset>' +
    '<div id="refHigh"></div><div class="est" aria-live="polite" hidden></div>' +
    '<div><label class="lb" for="q-idea">' + t.idea + '</label><textarea id="q-idea" name="idea" placeholder="' + esc(t.ideaPh) + '">' + esc(st.idea) + '</textarea></div>' +
-   '<div id="refBox"><label class="lb" for="q-refs" id="refLb">' + t.ref + '</label><input id="q-refs" type="file" name="refs" accept="image/*" multiple><p class="hint" id="refHint">' + t.refHint + '</p><div class="thumbs"></div></div><div id="refLow"></div>' +
+   '<div id="refBox"><label class="lb" for="q-refs" id="refLb">' + t.ref + '</label><input id="q-refs" type="file" name="refs" accept="image/*" multiple><p class="hint" id="refHint">' + t.refHint + '</p><div class="thumbs"></div><p class="hint ai-note" id="aiNote" hidden></p></div><div id="refLow"></div>' +
    '<div><label class="lb" for="q-budget">' + t.budget + '</label><input id="q-budget" type="number" min="0" inputmode="numeric" name="budget" value="' + esc(st.budget) + '" style="max-width:200px"></div>' +
    '<div class="row"><div><label class="lb" for="q-name">' + t.name + ' <span class="req">*</span></label><input id="q-name" type="text" name="name" autocomplete="given-name" value="' + esc(st.name) + '"></div>' +
    '<div><label class="lb" for="q-email">' + t.email + ' <span class="req" id="emReq">*</span><span class="req" id="emOpt" hidden style="color:var(--soft)">' + t.opt + '</span></label><input id="q-email" type="email" name="email" autocomplete="email" value="' + esc(st.email) + '"></div></div>' +
@@ -262,9 +263,11 @@ function render(){
    '<button class="btn" type="submit">' + t.send + '</button><p class="msg" aria-live="polite"></p></form></div>';
   var fm = app.querySelector('form');
   fm.addEventListener('change', update);
+  fm.addEventListener('change', function(e){ if(e.target.name === 'type' && files.length && !ai) runAI(); });
   fm.querySelector('#q-refs').addEventListener('change', function(ev){
     files = [].slice.call(ev.target.files).filter(function(x){ return x.size <= 5e6; }).slice(0, 3);
     fm.querySelector('.thumbs').innerHTML = files.map(function(x){ return '<img alt="" src="' + URL.createObjectURL(x) + '">'; }).join('');
+    ai = null; runAI(); update();
   });
   fm.addEventListener('submit', submit);
   update();
@@ -297,6 +300,11 @@ function update(){
   var askFirst = (cfg.A.refuse || []).indexOf('first_visible') > -1 && fv.p.indexOf(q.place) > -1;
   fm.querySelector('#firstQ').hidden = !askFirst;
   if(!askFirst) q.first = '';
+  var an = fm.querySelector('#aiNote'), useAI = ai && ai.done && aiType(q.type);
+  if(useAI) q.cx = ai.complexity;
+  if(ai && !ai.done && aiType(q.type)){ an.hidden = false; an.textContent = t.aiBusy; }
+  else if(useAI){ an.hidden = false; an.textContent = t.aiSaw + [lab(find(D.TECH, ai.technique)), t.colors[ai.color], t.cx[ai.complexity]].join(lang === 'zh' ? '，' : ', ') + (lang === 'zh' ? '。' : '. ') + (ai.note ? ai.note + (lang === 'zh' ? '' : ' ') : '') + t.aiAdj; }
+  else an.hidden = true;
   var e = HQ.estimate(cfg, q);
   if(e && e.refused){
     box.hidden = false; box.className = 'est no';
@@ -355,6 +363,26 @@ function mailFor(q, e, way){
   return {subject:m[q.intent] + ' · ' + q.name + ' · ' + sz + ' · ' + L(pl) + (price ? ' · ' + price : ''), text:rows.join('\n'), imgs:m.imgs, sheet:m.sheet, heads:m.cols, vals:vals, lang:ml, ai:m.ai};
 }
 
+/* L'IA regarde l'image (flash, dessin du client, cover-up) : technique, couleur, niveau de détail -> l'estimation s'ajuste.
+   Seulement quand le script est branché (pas en démo) ; en cas d'erreur, rien ne change. */
+function runAI(){
+  var fm = app.querySelector('form'), q = read(), ep = window.HQ_ENDPOINT;
+  if(!files.length || !aiType(q.type) || !ep || (preview && !/[?&]send=1/.test(location.search))) return;
+  var my = ++aiSeq; ai = {done:false};
+  Promise.all(files.map(toB64)).then(function(imgs){
+    return fetch(ep, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({action:'analyse', artist:cfg.id, lang:lang,
+      ai_lang:((cfg.A && cfg.A.mailLang) || (((window.HQ_ARTISTS || {})[cfg.id] || {}).A || {}).mailLang || 'fr'), type:q.type, size:q.size || '', idea:q.idea || '', images:imgs})});
+  }).then(function(r){ return r.json(); }).then(function(j){
+    if(my !== aiSeq) return;
+    if(!j.ok || !j.ai){ ai = null; update(); return; }
+    ai = {done:true, technique:j.ai.technique, color:j.ai.color, complexity:j.ai.complexity, note:j.ai.note_client || '', artist:j.ai.note_artist || ''};
+    /* pré-remplit technique et couleur si le client ne les a pas encore choisies */
+    var cur = read();
+    [['tech', ai.technique], ['color', ai.color]].forEach(function(p){ if(!cur[p[0]] || (p[0] === 'tech' && cur.tech === 'unsure')){ var el = fm.querySelector('input[name=' + p[0] + '][value=' + p[1] + ']'); if(el) el.checked = true; } });
+    update();
+  }).catch(function(){ if(my === aiSeq){ ai = null; update(); } });
+}
+
 function toB64(file){ return new Promise(function(res, rej){ var r = new FileReader(); r.onload = function(){ res({name:file.name, type:file.type, data:String(r.result).split(',')[1]}); }; r.onerror = rej; r.readAsDataURL(file); }); }
 
 function submit(ev){
@@ -371,6 +399,7 @@ function submit(ev){
   if(fm.querySelector('[name=adult]') && !q.adult) miss.push(t.adult);
   if(!q.consent) miss.push(t.consent.split('.')[0]);
   if(miss.length){ msg.className = 'msg err'; msg.textContent = f(t.need, {x:miss.join(', ')}); return; }
+  if(ai && ai.done && aiType(q.type)) q.cx = ai.complexity;
   var e = HQ.estimate(cfg, q) || {};
   if(e.refused){ msg.className = 'msg err'; msg.textContent = f(t.refused, {x:lab(find(D.REFUSE, e.refused)).toLowerCase()}); return; }
   var d = {artist:cfg.id, config_version:cfg.version, lang:lang, page:location.href, intent:q.intent,
@@ -379,7 +408,7 @@ function submit(ev){
     adult:q.adult ? 'oui' : '', consent:'oui',
     estimate_low:e.lo, estimate_high:e.hi, deposit:e.dep, design_fee:e.fee ? e.fee.lo + '-' + e.fee.hi : '', coef:Math.round(e.coef * 100) / 100,
     est_hours:e.hours ? e.hours.join('-') : '', est_sessions:e.sessions ? e.sessions.join('-') : ''};
-  var mm = mailFor(q, e, way); d.mail_subject = mm.subject; d.mail_text = mm.text; d.mail_imgs = mm.imgs; d.mail_sheet = mm.sheet; d.sheet_headers = mm.heads; d.sheet_vals = mm.vals; d.ai_lang = mm.lang; d.ai_label = mm.ai;
+  var mm = mailFor(q, e, way); d.mail_subject = mm.subject; d.mail_text = mm.text; d.mail_imgs = mm.imgs; d.mail_sheet = mm.sheet; d.sheet_headers = mm.heads; d.sheet_vals = mm.vals; d.ai_lang = mm.lang; d.ai_label = mm.ai; if(ai && ai.done && aiType(q.type)){ d.style_ai = ai.artist || [ai.technique, ai.color, ai.complexity].join(' · '); d.ai_cx = ai.complexity; q.cx = ai.complexity; }
   var ep = window.HQ_ENDPOINT;
   if(!ep || (preview && !/[?&]send=1/.test(location.search))){ msg.className = 'msg ok'; msg.textContent = t.demo + ' ' + f(q.intent === 'book' ? t.okBook : t.okAsk, {r:replyTxt()}); return; }
   btn.disabled = true; btn.textContent = t.sending;
@@ -390,7 +419,7 @@ function submit(ev){
     if(!j.ok) throw 0;
     msg.className = 'msg ok'; msg.textContent = f(q.intent === 'book' ? t.okBook : t.okAsk, {r:replyTxt()});
     tell({sent:1});
-    fm.reset(); files = []; st = {}; fm.querySelector('.thumbs').innerHTML = ''; update();
+    fm.reset(); files = []; st = {}; ai = null; fm.querySelector('.thumbs').innerHTML = ''; update();
   }).catch(function(){ msg.className = 'msg err'; msg.textContent = t.err; })
   .then(function(){ btn.disabled = false; update(); });
 }
