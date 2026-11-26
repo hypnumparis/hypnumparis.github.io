@@ -4233,4 +4233,10 @@ document.addEventListener('click', function(e){
   sync();
 })();
 </script>
+<style>
+/* Agenda : jours complets bien barrés (trait épais, couleur bordeaux), jours passés juste estompés ; la légende reprend le même signe */
+.cal-d.off,.resa-form .cal-d.off{opacity:.8;color:var(--ink-soft);text-decoration:line-through;text-decoration-thickness:1.5px;text-decoration-color:#7a1f1f;}
+.cal-d.past,.resa-form .cal-d.past{opacity:.28;text-decoration:none;}
+.cal-legend .cl-x::before{content:'12';width:auto;height:auto;border:0;border-radius:0;font-style:normal;color:var(--ink-soft);text-decoration:line-through;text-decoration-thickness:1.5px;text-decoration-color:#7a1f1f;margin-right:6px;}
+</style>
 </body></html>
