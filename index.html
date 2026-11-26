@@ -2465,7 +2465,8 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
         $('size').value = String(fsz.cm).replace('.', ',') + ' cm';
         /* durée estimée d'après le prix : environ 100 € de l'heure (son tarif), arrondi à la demi-heure, 1 h au moins */
         var hrs = Math.max(1, Math.ceil(flashPrice(start, min, fsz.cm) / 100 * 2) / 2), hs = String(hrs).replace('.', ',');
-        setRadio('sizeCat', hrs <= 2 ? 'petit' : hrs <= 4 ? 'moyen' : 'grand');
+        /* petit (acompte 30 € en ligne tout de suite) = 100 € au plus, à sa demande */
+        setRadio('sizeCat', flashPrice(start, min, fsz.cm) <= 100 ? 'petit' : hrs <= 4 ? 'moyen' : 'grand');
         $('resaDur').textContent = 'Environ ' + hs + ' h, ' + (hrs <= 4 ? 'le matin ou l\'après-midi.' : 'une journée entière.');
       }
       inp.addEventListener('input', function(){ upd(true); });
