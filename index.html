@@ -2463,7 +2463,10 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
         d.querySelector('.fsz-v').textContent = flashPrice(start, min, fsz.cm) + ' €';
         d.querySelector('button[data-d="-1"]').disabled = fsz.cm <= min;
         $('size').value = String(fsz.cm).replace('.', ',') + ' cm';
-        setRadio('sizeCat', fsz.cm < 8 ? 'petit' : fsz.cm <= 15 ? 'moyen' : 'grand');
+        /* durée estimée d'après le prix : environ 100 € de l'heure (son tarif), arrondi à la demi-heure, 1 h au moins */
+        var hrs = Math.max(1, Math.ceil(flashPrice(start, min, fsz.cm) / 100 * 2) / 2), hs = String(hrs).replace('.', ',');
+        setRadio('sizeCat', hrs <= 2 ? 'petit' : hrs <= 4 ? 'moyen' : 'grand');
+        $('resaDur').textContent = 'Environ ' + hs + ' h, ' + (hrs <= 4 ? 'le matin ou l\'après-midi.' : 'une journée entière.');
       }
       inp.addEventListener('input', function(){ upd(true); });
       inp.addEventListener('change', function(){ upd(false); });
@@ -2636,12 +2639,13 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     var MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
     var today = new Date(); today.setHours(0,0,0,0); var OPEN_FROM = new Date(2027, 0, 1); // avant cette date, l'agenda est affiché complet
     var view = new Date(today.getFullYear(), today.getMonth(), 1);
-    var last = new Date(today.getFullYear(), today.getMonth() + DISPO.monthsAhead - 1, 1);
+    var OPEN_UNTIL = new Date(2027, 1, 28); // dernier jour réservable affiché (fin février 2027, à sa demande)
+    var last = new Date(Math.min(new Date(today.getFullYear(), today.getMonth() + DISPO.monthsAhead - 1, 1), new Date(OPEN_UNTIL.getFullYear(), OPEN_UNTIL.getMonth(), 1)));
     /* l'agenda s'ouvre sur le premier mois qui a un jour libre (pas sur un mois tout complet) */
     (function(){ for(var m = new Date(view); m <= last; m.setMonth(m.getMonth() + 1)){ var n = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate(); for(var d = 1; d <= n; d++){ var x = new Date(m.getFullYear(), m.getMonth(), d); if(x >= today && isOpen(x)){ view = new Date(m.getFullYear(), m.getMonth(), 1); return; } } } })();
     function key(d){ return d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2); }
     var MON_WED_UNTIL = new Date(2027, 3, 1); // avant le 1er avril 2027 : lundi, mardi, mercredi fermés
-    function isOpen(d){ return d >= OPEN_FROM && !(d < MON_WED_UNTIL && d.getDay() >= 1 && d.getDay() <= 3) && DISPO.closedWeekdays.indexOf(d.getDay()) < 0 && DISPO.blocked.indexOf(key(d)) < 0 && !(DISPO.amOff.indexOf(key(d)) >= 0 && !half()); }
+    function isOpen(d){ return d >= OPEN_FROM && d <= OPEN_UNTIL && !(d < MON_WED_UNTIL && d.getDay() >= 1 && d.getDay() <= 3) && DISPO.closedWeekdays.indexOf(d.getDay()) < 0 && DISPO.blocked.indexOf(key(d)) < 0 && !(DISPO.amOff.indexOf(key(d)) >= 0 && !half()); }
     function fmt(k){ var p = k.split('-'); return (+p[2]) + ' ' + MOIS[+p[1]-1]; }
     function drawCal(){
       var y = view.getFullYear(), m = view.getMonth(), first = (new Date(y, m, 1).getDay() + 6) % 7, n = new Date(y, m+1, 0).getDate();
@@ -2839,6 +2843,8 @@ document.addEventListener('click', function(e){
   }
   var R = [
     [/^Voir les (\d+) flashs →$/, function(m){ return lang==='en' ? 'See the ' + m[1] + ' flashes →' : '查看全部 ' + m[1] + ' 张纹身稿 →'; }],
+    [/^Environ ([\d,]+) h, le matin ou l'après-midi\.$/, function(m){ var h = m[1].replace(',', '.'); return lang==='en' ? 'About ' + h + ' h, morning or afternoon.' : '约 ' + h + ' 小时，选上午或下午'; }],
+    [/^Environ ([\d,]+) h, une journée entière\.$/, function(m){ var h = m[1].replace(',', '.'); return lang==='en' ? 'About ' + h + ' h, a full day.' : '约 ' + h + ' 小时，需要一整天'; }],
     [/^dès\s(\d.+)$/, function(m){ return lang==='en' ? 'from ' + m[1] : m[1] + ' 起'; }],
     [/^Réserver le tatouage · dès\s(.+)$/, function(m){ return lang==='en' ? 'Book the tattoo · from ' + m[1] : '预约纹身 · ' + m[1] + ' 起'; }],
     [/^Le dessin seul\s·\s(.+)$/, function(m){ return (lang==='en' ? 'Design only · ' : '只买图稿 · ') + m[1]; }],
