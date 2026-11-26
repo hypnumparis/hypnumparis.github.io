@@ -1,0 +1,22 @@
+name: Daily booking check
+# Opens hypnum.fr every morning, fills the booking form and sends it to a fake endpoint
+# (nothing is e-mailed, nothing is paid). If anything breaks, the run fails and GitHub e-mails the owner.
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: tools/check
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm i --no-save playwright@1.48.2 && npx playwright install --with-deps chromium
+      - run: node tools/check/booking.js https://hypnum.fr/ || (sleep 60 && node tools/check/booking.js https://hypnum.fr/)
