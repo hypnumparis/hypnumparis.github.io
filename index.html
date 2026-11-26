@@ -2373,12 +2373,13 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     }
     /* Flash : le client choisit la taille (à partir du minimum), le prix suit.
        Le prix de départ vaut pour la taille minimum ; au-delà il suit la même courbe que le barème par taille :
-       FCURVE = [cm, prix de référence] ; prix = départ × courbe(taille) / courbe(minimum), arrondi à 5 €. */
+       FCURVE = [cm, prix de référence] ; prix = départ × (courbe(taille) / courbe(minimum))^FSOFT, arrondi à 5 €. */
     var FCURVE = [[0, 50], [5, 90], [10, 170], [15, 300], [25, 520]];
     function fcurve(x){
       for(var i = 1; i < FCURVE.length; i++){ var a = FCURVE[i-1], b = FCURVE[i]; if(x <= b[0] || i === FCURVE.length - 1) return a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0]); }
     }
-    function flashPrice(start, min, cm){ return Math.max(start, Math.round(start * fcurve(Math.max(cm, min)) / fcurve(min) / 5) * 5); }
+    var FSOFT = 0.8;   /* adoucit la courbe : taille ×2 ≈ prix ×1,8 */
+    function flashPrice(start, min, cm){ return Math.max(start, Math.round(start * Math.pow(fcurve(Math.max(cm, min)) / fcurve(min), FSOFT) / 5) * 5); }
     window.hypFlashPrice = flashPrice;
     var fsz = null;
     function flashSize(it){
