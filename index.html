@@ -528,6 +528,8 @@
   .rc-d{font-size:15px;font-style:italic;color:var(--ink-soft);}
   .resa-panel,.resa-sub-panel{display:none;flex-direction:column;gap:18px;}
   .resa-panel.on,.resa-sub-panel.on{display:flex;animation:resaIn .5s ease;}
+  /* flash pictures use multiply on the paper; a fading parent would show their white ground, so this panel appears without the fade */
+  .resa-panel.on[data-for="flash"]{animation:none;}
   @keyframes resaIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
   .resa-sub{display:flex;flex-wrap:wrap;gap:10px;}
   .resa-sub label{position:relative;padding:10px 16px;border:1px solid var(--line);font-size:15px;cursor:pointer;transition:all .3s;}
@@ -2613,7 +2615,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     // ---- availability calendar ----
     // Pour bloquer des jours : ajoutez des dates 'AAAA-MM-JJ' dans blocked, ou des jours de semaine (0 = dimanche) dans closedWeekdays.
     var DISPO = { closedWeekdays: [], monthsAhead: 6,
-      blocked: ['2027-01-07','2027-01-08','2027-01-14','2027-01-15','2027-01-21','2027-01-27','2027-01-28','2027-02-04','2027-02-05','2027-02-11','2027-02-18','2027-02-19','2027-02-25'],
+      blocked: ['2027-01-07','2027-01-08','2027-01-14','2027-01-15','2027-01-21','2027-01-28','2027-01-29','2027-02-04','2027-02-05','2027-02-11','2027-02-18','2027-02-19','2027-02-25'],
       amOff: ['2027-01-22','2027-02-12','2027-02-26'] }; // amOff : matin pris, seul l'après-midi reste
     var cal = $('resaCal'), chosen = [], slots = {};
     // Durée estimée selon la taille : petit et moyen = une demi-journée (matin ou après-midi), grand = journée entière.
