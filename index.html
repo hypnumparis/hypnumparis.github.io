@@ -2591,6 +2591,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     window.SIZE = SIZE;
     function half(){ var s = SIZE[val('sizeCat')]; return !s || s.half; }
     function slotTxt(k){ return half() ? (slots[k] === 'pm' ? 'après-midi' : 'matin') : 'journée entière'; }
+    window.hypCalText = function(){ return chosen.map(function(k){ return k + ' (' + slotTxt(k) + ')'; }).join(', '); };
     form.addEventListener('change', function(e){
       if(e.target.name !== 'sizeCat') return;
       $('resaDur').textContent = SIZE[e.target.value].dur + ' L\'heure exacte vous sera confirmée par message.';
@@ -4289,7 +4290,15 @@ document.addEventListener('click', function(e){
   ['customDesc', 'ownNote'].forEach(function(id){ var el = document.getElementById(id); if(el){ (el.closest('.resa-field') || el).classList.add('resa-hq-hide'); } });
   form.querySelectorAll('.resa-panel[data-for="custom"] .resa-hint, .resa-panel[data-for="own"] .resa-hint').forEach(function(el){ el.classList.add('resa-hq-hide'); });
   function want(){ var t = val('type'); return t === 'own' ? 'own' : t === 'custom' && val('customMode') !== 'seul' ? 'custom' : ''; }
-  function apply(){ form.classList.toggle('resa-hq', open && !!cur); if(box) box.hidden = !(open && cur); }
+  /* « Je veux réserver » dans le devis : l'agenda de la lettre passe sous le formulaire de devis */
+  var intent = '', calF = document.getElementById('resaDatesField'), calHome = calF && calF.parentNode, calNext = calF && calF.nextSibling;
+  function apply(){
+    var on = open && !!cur;
+    form.classList.toggle('resa-hq', on); if(box) box.hidden = !on;
+    if(!calF) return;
+    if(on && intent === 'book'){ if(calF.parentNode !== box.parentNode){ box.parentNode.insertBefore(calF, box.nextSibling); } calF.classList.add('resa-hq-cal'); }
+    else if(calF.parentNode !== calHome){ calHome.insertBefore(calF, calNext); calF.classList.remove('resa-hq-cal'); }
+  }
   function sync(force){
     var w = want();
     if(w === cur && !force){ apply(); return; }
@@ -4300,12 +4309,13 @@ document.addEventListener('click', function(e){
       var first = form.querySelector('.resa-step'); first.parentNode.insertBefore(box, first.nextSibling);
     }
     box.innerHTML = '<iframe loading="eager"></iframe>'; fr = box.firstChild;
-    fr.src = '/devis/?embed=1&type=' + w + (pv ? '&preview=1' : '') + (/[?&]send=1/.test(location.search) ? '&send=1' : '');
+    fr.src = '/devis/?embed=1&cal=1&type=' + w + (pv ? '&preview=1' : '') + (/[?&]send=1/.test(location.search) ? '&send=1' : '');
     apply();
   }
   window.addEventListener('message', function(e){
     if(e.origin !== location.origin || !fr || e.source !== fr.contentWindow || !e.data || !e.data.hq) return;
     if('open' in e.data){ open = !!e.data.open; apply(); }
+    if('intent' in e.data){ intent = e.data.intent; apply(); }
     if(e.data.h) fr.style.height = e.data.h + 'px';
     if(e.data.sent) box.scrollIntoView({behavior:'smooth', block:'end'});
   });
@@ -4314,7 +4324,7 @@ document.addEventListener('click', function(e){
     if(e.target !== form || !form.classList.contains('resa-hq') || !fr) return;
     e.preventDefault(); e.stopImmediatePropagation();
     var seal = form.querySelector('.lt-seal'); if(seal){ seal.classList.add('press'); setTimeout(function(){ seal.classList.remove('press'); }, 250); }
-    fr.contentWindow.postMessage({hqSubmit:1}, location.origin);
+    fr.contentWindow.postMessage({hqSubmit:1, dates:window.hypCalText ? window.hypCalText() : ''}, location.origin);
     setTimeout(function(){ box.scrollIntoView({behavior:'smooth', block:'end'}); }, 300);
   }, true);
   form.addEventListener('change', function(e){ if(e.target.name === 'type' || e.target.name === 'customMode') sync(); });

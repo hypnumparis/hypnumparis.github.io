@@ -97,7 +97,7 @@ html[lang=zh] .btn{font-size:17px;letter-spacing:.1em;}
 var D = HQ_DATA, app = document.getElementById('app');
 var preview = /[?&]preview=1/.test(location.search), cfg = null;
 /* ?embed=1 : formulaire intégré dans la page de réservation (iframe). ?type=custom|own présélectionne le type. */
-var embed = /[?&]embed=1/.test(location.search), qtype = (/[?&]type=(custom|own|cover)/.exec(location.search) || [])[1];
+var embed = /[?&]embed=1/.test(location.search), embedCal = embed && /[?&]cal=1/.test(location.search), lastIntent = null, qtype = (/[?&]type=(custom|own|cover)/.exec(location.search) || [])[1];
 if(embed) document.documentElement.classList.add('embed');
 function tell(o){ if(embed && window.parent !== window){ o.hq = 1; try{ window.parent.postMessage(o, location.origin); }catch(e){} } }
 if(preview){ try{ cfg = JSON.parse(localStorage.getItem('hq-draft') || 'null'); }catch(e){} }
@@ -122,7 +122,7 @@ fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'af
  fee:'Frais de dessin', feeDed:'déduits du prix final', feeAdd:'en plus du tatouage', incl:'Frais de dessin inclus : {a}', depD:'déduit du prix total', depX:'en plus du prix total',
  hours:'Environ {a} à {b} heures, en {c} séances', note:'Estimation indicative : le prix final dépend du dessin et du temps réel.',
  refused:'Je ne réalise pas ce type de projet : {x}. Merci de votre compréhension.',
- next:'Et ensuite ?', nextBook:'Je veux réserver', nextAsk:'J\'ai d\'abord des questions', datesReq:'Vos dates possibles',
+ next:'Et ensuite ?', nextBook:'Je veux réserver', nextAsk:'J\'ai d\'abord des questions', datesReq:'Vos dates possibles', question:'Votre question', questionPh:'Ce que vous aimeriez savoir avant de réserver',
  sendBook:'Envoyer pour confirmer le prix et la date', sendAsk:'Envoyer ma question',
  okBook:'Merci, votre demande de rendez-vous est envoyée. Je vous réponds sous {r} pour confirmer le prix et la date, avec le lien pour verser l\'acompte. Le rendez-vous est réservé dès que l\'acompte est versé.',
  okAsk:'Merci, votre question est envoyée. Je vous réponds sous {r}.',
@@ -148,7 +148,7 @@ en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate
  fee:'Design fee', feeDed:'deducted from the final price', feeAdd:'on top of the tattoo', incl:'Includes a design fee of {a}', depD:'deducted from the total', depX:'on top of the total',
  hours:'About {a} to {b} hours, over {c} sessions', note:'Rough estimate: the final price depends on the design and the actual time.',
  refused:'I don\'t do this kind of project: {x}. Thank you for understanding.',
- next:'What next?', nextBook:'I want to book', nextAsk:'I have questions first', datesReq:'Dates that suit you',
+ next:'What next?', nextBook:'I want to book', nextAsk:'I have questions first', datesReq:'Dates that suit you', question:'Your question', questionPh:'What you would like to know before booking',
  sendBook:'Send to confirm the price and date', sendAsk:'Send my question',
  okBook:'Thank you, your booking request has been sent. I\'ll reply within {r} to confirm the price and date, with a link to pay the deposit. Your appointment is booked once the deposit is paid.',
  okAsk:'Thank you, your question has been sent. I\'ll reply within {r}.',
@@ -174,7 +174,7 @@ zh:{title:'纹身询价', sub:'描述你的想法，马上就能看到预估价�
  fee:'设计费', feeDed:'从总价里扣', feeAdd:'另外收取', incl:'含设计费 {a}', depD:'从总价里扣', depX:'不抵扣总价，另外收',
  hours:'约 {a}–{b} 小时，分 {c} 次完成', note:'仅为大概估价，最终价格取决于图案和实际时长。',
  refused:'这类项目我不接：{x}。谢谢理解。',
- next:'接下来', nextBook:'我想直接预约', nextAsk:'我还想先问问', datesReq:'你方便的日期',
+ next:'接下来', nextBook:'我想直接预约', nextAsk:'我还想先问问', datesReq:'你方便的日期', question:'你的问题', questionPh:'预约之前想先问的事情',
  sendBook:'发送给纹身师，确认最终价格和时间', sendAsk:'发送问题',
  okBook:'谢谢！预约请求已发送。我会在 {r}内回复，确认最终价格和日期，并发给你定金付款链接。付了定金，预约就定下来了。',
  okAsk:'谢谢！问题已发送，我会在 {r}内回复。',
@@ -268,6 +268,7 @@ function render(){
    '<div id="ctQ" hidden><label class="lb" for="q-contact" id="ctLb"></label><input id="q-contact" type="text" name="contact" value="' + esc(st.contact) + '"></div>' +
    '<fieldset><legend>' + t.next + '</legend><div class="chips">' + chip('intent', 'book', t.nextBook) + chip('intent', 'ask', t.nextAsk) + '</div></fieldset>' +
    '<div id="datesQ" hidden><label class="lb" for="q-dates">' + t.datesReq + ' <span class="req">*</span></label><input id="q-dates" type="text" name="dates" placeholder="' + esc(t.datesPh) + '" value="' + esc(st.dates) + '"></div>' +
+   '<div id="askQ" hidden><label class="lb" for="q-question">' + t.question + ' <span class="req">*</span></label><textarea id="q-question" name="question" rows="4" placeholder="' + esc(t.questionPh) + '">' + esc(st.question || '') + '</textarea></div>' +
    ((A.refuse || []).indexOf('minors') > -1 ? '<label class="check"><input type="checkbox" name="adult"' + (st.adult ? ' checked' : '') + '> ' + t.adult + '</label>' : '') +
    '<label class="check"><input type="checkbox" name="consent"' + (st.consent ? ' checked' : '') + '> <span>' + t.consent + '</span></label>' +
    '<button class="btn" type="submit">' + t.send + '</button><p class="msg" aria-live="polite"></p></form></div>';
@@ -302,7 +303,9 @@ function save(){ var d = read(); if(Object.keys(d).length) st = d; }
 
 function update(){
   var t = T[lang], fm = app.querySelector('form'), q = read(), box = fm.querySelector('.est');
-  fm.querySelector('#datesQ').hidden = q.intent !== 'book';
+  fm.querySelector('#datesQ').hidden = q.intent !== 'book' || embedCal;
+  fm.querySelector('#askQ').hidden = q.intent !== 'ask';
+  if(embed && q.intent !== lastIntent){ lastIntent = q.intent; try{ parent.postMessage({hq:1, intent:q.intent || ''}, location.origin); }catch(e){} }
   fm.querySelector('#unsureHint').hidden = q.tech !== 'unsure';
   /* flash ou dessin du client : l'image aide l'estimation, donc l'envoi d'image passe au-dessus du prix */
   var hi = aiType(q.type), rb = fm.querySelector('#refBox'), anchor = fm.querySelector(hi ? '#refHigh' : '#refLow');
@@ -373,6 +376,7 @@ function mailFor(q, e, way){
   if(q.idea) rows.push('', m.idea + c + q.idea);
   if(q.budget) rows.push(m.budget + c + q.budget);
   if(q.intent === 'book' && q.dates) rows.push(m.dates + c + q.dates);
+  if(q.intent === 'ask' && q.question) rows.push(({fr:'Question', en:'Question', zh:'问题'}[ml] || 'Question') + c + q.question);
   if(price) rows.push('', m.est + c + price + (e.fee ? (zh ? '（' : ' (') + f(m.fee, {a:e.fee.lo + '–' + e.fee.hi + ' €'}) + (zh ? '）' : ')') : ''), m.dep + c + e.dep + ' €');
   rows.push('', q.email ? m.reply : f(m.noMail, {w:m.ways[way]}));
   var yn = m.yn, vals = {intent:m.intents[q.intent], status:m.newSt, contact:way === 'email' ? m.ways.email : m.ways[way] + ' ' + (q.contact || '').trim(),
@@ -410,7 +414,7 @@ function submit(ev){
   var miss = [];
   if(!q.type) miss.push(t.type); if(!q.size) miss.push(t.size); if(!q.place) miss.push(t.place); if(!q.color) miss.push(t.color);
   if(!fm.querySelector('#firstQ').hidden && !q.first) miss.push(t.first);
-  if(!q.intent) miss.push(t.next); if(q.intent === 'book' && !(q.dates || '').trim()) miss.push(t.datesReq);
+  if(!q.intent) miss.push(t.next); if(q.intent === 'book' && !(q.dates || '').trim()) miss.push(t.datesReq); if(q.intent === 'ask' && !(q.question || '').trim()) miss.push(t.question);
   var way = q.ctWay || 'email';
   if(!q.name) miss.push(t.name);
   if(way === 'email' ? !/.+@.+\..+/.test(q.email || '') : (q.email && !/.+@.+\..+/.test(q.email))) miss.push(t.email);
@@ -423,7 +427,7 @@ function submit(ev){
   if(e.refused){ msg.className = 'msg err'; msg.textContent = f(t.refused, {x:lab(find(D.REFUSE, e.refused)).toLowerCase()}); return; }
   var d = {artist:cfg.id, config_version:cfg.version, lang:lang, page:location.href, intent:q.intent,
     type:q.type, technique:q.tech || 'unsure', size:q.size + (q.cm ? ' ' + q.cm + 'cm' : ''), place:q.place, place_tier:HQ.tierOf(cfg, q.place), color:q.color, first_tattoo:q.first || '',
-    idea:q.idea || '', budget:q.budget || '', dates:q.intent === 'book' ? q.dates || '' : '', name:q.name, email:q.email || '', contact:way === 'email' ? 'E-mail' : T.en.ways[way] + ' : ' + (q.contact || '').trim(),
+    idea:(q.idea || '') + (q.intent === 'ask' && q.question ? (q.idea ? '\n\n' : '') + '? ' + q.question : ''), budget:q.budget || '', dates:q.intent === 'book' ? q.dates || '' : '', name:q.name, email:q.email || '', contact:way === 'email' ? 'E-mail' : T.en.ways[way] + ' : ' + (q.contact || '').trim(),
     adult:q.adult ? 'oui' : '', consent:'oui',
     estimate_low:e.lo, estimate_high:e.hi, deposit:e.dep, design_fee:e.fee ? e.fee.lo + '-' + e.fee.hi : '', coef:Math.round(e.coef * 100) / 100,
     est_hours:e.hours ? e.hours.join('-') : '', est_sessions:e.sessions ? e.sessions.join('-') : ''};
@@ -448,7 +452,9 @@ if(embed){
   /* le cachet de cire de la lettre (page parente) envoie le formulaire */
   window.addEventListener('message', function(e){
     if(e.origin !== location.origin || e.source !== window.parent || !e.data || !e.data.hqSubmit) return;
-    var fm = document.querySelector('#app form'); if(fm){ if(fm.requestSubmit) fm.requestSubmit(); else fm.querySelector('.btn').click(); }
+    var fm = document.querySelector('#app form');
+    /* dates choisies dans l'agenda de la page parente */
+    if(fm && embedCal && 'dates' in e.data){ var di = fm.querySelector('input[name=dates]'); if(di) di.value = e.data.dates || ''; } if(fm){ if(fm.requestSubmit) fm.requestSubmit(); else fm.querySelector('.btn').click(); }
   });
   var lastH = 0, post = function(){ var w = document.querySelector('.wrap') || document.body, h = Math.ceil(w.getBoundingClientRect().bottom + window.scrollY) + 24;  /* hauteur du contenu, pas de la fenêtre (sinon elle ne rétrécit jamais) */ if(h !== lastH){ lastH = h; tell({h:h}); } };
   if(window.ResizeObserver) new ResizeObserver(post).observe(document.querySelector('.wrap') || document.body); else setInterval(post, 500);
