@@ -285,7 +285,7 @@ function render(){
    '<div id="ctQ" hidden><label class="lb" for="q-contact" id="ctLb"></label><input id="q-contact" type="text" name="contact" value="' + esc(st.contact) + '"></div>' +
    '<fieldset>' + (t.next ? '<legend>' + t.next + '</legend>' : '') + '<div class="chips">' + chip('intent', 'book', t.nextBook) + chip('intent', 'ask', t.nextAsk) + '</div></fieldset>' +
    '<div id="datesQ" hidden><label class="lb" for="q-dates">' + t.datesReq + ' <span class="req">*</span></label><input id="q-dates" type="text" name="dates" placeholder="' + esc(t.datesPh) + '" value="' + esc(st.dates) + '"></div>' +
-   '<div id="askQ" hidden>' + (A.instagram ? '<p class="askdm">' + t.askDm + ' <a href="https://ig.me/m/' + esc(A.instagram) + '" target="_blank" rel="noopener">@' + esc(A.instagram) + ' →</a></p>' : '') + '<label class="lb" for="q-question">' + t.question + ' <span class="req">*</span></label><textarea id="q-question" name="question" rows="4" placeholder="' + esc(t.questionPh) + '">' + esc(st.question || '') + '</textarea></div>' +
+   '<div id="askQ" hidden>' + '<label class="lb" for="q-question">' + t.question + ' <span class="req">*</span></label><textarea id="q-question" name="question" rows="4" placeholder="' + esc(t.questionPh) + '">' + esc(st.question || '') + '</textarea></div>' +
    ((A.refuse || []).indexOf('minors') > -1 ? '<label class="check"><input type="checkbox" name="adult"' + (st.adult ? ' checked' : '') + '> ' + t.adult + '</label>' : '') +
    '<label class="check"><input type="checkbox" name="consent"' + (st.consent ? ' checked' : '') + '> <span>' + t.consent + '</span></label>' +
    '<button class="btn" type="submit">' + t.send + '</button><p class="msg" aria-live="polite"></p></form></div>';
