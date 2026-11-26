@@ -92,19 +92,19 @@ var T = {
     wait:"L'IA regarde…", fail:"L'IA n'a pas répondu. Réessayez plus tard.", retry:"Réessayer", aiSays:"IA", tech:"Technique", color:"Couleur", cx:"Détails", save:"Enregistrer comme exemple", skip:"Ignorer", allRight:"L'IA avait tout juste.", fixed:"Corrigé : l'IA s'était trompée.",
     exTitle:"Exemples", exHelp:"Cadre rouge = l'IA s'était trompée (ces exemples comptent en priorité). Elle en voit au plus 12 à chaque fois.", del:"supprimer", none:"Pas encore d'exemple.",
     saveTitle:"Sauvegarder", saveHelp:"Les exemples sont dans votre Google Drive (dossier « AI 训练例子 ») et l'onglet « AI 例子 » du tableau. L'export n'est qu'une copie de secours.", export:"Exporter les exemples", import:"Importer un fichier", imported:"exemples importés", pw:"Mot de passe d'entraînement (TRAIN_KEY dans les propriétés du script)", pwOk:"OK", badKey:"Mot de passe incorrect, ou TRAIN_KEY pas encore défini.", loading:"Chargement des exemples…", saveFail:"Pas enregistré, réessayez.",
-    L:{line:"trait seul", shade:"trait + ombrage", fill:"remplissage seul", bw:"noir et gris", col:"couleur", simple:"simple", medium:"moyen", complex:"beaucoup"}},
+    L:{line:"trait seul", shade:"trait + ombrage", fill:"remplissage seul (estompé, réaliste)", bw:"noir et gris", col:"couleur", simple:"simple", medium:"moyen", complex:"beaucoup"}},
   en:{title:"Train the AI to read images", lead1:"Add images (your flashes, tattoo photos, client references). The AI says what it sees: technique, colour, amount of detail. Correct it if needed, then save the image as an example.", lead2:"Before each new image, the AI looks at your examples so it judges like you. Once it is almost always right, export the examples: they get built into the assistant for every artist. Examples are kept in your Google script; other artists' assistants pick them up automatically. Nothing goes to clients.",
     sN:"examples", sW:"where the AI was wrong", sR:"right out of the last 20", add:"Add images", queue:"waiting: ", noEp:"The Google script is not set up (HQ_ENDPOINT).",
     wait:"The AI is looking…", fail:"The AI did not answer. Try again later.", retry:"Retry", aiSays:"AI", tech:"Technique", color:"Colour", cx:"Detail", save:"Save as example", skip:"Skip", allRight:"The AI got it all right.", fixed:"Corrected: the AI was wrong.",
     exTitle:"Examples", exHelp:"Red frame = the AI was wrong (these count first). It sees at most 12 each time.", del:"delete", none:"No examples yet.",
     saveTitle:"Back up", saveHelp:"Examples live in your Google Drive (folder “AI 训练例子”) and the “AI 例子” tab of the sheet. Export is only a spare copy.", export:"Export examples", import:"Import a file", imported:"examples imported", pw:"Training password (TRAIN_KEY in the script properties)", pwOk:"OK", badKey:"Wrong password, or TRAIN_KEY not set yet.", loading:"Loading examples…", saveFail:"Not saved, try again.",
-    L:{line:"lines only", shade:"lines + shading", fill:"fill only", bw:"black & grey", col:"colour", simple:"simple", medium:"medium", complex:"lots"}},
+    L:{line:"lines only", shade:"lines + shading", fill:"fill only (soft shading, realism)", bw:"black & grey", col:"colour", simple:"simple", medium:"medium", complex:"lots"}},
   zh:{title:"训练 AI 看图", lead1:"上传图片（你的纹身稿、纹身照片、客人发来的参考图都行）。AI 会说它看到的技法、颜色和细节多少。错了就改，然后存成例子。", lead2:"之后每看一张新图，AI 都会先看你的例子，学你的判断标准。等它差不多每次都对了，就导出例子，我把它们装进系统，以后所有纹身师用的都是练好的版本。例子存在你的 Google 后台，其他纹身师的系统会自动同步。这里的东西不会发给客人。",
     sN:"个例子", sW:"个是 AI 判断错过的", sR:"最近 20 张里 AI 全对的", add:"上传图片", queue:"排队中：", noEp:"还没连上 Google 后台（HQ_ENDPOINT）。",
     wait:"AI 正在看…", fail:"AI 没有回应，等一下再试。", retry:"再试一次", aiSays:"AI", tech:"技法", color:"颜色", cx:"细节", save:"存成例子", skip:"跳过", allRight:"AI 全对。", fixed:"已改正：AI 判断错了。",
     exTitle:"例子", exHelp:"红框 = AI 当时判断错了（这些会优先给 AI 看）。AI 每次最多看 12 个。", del:"删除", none:"还没有例子。",
     saveTitle:"备份", saveHelp:"例子存在你的 Google Drive（「AI 训练例子」文件夹）和表格的「AI 例子」分页里。导出只是多一份备份。", export:"导出例子", import:"导入文件", imported:"个例子已导入", pw:"训练密码（你在 Apps Script 脚本属性 TRAIN_KEY 里设的）", pwOk:"确定", badKey:"密码不对，或者还没设 TRAIN_KEY。", loading:"正在读取例子…", saveFail:"没存上，再试一次。",
-    L:{line:"纯线条", shade:"线条+阴影", fill:"纯填色", bw:"黑灰", col:"彩色", simple:"简单", medium:"中等", complex:"细节多"}}
+    L:{line:"纯线条", shade:"线条+阴影", fill:"纯填色（打雾、写实）", bw:"黑灰", col:"彩色", simple:"简单", medium:"中等", complex:"细节多"}}
 };
 var G = [['t', 'tech', ['line', 'shade', 'fill']], ['c', 'color', ['bw', 'col']], ['x', 'cx', ['simple', 'medium', 'complex']]];
 var KEY = 'hq-train-key';
