@@ -43,6 +43,11 @@ legend,.lb{display:block;font-size:12px;letter-spacing:.16em;text-transform:uppe
 .chips{display:flex;flex-wrap:wrap;gap:8px;}
 .cm{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px;font-size:14px;color:var(--soft);}
 .cm span{flex-basis:100%;}
+.more{margin:4px 0 8px;}
+.more summary{cursor:pointer;font-size:15px;color:var(--soft);}
+.more[open] summary{margin-bottom:12px;}
+.askdm{margin:0 0 14px;}
+.askdm a{display:inline-block;margin-left:6px;padding:6px 12px;border:1px solid var(--ink);color:var(--ink);text-decoration:none;}
 .cm-alt{margin:-4px 0 10px;}
 .cm-alt .lnk{background:none;border:0;padding:0;font:inherit;font-size:14px;color:var(--soft);text-decoration:underline;cursor:pointer;}
 .cm-big{margin:14px 0 6px;font-size:14px;color:var(--soft);}
@@ -114,7 +119,7 @@ fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'af
  first:'Est-ce votre premier tatouage ?', yes:'Oui', no:'Non',
  idea:'Votre idée', ideaPh:'Le sujet, l\'ambiance, ce qui compte pour vous…',
  ref:'Images de référence (facultatif)', refFlash:'Image du flash (facultatif)', refOwn:'Votre dessin (facultatif)', refMore:'Ajoutez une image : la technique et la couleur sont lues dessus et l\'estimation est plus précise.', unsureHint:'Estimation calculée pour un trait avec ombrage ; le prix est confirmé après avoir vu l\'image.', refHint:'Jusqu\'à 3 images, 5 Mo maximum chacune.', aiBusy:'Lecture de l\'image…', aiSaw:'D\'après l\'image : ', aiAdj:'L\'estimation tient compte de l\'image ; le prix est confirmé par le tatoueur.', cx:{simple:'peu de détails', medium:'détails moyens', complex:'beaucoup de détails'},
- budget:'Budget (€)', dates:'Disponibilités', datesPh:'ex. les samedis de janvier',
+ budget:'Budget (€)', more:'Plus de détails (facultatif)', dates:'Disponibilités', datesPh:'ex. les samedis de janvier',
  name:'Prénom', email:'E-mail', contact:'Téléphone, Instagram ou WeChat', ctWay:'Comment préférez-vous être contacté ?', ways:{email:'E-mail', tel:'Téléphone', sms:'SMS', wa:'WhatsApp', wx:'WeChat', ig:'Instagram'}, hTel:'Numéro de téléphone', hWx:'Identifiant WeChat', hIg:'Compte Instagram', opt:'(facultatif)',
  adult:'J\'ai 18 ans ou plus.',
  consent:'J\'accepte que ces informations soient utilisées pour répondre à ma demande. Mes images de référence pourront être analysées par un service d\'intelligence artificielle (prestataire externe) pour reconnaître le style. <a href="/mentions-legales.html" target="_blank" rel="noopener">En savoir plus</a>',
@@ -122,7 +127,7 @@ fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'af
  fee:'Frais de dessin', feeDed:'déduits du prix final', feeAdd:'en plus du tatouage', incl:'Frais de dessin inclus : {a}', depD:'déduit du prix total', depX:'en plus du prix total',
  hours:'Environ {a} à {b} heures, en {c} séances', note:'Estimation indicative : le prix final dépend du dessin et du temps réel.',
  refused:'Je ne réalise pas ce type de projet : {x}. Merci de votre compréhension.',
- next:'Et ensuite ?', nextBook:'Je veux réserver', nextAsk:'J\'ai d\'abord des questions', datesReq:'Vos dates possibles', question:'Votre question', questionPh:'Ce que vous aimeriez savoir avant de réserver',
+ next:'Et ensuite ?', nextBook:'Je veux réserver', nextAsk:'J\'ai d\'abord des questions', datesReq:'Vos dates possibles', question:'Ou posez votre question ici', askDm:'Le plus simple : écrivez-moi sur Instagram.', questionPh:'Ce que vous aimeriez savoir avant de réserver',
  sendBook:'Envoyer pour confirmer le prix et la date', sendAsk:'Envoyer ma question',
  okBook:'Merci, votre demande de rendez-vous est envoyée. Je vous réponds sous {r} pour confirmer le prix et la date, avec le lien pour verser l\'acompte. Le rendez-vous est réservé dès que l\'acompte est versé.',
  okAsk:'Merci, votre question est envoyée. Je vous réponds sous {r}.',
@@ -140,7 +145,7 @@ en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate
  first:'Is this your first tattoo?', yes:'Yes', no:'No',
  idea:'Your idea', ideaPh:'Subject, mood, what matters to you…',
  ref:'Reference images (optional)', refFlash:'Flash image (optional)', refOwn:'Your design (optional)', refMore:'Add an image: technique and colour are read from it and the estimate is more accurate.', unsureHint:'Estimated as lines with shading; the price is confirmed after seeing the image.', refHint:'Up to 3 images, 5 MB each.', aiBusy:'Reading the image…', aiSaw:'From the image: ', aiAdj:'The estimate takes the image into account; the artist confirms the price.', cx:{simple:'few details', medium:'some detail', complex:'lots of detail'},
- budget:'Budget (€)', dates:'Availability', datesPh:'e.g. Saturdays in January',
+ budget:'Budget (€)', more:'More details (optional)', dates:'Availability', datesPh:'e.g. Saturdays in January',
  name:'First name', email:'Email', contact:'Phone, Instagram or WeChat', ctWay:'How would you like to be contacted?', ways:{email:'Email', tel:'Phone', sms:'SMS', wa:'WhatsApp', wx:'WeChat', ig:'Instagram'}, hTel:'Phone number', hWx:'WeChat ID', hIg:'Instagram account', opt:'(optional)',
  adult:'I am 18 or older.',
  consent:'I agree that this information is used to answer my request. My reference images may be analysed by an artificial intelligence service (external provider) to recognise the style. <a href="/mentions-legales.html" target="_blank" rel="noopener">Learn more</a>',
@@ -148,7 +153,7 @@ en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate
  fee:'Design fee', feeDed:'deducted from the final price', feeAdd:'on top of the tattoo', incl:'Includes a design fee of {a}', depD:'deducted from the total', depX:'on top of the total',
  hours:'About {a} to {b} hours, over {c} sessions', note:'Rough estimate: the final price depends on the design and the actual time.',
  refused:'I don\'t do this kind of project: {x}. Thank you for understanding.',
- next:'What next?', nextBook:'I want to book', nextAsk:'I have questions first', datesReq:'Dates that suit you', question:'Your question', questionPh:'What you would like to know before booking',
+ next:'What next?', nextBook:'I want to book', nextAsk:'I have questions first', datesReq:'Dates that suit you', question:'Or ask your question here', askDm:'Easiest: message me on Instagram.', questionPh:'What you would like to know before booking',
  sendBook:'Send to confirm the price and date', sendAsk:'Send my question',
  okBook:'Thank you, your booking request has been sent. I\'ll reply within {r} to confirm the price and date, with a link to pay the deposit. Your appointment is booked once the deposit is paid.',
  okAsk:'Thank you, your question has been sent. I\'ll reply within {r}.',
@@ -166,7 +171,7 @@ zh:{title:'纹身询价', sub:'描述你的想法，马上就能看到预估价�
  first:'这是你的第一个纹身吗？', yes:'是', no:'不是',
  idea:'你的想法', ideaPh:'图案、感觉、对你重要的点……',
  ref:'参考图（选填）', refFlash:'纹身稿图片（选填）', refOwn:'你的图（选填）', refMore:'先上传图片：系统会看图帮你选好技法和颜色，估价也更准。', unsureHint:'按线条加阴影估算，纹身师看图后确认。', refHint:'最多 3 张，每张不超过 5 MB。', aiBusy:'正在看图…', aiSaw:'根据图片：', aiAdj:'估价已按图片调整，最终价格由纹身师确认。', cx:{simple:'细节简单', medium:'细节中等', complex:'细节多'},
- budget:'预算（€）', dates:'方便的时间', datesPh:'例如：1 月的周六',
+ budget:'预算（€）', more:'更多信息（选填）', dates:'方便的时间', datesPh:'例如：1 月的周六',
  name:'名字', email:'邮箱', contact:'电话、Instagram 或微信', ctWay:'你希望我怎么联系你？', ways:{email:'邮箱', tel:'电话', sms:'短信', wa:'WhatsApp', wx:'微信', ig:'Instagram'}, hTel:'电话号码', hWx:'微信号', hIg:'Instagram 账号', opt:'（选填）',
  adult:'我已年满 18 岁。',
  consent:'我同意这些信息用于回复我的询价。我的参考图可能会交给人工智能服务商（外部服务）分析风格。<a href="/mentions-legales.html" target="_blank" rel="noopener">了解更多</a>',
@@ -174,7 +179,7 @@ zh:{title:'纹身询价', sub:'描述你的想法，马上就能看到预估价�
  fee:'设计费', feeDed:'从总价里扣', feeAdd:'另外收取', incl:'含设计费 {a}', depD:'从总价里扣', depX:'不抵扣总价，另外收',
  hours:'约 {a}–{b} 小时，分 {c} 次完成', note:'仅为大概估价，最终价格取决于图案和实际时长。',
  refused:'这类项目我不接：{x}。谢谢理解。',
- next:'接下来', nextBook:'我想直接预约', nextAsk:'我还想先问问', datesReq:'你方便的日期', question:'你的问题', questionPh:'预约之前想先问的事情',
+ next:'接下来', nextBook:'我想直接预约', nextAsk:'我还想先问问', datesReq:'你方便的日期', question:'或者在这里写下你的问题', askDm:'最快的方式：直接在 Instagram 私信我。', questionPh:'预约之前想先问的事情',
  sendBook:'发送给纹身师，确认最终价格和时间', sendAsk:'发送问题',
  okBook:'谢谢！预约请求已发送。我会在 {r}内回复，确认最终价格和日期，并发给你定金付款链接。付了定金，预约就定下来了。',
  okAsk:'谢谢！问题已发送，我会在 {r}内回复。',
@@ -241,6 +246,7 @@ function render(){
   var A = cfg.A, cover = (A.refuse || []).indexOf('coverup') < 0;
   var types = (embed ? [qtype || 'custom'] : ['custom', 'flash', 'own']).concat(cover ? ['cover'] : []);
   if(embed && qtype && !st.type) st.type = qtype;
+  if(!st.tech) st.tech = 'unsure';   /* par défaut « je ne sais pas » : l'IA choisit si une image est envoyée */
   var places = D.ZONES.map(function(z){
     return '<optgroup label="' + esc(lab(z)) + '">' + D.PLACES.filter(function(p){ return p.z === z.k; }).map(function(p){
       return '<option value="' + p.k + '"' + (st.place === p.k ? ' selected' : '') + '>' + esc(lab(p)) + '</option>'; }).join('') + '</optgroup>';
@@ -261,14 +267,14 @@ function render(){
    '<div class="est" aria-live="polite" hidden></div>' +
    '<div><label class="lb" for="q-idea">' + t.idea + '</label><textarea id="q-idea" name="idea" placeholder="' + esc(t.ideaPh) + '">' + esc(st.idea) + '</textarea></div>' +
    '<div id="refBox"><label class="lb" for="q-refs" id="refLb">' + t.ref + '</label><input id="q-refs" type="file" name="refs" accept="image/*" multiple><p class="hint" id="refHint">' + t.refHint + '</p><div class="thumbs"></div><p class="hint ai-note" id="aiNote" hidden></p></div><div id="refLow"></div>' +
-   '<div><label class="lb" for="q-budget">' + t.budget + '</label><input id="q-budget" type="number" min="0" inputmode="numeric" name="budget" value="' + esc(st.budget) + '" style="max-width:200px"></div>' +
+   '<details class="more"' + (st.budget ? ' open' : '') + '><summary>' + t.more + '</summary><div><label class="lb" for="q-budget">' + t.budget + '</label><input id="q-budget" type="number" min="0" inputmode="numeric" name="budget" value="' + esc(st.budget) + '" style="max-width:200px"></div></details>' +
    '<div class="row"><div><label class="lb" for="q-name">' + t.name + ' <span class="req">*</span></label><input id="q-name" type="text" name="name" autocomplete="given-name" value="' + esc(st.name) + '"></div>' +
    '<div><label class="lb" for="q-email">' + t.email + ' <span class="req" id="emReq">*</span><span class="req" id="emOpt" hidden style="color:var(--soft)">' + t.opt + '</span></label><input id="q-email" type="email" name="email" autocomplete="email" value="' + esc(st.email) + '"></div></div>' +
    '<fieldset><legend>' + t.ctWay + '</legend><div class="chips">' + ['email','tel','sms','wa','wx','ig'].map(function(k){ return chip('ctWay', k, t.ways[k]); }).join('') + '</div></fieldset>' +
    '<div id="ctQ" hidden><label class="lb" for="q-contact" id="ctLb"></label><input id="q-contact" type="text" name="contact" value="' + esc(st.contact) + '"></div>' +
    '<fieldset><legend>' + t.next + '</legend><div class="chips">' + chip('intent', 'book', t.nextBook) + chip('intent', 'ask', t.nextAsk) + '</div></fieldset>' +
    '<div id="datesQ" hidden><label class="lb" for="q-dates">' + t.datesReq + ' <span class="req">*</span></label><input id="q-dates" type="text" name="dates" placeholder="' + esc(t.datesPh) + '" value="' + esc(st.dates) + '"></div>' +
-   '<div id="askQ" hidden><label class="lb" for="q-question">' + t.question + ' <span class="req">*</span></label><textarea id="q-question" name="question" rows="4" placeholder="' + esc(t.questionPh) + '">' + esc(st.question || '') + '</textarea></div>' +
+   '<div id="askQ" hidden>' + (A.instagram ? '<p class="askdm">' + t.askDm + ' <a href="https://ig.me/m/' + esc(A.instagram) + '" target="_blank" rel="noopener">@' + esc(A.instagram) + ' →</a></p>' : '') + '<label class="lb" for="q-question">' + t.question + ' <span class="req">*</span></label><textarea id="q-question" name="question" rows="4" placeholder="' + esc(t.questionPh) + '">' + esc(st.question || '') + '</textarea></div>' +
    ((A.refuse || []).indexOf('minors') > -1 ? '<label class="check"><input type="checkbox" name="adult"' + (st.adult ? ' checked' : '') + '> ' + t.adult + '</label>' : '') +
    '<label class="check"><input type="checkbox" name="consent"' + (st.consent ? ' checked' : '') + '> <span>' + t.consent + '</span></label>' +
    '<button class="btn" type="submit">' + t.send + '</button><p class="msg" aria-live="polite"></p></form></div>';

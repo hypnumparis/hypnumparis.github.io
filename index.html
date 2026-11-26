@@ -937,18 +937,18 @@
   .lt-seal:hover{transform:rotate(-6deg) scale(1.04);}
   .lt-seal:active,.lt-seal.press{transform:scale(.9);}
   .lt-seal-hint{font-style:italic;font-size:14px;color:var(--ink-soft);text-align:center;}
-  .resa-form.lt-fold{transition:transform .85s cubic-bezier(.55,0,.4,1),opacity .55s ease .3s;transform:translateY(60px) scale(.5,.32);opacity:0;}
+  .resa-form.lt-fold{transition:transform .6s cubic-bezier(.55,0,.4,1),opacity .4s ease .2s;transform:translateY(60px) scale(.5,.32);opacity:0;}
   .lt-env{display:flex;justify-content:center;padding:30px 0 10px;}
-  .lt-env-body{position:relative;width:min(300px,78vw);aspect-ratio:3/2;animation:ltRise .7s cubic-bezier(.2,.7,.2,1) both;}
+  .lt-env-body{position:relative;width:min(300px,78vw);aspect-ratio:3/2;animation:ltRise .5s cubic-bezier(.2,.7,.2,1) both;}
   .lt-env-back,.lt-env-front{position:absolute;inset:0;background:center/100% 100% no-repeat;}
   .lt-env-back{background-image:url("img/185f35496417.webp");box-shadow:0 1px 2px rgba(60,40,20,.18),0 6px 10px -4px rgba(60,40,20,.2),0 26px 42px -18px rgba(60,40,20,.5);border-radius:2px;}
   .lt-env-front{background-image:url("img/91e99c1495b0.webp");}
-  .lt-env-paper{position:absolute;left:5%;right:5%;top:5%;height:82%;box-shadow:0 0 3px rgba(60,40,20,.15);background:#efe3cc;animation:ltSlip .7s cubic-bezier(.4,0,.2,1) .25s both;}
-  .lt-env-flap{position:absolute;left:0;right:0;top:0;height:100%;background:url("img/724464463fa4.webp") center/100% 100% no-repeat;filter:drop-shadow(0 3px 3px rgba(60,40,20,.28));transform-origin:50% 0;transform:perspective(700px) rotateX(180deg);animation:ltFlap .6s cubic-bezier(.5,0,.3,1) .95s forwards;z-index:2;}
+  .lt-env-paper{position:absolute;left:5%;right:5%;top:5%;height:82%;box-shadow:0 0 3px rgba(60,40,20,.15);background:#efe3cc;animation:ltSlip .5s cubic-bezier(.4,0,.2,1) .18s both;}
+  .lt-env-flap{position:absolute;left:0;right:0;top:0;height:100%;background:url("img/724464463fa4.webp") center/100% 100% no-repeat;filter:drop-shadow(0 3px 3px rgba(60,40,20,.28));transform-origin:50% 0;transform:perspective(700px) rotateX(180deg);animation:ltFlap .42s cubic-bezier(.5,0,.3,1) .66s forwards;z-index:2;}
   .lt-env-seal{position:absolute;left:50%;top:62%;width:70px;height:70px;margin:-35px 0 0 -35px;z-index:3;}
-  .lt-env-seal .lt-wax{position:absolute;inset:0;opacity:0;transform:rotate(-4deg);filter:drop-shadow(0 1px 1px rgba(40,4,6,.45)) drop-shadow(0 3px 4px rgba(40,4,6,.18));animation:ltWax .25s ease-out 2.2s forwards;}
-  .lt-env-seal .lt-pud{position:absolute;inset:0;width:100%;height:100%;opacity:0;filter:drop-shadow(0 1px 1px rgba(40,4,6,.4));animation:ltPour .6s cubic-bezier(.2,.7,.3,1) 1.5s forwards,ltSquash .3s ease-out 2.2s forwards;}
-  .lt-env-seal .lt-stamp{position:absolute;left:50%;top:50%;width:48px;height:48px;margin:-24px 0 0 -24px;opacity:0;z-index:2;animation:ltPress 1s cubic-bezier(.45,0,.3,1) 1.85s forwards;}
+  .lt-env-seal .lt-wax{position:absolute;inset:0;opacity:0;transform:rotate(-4deg);filter:drop-shadow(0 1px 1px rgba(40,4,6,.45)) drop-shadow(0 3px 4px rgba(40,4,6,.18));animation:ltWax .2s ease-out 1.54s forwards;}
+  .lt-env-seal .lt-pud{position:absolute;inset:0;width:100%;height:100%;opacity:0;filter:drop-shadow(0 1px 1px rgba(40,4,6,.4));animation:ltPour .42s cubic-bezier(.2,.7,.3,1) 1.05s forwards,ltSquash .22s ease-out 1.54s forwards;}
+  .lt-env-seal .lt-stamp{position:absolute;left:50%;top:50%;width:48px;height:48px;margin:-24px 0 0 -24px;opacity:0;z-index:2;animation:ltPress .7s cubic-bezier(.45,0,.3,1) 1.3s forwards;}
   @keyframes ltPour{0%{opacity:0;transform:scale(.25);}25%{opacity:1;}100%{opacity:1;transform:scale(.9);}}
   @keyframes ltSquash{0%{transform:scale(.9);opacity:1;}60%{opacity:1;}100%{transform:scale(1);opacity:0;}}
   @keyframes ltWax{from{opacity:0;transform:rotate(-4deg) scale(.97);}to{opacity:1;transform:rotate(-4deg) scale(1);}}
@@ -2601,8 +2601,8 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
         var sec = document.getElementById('reservation'), y = sec.getBoundingClientRect().top + window.scrollY;
         try{ window.scrollTo({top:Math.max(0, y), behavior:'instant'}); }catch(err2){ window.scrollTo(0, Math.max(0, y)); }
         env.hidden = false; env.querySelectorAll('.lt-env-body').forEach(function(b){ b.style.animation = 'none'; void b.offsetWidth; b.style.animation = ''; });
-        setTimeout(function(){ $('resaDone').hidden = false; }, 2300);
-      }, 1150);
+        setTimeout(function(){ $('resaDone').hidden = false; }, 1600);
+      }, 800);
     });
     // ---- availability calendar ----
     // Pour bloquer des jours : ajoutez des dates 'AAAA-MM-JJ' dans blocked, ou des jours de semaine (0 = dimanche) dans closedWeekdays.
@@ -3913,7 +3913,7 @@ document.addEventListener('click', function(e){
       $('cmdDone').hidden = false;
       try{ window.scrollTo({top:0, behavior:'instant'}); }catch(err2){ window.scrollTo(0, 0); }
       if(!window.HYP_SEND) window.location.href = href;
-    }, 1150);
+    }, 800);
   });
 })();
 </script>
