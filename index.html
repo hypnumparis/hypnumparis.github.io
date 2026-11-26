@@ -2385,7 +2385,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     function setRadio(name, v){ var r = form.querySelector('input[name="'+name+'"][value="'+v+'"]'); if(r && !r.checked){ r.checked = true; r.dispatchEvent(new Event('change', {bubbles:true})); } sync(); }
     /* petit flash réservé : le cachet envoie la lettre et ouvre le paiement de l'acompte dans la foulée */
     /* acompte des flashs selon le prix (ses paliers, 2026-11-26) : [prix max, acompte, lien Stripe] ; sans lien = acompte indiqué avec la réponse */
-    var DEP_TIERS = [[150, 30, 'https://book.stripe.com/cNicN5amwggwajffDn2Fa00'], [250, 60, 'https://buy.stripe.com/4gM28rcuEaWcdvr1Mx2Fa0j'], [350, 70, 'https://buy.stripe.com/4gMfZhbqA3tK1MJ0It2Fa0k'], [450, 80, ''], [Infinity, 100, '']];
+    var DEP_TIERS = [[150, 30, 'https://book.stripe.com/cNicN5amwggwajffDn2Fa00'], [250, 60, 'https://buy.stripe.com/4gM28rcuEaWcdvr1Mx2Fa0j'], [350, 70, 'https://buy.stripe.com/4gMfZhbqA3tK1MJ0It2Fa0k'], [450, 80, 'https://buy.stripe.com/bJedR97akaWcezvbn72Fa0l'], [Infinity, 100, '']];
     function depFor(price){ for(var i = 0; i < DEP_TIERS.length; i++){ if(price <= DEP_TIERS[i][0]) return [DEP_TIERS[i][1], DEP_TIERS[i][2]]; } return [0, '']; }
     function payNow(){ return val('type') === 'flash' && val('flashIntent') !== 'ask' && !!fsz && !!depFor(flashPrice(fsz.start, fsz.min, fsz.cm))[1] && !document.getElementById('reservation').classList.contains('resa-wait'); }
     function sealTxt(){ var el = $('resaSealTxt'); if(!el) return; var v = payNow() ? 'Envoyer et régler l\'acompte' : 'Touchez pour envoyer'; if(el.getAttribute('data-v') !== v){ el.setAttribute('data-v', v); el.textContent = v; } }
