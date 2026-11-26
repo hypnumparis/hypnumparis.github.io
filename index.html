@@ -545,6 +545,8 @@
   .resa-picked[hidden]{display:none;}
   .resa-picked img{width:84px;height:84px;object-fit:contain;mix-blend-mode:multiply;}
   .resa-picked .rp-t{font-size:19px;}
+  form.fsz-on .resa-grid > label.resa-field:has(#size), form.fsz-on .resa-field:has(input[name="sizeCat"]) > span, form.fsz-on .resa-field:has(input[name="sizeCat"]) > .resa-sub{display:none;}
+  form.fsz-on .resa-grid{grid-template-columns:1fr;}
   .resa-fsz{border:1px solid var(--line);border-top:0;padding:12px 14px;}
   .resa-fsz .fsz-row{display:flex;justify-content:space-between;align-items:center;gap:12px;}
   .resa-fsz .fsz-p{margin-top:8px;}
@@ -2347,12 +2349,13 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     var $ = function(id){ return document.getElementById(id); };
     var files = {custom:[], own:[]}, picked = null;
     function val(name){ var c = form.querySelector('input[name="'+name+'"]:checked'); return c ? c.value : ''; }
-    function setRadio(name, v){ var r = form.querySelector('input[name="'+name+'"][value="'+v+'"]'); if(r){ r.checked = true; } sync(); }
+    function setRadio(name, v){ var r = form.querySelector('input[name="'+name+'"][value="'+v+'"]'); if(r && !r.checked){ r.checked = true; r.dispatchEvent(new Event('change', {bubbles:true})); } sync(); }
     function sync(){
       var t = val('type'), m = val('flashMode');
       form.querySelectorAll('.resa-panel').forEach(function(p){ p.classList.toggle('on', p.getAttribute('data-for') === t); });
       form.querySelectorAll('.resa-sub-panel').forEach(function(p){ p.classList.toggle('on', p.getAttribute('data-for') === m); });
       if($('resaAlt')) altSync();
+      form.classList.toggle('fsz-on', t === 'flash' && !!$('flashSz'));   /* taille déjà choisie avec le flash : on cache les champs de taille en double */
     }
     form.addEventListener('change', function(e){ if(e.target.name === 'type' || e.target.name === 'flashMode'){ sync(); altSync(); } });
     function altSync(){
@@ -2386,6 +2389,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
       var P = window.HYP_P || {}, k = it.key || it.title, start = parseInt(P.PRIX && P.PRIX[k], 10), min = parseFloat(String(P.MINS && P.MINS[k] || '').replace(',', '.'));
       fsz = null;
       var old = $('flashSz'); if(old) old.remove();
+      form.classList.remove('fsz-on');
       if(it.status !== 'dispo' || !start || !min) return;
       fsz = {start:start, min:min, cm:min};
       var d = document.createElement('div'); d.id = 'flashSz'; d.className = 'resa-fsz';
@@ -2402,12 +2406,11 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
         d.querySelector('.fsz-v').textContent = flashPrice(start, min, fsz.cm) + ' €';
         $('size').value = String(fsz.cm).replace('.', ',') + ' cm';
         setRadio('sizeCat', fsz.cm < 8 ? 'petit' : fsz.cm <= 15 ? 'moyen' : 'grand');
-        var r = form.querySelector('input[name="sizeCat"]:checked'); if(r) r.dispatchEvent(new Event('change', {bubbles:true}));
       }
       inp.addEventListener('input', function(){ upd(true); });
       inp.addEventListener('change', function(){ upd(false); });
       d.addEventListener('click', function(e){ var b = e.target.closest('button[data-d]'); if(!b) return; inp.value = String(Math.max(min, (parseFloat(inp.value) || min) + (+b.dataset.d))); upd(false); });
-      upd(false);
+      upd(false); sync();
     }
     $('flashNo').addEventListener('input', function(){ showPick(parseInt(this.value,10) || 0); });
     $('browseFlash').addEventListener('click', function(){ if(window.__galTab) window.__galTab('flash'); });
