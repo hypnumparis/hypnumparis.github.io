@@ -96,7 +96,14 @@ function estimate(c, q){
     out.sessions = [Math.ceil(lg[0] / A.maxSession), Math.ceil(lg[1] / A.maxSession)];
   } else {
     var s = B.sizes[q.size]; if(!s) return null;
-    lo = s[0] * coef * flash; hi = s[1] * coef * flash;
+    var sd = D.SIZES.filter(function(x){ return x.k === q.size; })[0], cm = parseFloat(String(q.cm || '').replace(',', '.'));
+    if(cm > 0 && sd && sd.c){
+      /* taille exacte connue : on place le prix dans la fourchette de la tranche, puis ±12 % */
+      var p = Math.min(1, Math.max(0, (cm - sd.c[0]) / (sd.c[1] - sd.c[0]))), mid = s[0] + (s[1] - s[0]) * p;
+      lo = mid * 0.88 * coef * flash; hi = mid * 1.12 * coef * flash;
+    } else {
+      lo = s[0] * coef * flash; hi = s[1] * coef * flash;
+    }
   }
   /* prix du tatouage, puis frais de dessin inclus dans le total affiché */
   var tlo = r10(Math.max(B.min, lo)), thi = r10(Math.max(B.min, hi));

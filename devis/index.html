@@ -41,6 +41,9 @@ fieldset{border:0;margin:0;padding:0;display:grid;gap:10px;min-width:0;}
 legend{width:100%;box-sizing:border-box;}
 legend,.lb{display:block;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);padding:0;margin-bottom:10px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;}
+.cm{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px;font-size:14px;color:var(--soft);}
+.cm span{flex-basis:100%;}
+label.cm input[name=cm]{width:90px !important;flex:0 0 auto;padding:7px 9px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:16px;border-radius:0;}
 .chips label{position:relative;}
 .chips input{position:absolute;opacity:0;pointer-events:none;}
 .chips span{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:8px 14px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:16px;line-height:1.25;}
@@ -104,7 +107,7 @@ var T = {
 fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'affiche tout de suite. Si vous êtes décidé·e, envoyez une demande de rendez-vous ; sinon, posez-moi simplement vos questions. Je réponds sous {r}.',
  type:'Type de projet', types:{custom:'Un dessin sur mesure', flash:'Un flash déjà dessiné', own:'Un dessin que vous apportez', cover:'Cover-up ou retouche d\'un ancien tatouage'},
  flashHint:'Ajoutez une capture du flash dans les images de référence.', ownHint:'Ajoutez votre dessin dans les images de référence.',
- tech:'Technique', size:'Taille', place:'Emplacement', pick:'Choisir…', color:'Couleur', colors:{bw:'Noir et gris', col:'Couleur'},
+ tech:'Technique', size:'Taille', cm:'Taille exacte, si vous la connaissez (plus large côté) : l\'estimation sera plus précise', place:'Emplacement', pick:'Choisir…', color:'Couleur', colors:{bw:'Noir et gris', col:'Couleur'},
  first:'Est-ce votre premier tatouage ?', yes:'Oui', no:'Non',
  idea:'Votre idée', ideaPh:'Le sujet, l\'ambiance, ce qui compte pour vous…',
  ref:'Images de référence (facultatif)', refFlash:'Image du flash (facultatif)', refOwn:'Votre dessin (facultatif)', refMore:'Ajoutez une image : la technique et la couleur sont lues dessus et l\'estimation est plus précise.', unsureHint:'Estimation calculée pour un trait avec ombrage ; le prix est confirmé après avoir vu l\'image.', refHint:'Jusqu\'à 3 images, 5 Mo maximum chacune.', aiBusy:'Lecture de l\'image…', aiSaw:'D\'après l\'image : ', aiAdj:'L\'estimation tient compte de l\'image ; le prix est confirmé par le tatoueur.', cx:{simple:'peu de détails', medium:'détails moyens', complex:'beaucoup de détails'},
@@ -130,7 +133,7 @@ fr:{title:'Demande de devis', sub:'Décrivez votre projet : une estimation s\'af
 en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate right away. If you\'ve decided, send a booking request; if not, just ask me your questions. I reply within {r}.',
  type:'Project type', types:{custom:'A custom design', flash:'A ready-made flash', own:'A design you bring', cover:'Cover-up or rework of an old tattoo'},
  flashHint:'Add a screenshot of the flash in the reference images.', ownHint:'Add your design in the reference images.',
- tech:'Technique', size:'Size', place:'Placement', pick:'Choose…', color:'Colour', colors:{bw:'Black and grey', col:'Colour'},
+ tech:'Technique', size:'Size', cm:'Exact size, if you know it (longest side): the estimate gets more precise', place:'Placement', pick:'Choose…', color:'Colour', colors:{bw:'Black and grey', col:'Colour'},
  first:'Is this your first tattoo?', yes:'Yes', no:'No',
  idea:'Your idea', ideaPh:'Subject, mood, what matters to you…',
  ref:'Reference images (optional)', refFlash:'Flash image (optional)', refOwn:'Your design (optional)', refMore:'Add an image: technique and colour are read from it and the estimate is more accurate.', unsureHint:'Estimated as lines with shading; the price is confirmed after seeing the image.', refHint:'Up to 3 images, 5 MB each.', aiBusy:'Reading the image…', aiSaw:'From the image: ', aiAdj:'The estimate takes the image into account; the artist confirms the price.', cx:{simple:'few details', medium:'some detail', complex:'lots of detail'},
@@ -156,7 +159,7 @@ en:{title:'Tattoo quote request', sub:'Describe your project and see an estimate
 zh:{title:'纹身询价', sub:'描述你的想法，马上就能看到预估价格。想好了就直接发预约请求；还没想好，也可以先问问。我会在 {r}内回复。',
  type:'类型', types:{custom:'定制设计', flash:'现成的纹身稿', own:'自带的图', cover:'cover-up 或修改旧图'},
  flashHint:'请在参考图里上传那张纹身稿的截图。', ownHint:'请在参考图里上传你的图。',
- tech:'技法', size:'大小', place:'部位', pick:'请选择', color:'颜色', colors:{bw:'黑灰', col:'彩色'},
+ tech:'技法', size:'大小', cm:'知道具体几厘米就填（最长的一边），估价会更准', place:'部位', pick:'请选择', color:'颜色', colors:{bw:'黑灰', col:'彩色'},
  first:'这是你的第一个纹身吗？', yes:'是', no:'不是',
  idea:'你的想法', ideaPh:'图案、感觉、对你重要的点……',
  ref:'参考图（选填）', refFlash:'纹身稿图片（选填）', refOwn:'你的图（选填）', refMore:'先上传图片：系统会看图帮你选好技法和颜色，估价也更准。', unsureHint:'按线条加阴影估算，纹身师看图后确认。', refHint:'最多 3 张，每张不超过 5 MB。', aiBusy:'正在看图…', aiSaw:'根据图片：', aiAdj:'估价已按图片调整，最终价格由纹身师确认。', cx:{simple:'细节简单', medium:'细节中等', complex:'细节多'},
@@ -245,7 +248,7 @@ function render(){
    '<fieldset' + (types.length < 2 ? ' hidden' : '') + '><legend>' + t.type + '</legend><div class="chips">' + types.map(function(k){ return chip('type', k, t.types[k]); }).join('') + '</div></fieldset>' +
    '<div id="refHigh"></div>' +
    '<fieldset><legend>' + t.tech + '</legend><div class="chips tech">' + D.TECH.map(function(x){ return chip('tech', x.k, lab(x), 'radio'); }).join('') + '</div><p class="hint" id="unsureHint" hidden>' + t.unsureHint + '</p></fieldset>' +
-   '<fieldset><legend>' + t.size + '</legend><div class="chips">' + D.SIZES.concat(D.LARGE).map(function(x){ return chip('size', x.k, lab(x)); }).join('') + '</div></fieldset>' +
+   '<fieldset><legend>' + t.size + '</legend><label class="cm"><span>' + t.cm + '</span><input type="number" inputmode="decimal" step="0.5" min="1" max="60" name="cm" value="' + (st.cm || '') + '"> cm</label><div class="chips">' + D.SIZES.concat(D.LARGE).map(function(x){ return chip('size', x.k, lab(x)); }).join('') + '</div></fieldset>' +
    '<div><label class="lb" for="q-place">' + t.place + '</label><select id="q-place" name="place"><option value="">' + t.pick + '</option>' + places + '</select></div>' +
    '<fieldset id="firstQ" hidden><legend>' + t.first + '</legend><div class="chips">' + chip('first', 'yes', t.yes) + chip('first', 'no', t.no) + '</div></fieldset>' +
    '<fieldset><legend>' + t.color + '</legend><div class="chips">' + chip('color', 'bw', t.colors.bw) + chip('color', 'col', t.colors.col) + '</div></fieldset>' +
@@ -264,6 +267,13 @@ function render(){
    '<button class="btn" type="submit">' + t.send + '</button><p class="msg" aria-live="polite"></p></form></div>';
   var fm = app.querySelector('form');
   fm.addEventListener('change', update);
+  /* taille en cm : coche la tranche correspondante et met l'estimation à jour */
+  fm.querySelector('input[name=cm]').addEventListener('input', function(){
+    var v = parseFloat(String(this.value).replace(',', '.'));
+    if(v > 0){ var hit = D.SIZES.filter(function(x){ return v <= x.c[1]; })[0] || D.SIZES[D.SIZES.length - 1];
+      var r = fm.querySelector('input[name=size][value=' + hit.k + ']'); if(r) r.checked = true; }
+    update();
+  });
   fm.addEventListener('change', function(e){ if(e.target.name === 'type' && files.length && !ai) runAI(); });
   fm.querySelector('#q-refs').addEventListener('change', function(ev){
     files = [].slice.call(ev.target.files).filter(function(x){ return x.size <= 5e6; }).slice(0, 3);
@@ -339,7 +349,7 @@ var ML = {
 function mailFor(q, e, way){
   var base = (window.HQ_ARTISTS || {})[cfg.id] || {}, ml = (cfg.A && cfg.A.mailLang) || (base.A && base.A.mailLang) || 'fr', m = ML[ml] || ML.fr, zh = ml === 'zh', c = zh ? '：' : ' : ';
   var L = function(x){ return x ? (x.l[ml] || x.l.fr) : ''; };
-  var sz = L(find(D.SIZES.concat(D.LARGE), q.size)), pl = find(D.PLACES, q.place), tier = HQ.tierOf(cfg, q.place);
+  var sz = L(find(D.SIZES.concat(D.LARGE), q.size)) + (q.cm ? ' · ' + q.cm + ' cm' : ''), pl = find(D.PLACES, q.place), tier = HQ.tierOf(cfg, q.place);
   var ct = way === 'email' ? m.ways.email + ' ' + (q.email || '') : m.ways[way] + ' ' + (q.contact || '').trim() + (q.email ? ' · ' + m.ways.email + ' ' + q.email : '');
   var price = e.lo ? e.lo + '–' + e.hi + ' €' : '';
   var rows = [
@@ -404,7 +414,7 @@ function submit(ev){
   var e = HQ.estimate(cfg, q) || {};
   if(e.refused){ msg.className = 'msg err'; msg.textContent = f(t.refused, {x:lab(find(D.REFUSE, e.refused)).toLowerCase()}); return; }
   var d = {artist:cfg.id, config_version:cfg.version, lang:lang, page:location.href, intent:q.intent,
-    type:q.type, technique:q.tech || 'unsure', size:q.size, place:q.place, place_tier:HQ.tierOf(cfg, q.place), color:q.color, first_tattoo:q.first || '',
+    type:q.type, technique:q.tech || 'unsure', size:q.size + (q.cm ? ' ' + q.cm + 'cm' : ''), place:q.place, place_tier:HQ.tierOf(cfg, q.place), color:q.color, first_tattoo:q.first || '',
     idea:q.idea || '', budget:q.budget || '', dates:q.intent === 'book' ? q.dates || '' : '', name:q.name, email:q.email || '', contact:way === 'email' ? 'E-mail' : T.en.ways[way] + ' : ' + (q.contact || '').trim(),
     adult:q.adult ? 'oui' : '', consent:'oui',
     estimate_low:e.lo, estimate_high:e.hi, deposit:e.dep, design_fee:e.fee ? e.fee.lo + '-' + e.fee.hi : '', coef:Math.round(e.coef * 100) / 100,

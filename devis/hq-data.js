@@ -86,10 +86,10 @@ var REFUSE = [
 ];
 
 var SIZES = [
-  {k:'xs', l:L('Moins de 5 cm','Under 5 cm','小于 5 cm'), h:[0.5, 1]},
-  {k:'s',  l:L('5 à 10 cm','5 to 10 cm','5–10 cm'), h:[1, 2]},
-  {k:'m',  l:L('10 à 15 cm','10 to 15 cm','10–15 cm'), h:[2, 3.5]},
-  {k:'l',  l:L('15 à 25 cm','15 to 25 cm','15–25 cm'), h:[3.5, 6]}
+  {k:'xs', l:L('Moins de 5 cm','Under 5 cm','小于 5 cm'), h:[0.5, 1], c:[1, 5]},
+  {k:'s',  l:L('5 à 10 cm','5 to 10 cm','5–10 cm'), h:[1, 2], c:[5, 10]},
+  {k:'m',  l:L('10 à 15 cm','10 to 15 cm','10–15 cm'), h:[2, 3.5], c:[10, 15]},
+  {k:'l',  l:L('15 à 25 cm','15 to 25 cm','15–25 cm'), h:[3.5, 6], c:[15, 25]}
 ];
 var LARGE = [
   {k:'half', l:L('Demi-manche','Half sleeve','半臂'), h:[10, 15]},
