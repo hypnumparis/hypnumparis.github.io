@@ -12,7 +12,15 @@
 :root{--bg:#f8f3e9;--card:#fbf8f2;--ink:#2a1c15;--soft:#6a5a4e;--line:rgba(42,28,21,.2);--good:#3d5a40;--bad:#8a2f24;}
 *{box-sizing:border-box}
 [hidden]{display:none !important}
-html.embed{--card:transparent;--line:rgba(43,32,26,.32);}html.embed select{background-color:transparent;}html.embed legend,html.embed .lb{font-size:16px;letter-spacing:.02em;text-transform:none;color:var(--ink);}html.embed .sub{margin-bottom:28px;}html.embed .btn{display:none;}html.embed ::placeholder{color:rgba(43,32,26,.55);opacity:1;}html.embed body{background:transparent;}html.embed .wrap{padding:0;max-width:none;}html.embed .top,html.embed .foot,html.embed .pf,html.embed #app > h1{display:none !important;}html.embed .grid{display:block;margin-top:0;}
+html.embed{--card:transparent;--line:rgba(43,32,26,.32);}html.embed select{background-color:transparent;}html.embed legend,html.embed .lb{font-size:16px;letter-spacing:.02em;text-transform:none;color:var(--ink);}
+html.embed legend,html.embed .lb{font-size:15px !important;letter-spacing:0 !important;text-transform:none !important;color:var(--ink) !important;margin-bottom:10px;}
+html.embed input[type=text],html.embed input[type=email],html.embed input[type=tel],html.embed input[type=number],html.embed select{border:0;border-bottom:1px solid var(--ink);padding:8px 0;background-color:transparent;}
+html.embed select{padding-right:22px;}
+html.embed label.cm input[name=cm]{border:0;border-bottom:1px solid var(--ink);background:transparent;padding:7px 4px;text-align:center;}
+html.embed .grid{gap:30px;}
+html.embed textarea{background:transparent;}
+html.embed input[type=file]::file-selector-button{font:inherit;font-size:14px;padding:8px 14px;margin-right:12px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;}
+html.embed .grid > *{margin-bottom:0;}html.embed .sub{margin-bottom:28px;}html.embed .btn{display:none;}html.embed ::placeholder{color:rgba(43,32,26,.55);opacity:1;}html.embed body{background:transparent;}html.embed .wrap{padding:0;max-width:none;}html.embed .top,html.embed .foot,html.embed .pf,html.embed #app > h1{display:none !important;}html.embed .grid{display:block;margin-top:0;}
 input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 
