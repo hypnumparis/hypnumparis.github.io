@@ -2612,7 +2612,9 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     });
     // ---- availability calendar ----
     // Pour bloquer des jours : ajoutez des dates 'AAAA-MM-JJ' dans blocked, ou des jours de semaine (0 = dimanche) dans closedWeekdays.
-    var DISPO = { closedWeekdays: [], blocked: [], monthsAhead: 6 };
+    var DISPO = { closedWeekdays: [], monthsAhead: 6,
+      blocked: ['2027-01-07','2027-01-08','2027-01-14','2027-01-15','2027-01-21','2027-01-27','2027-01-28','2027-02-04','2027-02-05','2027-02-11','2027-02-18','2027-02-19','2027-02-25'],
+      amOff: ['2027-01-22','2027-02-12','2027-02-26'] }; // amOff : matin pris, seul l'après-midi reste
     var cal = $('resaCal'), chosen = [], slots = {};
     // Durée estimée selon la taille : petit et moyen = une demi-journée (matin ou après-midi), grand = journée entière.
     var SIZE = {
@@ -2637,7 +2639,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     (function(){ for(var m = new Date(view); m <= last; m.setMonth(m.getMonth() + 1)){ var n = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate(); for(var d = 1; d <= n; d++){ var x = new Date(m.getFullYear(), m.getMonth(), d); if(x >= today && isOpen(x)){ view = new Date(m.getFullYear(), m.getMonth(), 1); return; } } } })();
     function key(d){ return d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2); }
     var MON_WED_UNTIL = new Date(2027, 3, 1); // avant le 1er avril 2027 : lundi, mardi, mercredi fermés
-    function isOpen(d){ return d >= OPEN_FROM && !(d < MON_WED_UNTIL && d.getDay() >= 1 && d.getDay() <= 3) && DISPO.closedWeekdays.indexOf(d.getDay()) < 0 && DISPO.blocked.indexOf(key(d)) < 0; }
+    function isOpen(d){ return d >= OPEN_FROM && !(d < MON_WED_UNTIL && d.getDay() >= 1 && d.getDay() <= 3) && DISPO.closedWeekdays.indexOf(d.getDay()) < 0 && DISPO.blocked.indexOf(key(d)) < 0 && !(DISPO.amOff.indexOf(key(d)) >= 0 && !half()); }
     function fmt(k){ var p = k.split('-'); return (+p[2]) + ' ' + MOIS[+p[1]-1]; }
     function drawCal(){
       var y = view.getFullYear(), m = view.getMonth(), first = (new Date(y, m, 1).getDay() + 6) % 7, n = new Date(y, m+1, 0).getDate();
@@ -2651,6 +2653,7 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
         h += '<button type="button" class="' + c + '" data-k="' + k + '"' + (c.indexOf('av')<0 ? ' disabled' : '') + '>' + dd + '</button>';
       }
       var sl = chosen.map(function(k){
+        if(DISPO.amOff.indexOf(k) >= 0){ slots[k] = 'pm'; if(half()) return '<div class="cal-slot"><b>' + fmt(k) + '</b><em>Après-midi</em></div>'; }
         return '<div class="cal-slot"><b>' + fmt(k) + '</b>' + (half()
           ? '<div class="resa-sub"><label><input type="radio" name="slot-' + k + '" data-slot="' + k + '" value="am"' + (slots[k] !== 'pm' ? ' checked' : '') + '> Matin</label><label><input type="radio" name="slot-' + k + '" data-slot="' + k + '" value="pm"' + (slots[k] === 'pm' ? ' checked' : '') + '> Après-midi</label></div>'
           : '<em>Journée entière</em>') + '</div>';
