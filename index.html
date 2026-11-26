@@ -2384,7 +2384,10 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
     function val(name){ var c = form.querySelector('input[name="'+name+'"]:checked'); return c ? c.value : ''; }
     function setRadio(name, v){ var r = form.querySelector('input[name="'+name+'"][value="'+v+'"]'); if(r && !r.checked){ r.checked = true; r.dispatchEvent(new Event('change', {bubbles:true})); } sync(); }
     /* petit flash réservé : le cachet envoie la lettre et ouvre le paiement de l'acompte dans la foulée */
-    function payNow(){ return val('type') === 'flash' && val('flashIntent') !== 'ask' && val('sizeCat') === 'petit' && !document.getElementById('reservation').classList.contains('resa-wait'); }
+    /* acompte des flashs selon le prix (ses paliers, 2026-11-26) : [prix max, acompte, lien Stripe] ; sans lien = acompte indiqué avec la réponse */
+    var DEP_TIERS = [[150, 30, 'https://book.stripe.com/cNicN5amwggwajffDn2Fa00'], [250, 60, ''], [350, 70, ''], [Infinity, 80, '']];
+    function depFor(price){ for(var i = 0; i < DEP_TIERS.length; i++){ if(price <= DEP_TIERS[i][0]) return [DEP_TIERS[i][1], DEP_TIERS[i][2]]; } return [0, '']; }
+    function payNow(){ return val('type') === 'flash' && val('flashIntent') !== 'ask' && !!fsz && !!depFor(flashPrice(fsz.start, fsz.min, fsz.cm))[1] && !document.getElementById('reservation').classList.contains('resa-wait'); }
     function sealTxt(){ var el = $('resaSealTxt'); if(!el) return; var v = payNow() ? 'Envoyer et régler l\'acompte' : 'Touchez pour envoyer'; if(el.getAttribute('data-v') !== v){ el.setAttribute('data-v', v); el.textContent = v; } }
     function sync(){
       var t = val('type'), m = val('flashMode');
@@ -2480,8 +2483,8 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
         var hrs = Math.max(1, Math.ceil(flashPrice(start, min, fsz.cm) / 100 * 2) / 2), hs = String(hrs).replace('.', ',');
         /* petit (acompte 30 € en ligne tout de suite) = 100 € au plus, à sa demande */
         setRadio('sizeCat', flashPrice(start, min, fsz.cm) <= 100 ? 'petit' : hrs <= 4 ? 'moyen' : 'grand');
-        var dp = d.querySelector('.fsz-dep'), smallP = flashPrice(start, min, fsz.cm) <= 100;
-        dp.hidden = !smallP; if(smallP) dp.textContent = 'Acompte de 30 €, à régler en envoyant la lettre.';
+        var dp = d.querySelector('.fsz-dep'), dep = depFor(flashPrice(start, min, fsz.cm));
+        dp.hidden = !dep[1]; if(dep[1]) dp.textContent = 'Acompte de ' + dep[0] + ' €, à régler en envoyant la lettre.';
         sealTxt();
         $('resaDur').textContent = 'Environ ' + hs + ' h, ' + (hrs <= 4 ? 'le matin ou l\'après-midi.' : 'une journée entière.');
       }
@@ -2603,7 +2606,8 @@ function peauPart(src){ var k = (src.split('__')[1] || '').split('_')[0]; return
       $('doneMeth').textContent = window.__t ? window.__t(way) : way; $('doneHandle').textContent = handle;
       var small = val('sizeCat') === 'petit', wait = document.getElementById('reservation').classList.contains('resa-wait');
       $('donePay').hidden = wait || !small || fAsk; $('donePayLater').hidden = wait || small || fAsk; $('doneWait').hidden = !wait;
-      if(small) $('payBtn').href = 'https://book.stripe.com/cNicN5amwggwajffDn2Fa00' + (email ? '?prefilled_email=' + encodeURIComponent(email) : '');
+      var fdep = (t === 'flash' && fsz) ? depFor(flashPrice(fsz.start, fsz.min, fsz.cm)) : null; if(fdep){ small = !!fdep[1]; $('donePay').hidden = wait || !small || fAsk; $('donePayLater').hidden = wait || small || fAsk; }
+      if(small) $('payBtn').href = (fdep && fdep[1] ? fdep[1] : 'https://book.stripe.com/cNicN5amwggwajffDn2Fa00') + (email ? '?prefilled_email=' + encodeURIComponent(email) : '');
       if(window.HYP_SEND){
         var fd = new FormData(), nm = $('name').value.trim();
         fd.append('_subject', (fAsk ? 'Question — ' : 'Réservation — ') + nm); if(fAsk){ fd.append('Demande', 'Question avant de réserver'); fd.append('Question', $('resaQuestion').value.trim()); } fd.append('_template', 'table'); fd.append('_captcha', 'false'); if(email) fd.append('_replyto', email);
@@ -2866,6 +2870,7 @@ document.addEventListener('click', function(e){
     [/^Voir les (\d+) flashs →$/, function(m){ return lang==='en' ? 'See the ' + m[1] + ' flashes →' : '查看全部 ' + m[1] + ' 张纹身稿 →'; }],
     [/^Environ ([\d,]+) h, le matin ou l'après-midi\.$/, function(m){ var h = m[1].replace(',', '.'); return lang==='en' ? 'About ' + h + ' h, morning or afternoon.' : '约 ' + h + ' 小时，选上午或下午'; }],
     [/^Environ ([\d,]+) h, une journée entière\.$/, function(m){ var h = m[1].replace(',', '.'); return lang==='en' ? 'About ' + h + ' h, a full day.' : '约 ' + h + ' 小时，需要一整天'; }],
+    [/^Acompte de (\d+) €, à régler en envoyant la lettre\.$/, function(m){ return lang==='en' ? '€' + m[1] + ' deposit, paid when you send the letter.' : '定金 ' + m[1] + ' €，寄出时支付'; }],
     [/^dès\s(\d.+)$/, function(m){ return lang==='en' ? 'from ' + m[1] : m[1] + ' 起'; }],
     [/^Réserver le tatouage · dès\s(.+)$/, function(m){ return lang==='en' ? 'Book the tattoo · from ' + m[1] : '预约纹身 · ' + m[1] + ' 起'; }],
     [/^Le dessin seul\s·\s(.+)$/, function(m){ return (lang==='en' ? 'Design only · ' : '只买图稿 · ') + m[1]; }],
