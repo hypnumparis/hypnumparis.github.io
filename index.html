@@ -4418,6 +4418,7 @@ document.addEventListener('click', function(e){
     if('open' in e.data){ open = !!e.data.open; apply(); }
     if('intent' in e.data){ intent = e.data.intent; apply(); }
     if(e.data.h) fr.style.height = e.data.h + 'px';
+    if('err' in e.data){ var eb = form.querySelector('#resaError'); if(eb){ eb.textContent = e.data.err || ''; eb.hidden = !e.data.err; } }
     if(e.data.sent) box.scrollIntoView({behavior:'smooth', block:'end'});
   });
   /* en mode devis, le cachet envoie le formulaire de devis (pas la lettre) */
