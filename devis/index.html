@@ -324,7 +324,7 @@ function update(){
   fm.querySelector('#askQ').hidden = q.intent !== 'ask';
   var mg = fm.querySelector('.msg'); if(mg && /\berr\b/.test(mg.className)){ mg.className = 'msg'; mg.textContent = ''; tell({err:''}); }
   if(embed && q.intent !== lastIntent){ lastIntent = q.intent; try{ parent.postMessage({hq:1, intent:q.intent || ''}, location.origin); }catch(e){} }
-  fm.querySelector('#unsureHint').hidden = q.tech !== 'unsure';
+  fm.querySelector('#unsureHint').hidden = true;  /* retiré : la phrase prêtait à confusion */
   /* flash ou dessin du client : l'image aide l'estimation, donc l'envoi d'image passe au-dessus du prix */
   var hi = aiType(q.type), rb = fm.querySelector('#refBox'), anchor = fm.querySelector(hi ? '#refHigh' : '#refLow');
   if(rb.nextElementSibling !== anchor) anchor.parentNode.insertBefore(rb, anchor);
